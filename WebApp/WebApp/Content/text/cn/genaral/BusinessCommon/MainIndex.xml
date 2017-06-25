@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<layout>
+  <Text name="BtnPurchaseApply" value="采购申请"/>
+  <Text name="BtnTransferApply" value="调拨申请"/>
+  <Text name="BtnScrapApply" value="报废申请"/>
+</layout>

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<gridLayout>
+  <gridTitle name="待审核单据"/>
+  <columnLayout>
+    <Header name="ApplyType"  caption="单据类型"  index="ApplyType" align="Left" hidden="false"  width="100" />
+    <Header name="RefId"  caption="审核ID主键"  index="RefId" align="Left" hidden="true"  width="100" />
+    <Header name="ApplyUser"  caption="申请人"  index="ApplyType" align="ApplyUser" hidden="false"  width="100" />
+    <Header name="ApplyTime"  caption="申请时间"  index="ApplyTime" align="Left" hidden="false"  width="150" />
+    <Header name="ApproveState"  caption="状态"  index="ApproveState" align="Left" hidden="false"  width="100" />
+  </columnLayout>
+</gridLayout>
