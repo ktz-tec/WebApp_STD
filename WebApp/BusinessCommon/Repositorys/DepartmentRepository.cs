@@ -203,13 +203,13 @@ namespace BusinessCommon.Repositorys
         public DataTable GetDepartmentTree(UserInfo sysUser)
         {
             Dictionary<string, object> paras = new Dictionary<string, object>();
-            string sql = @"select departmentId,parentId,departmentName, case isCompany when 'Y' then 1 else 0 end  as isOpen ,'false' checked from AppDepartment where 1=1  ";
+            string sql = @"select departmentId id ,parentId,departmentName name, case isCompany when 'Y' then 1 else 0 end  as isOpen ,'false' checked from AppDepartment where 1=1  ";
             if (sysUser.UserNo!="sa" && sysUser.IsHeaderOffice != "Y")
             {
                 paras.Add("companyId", sysUser.CompanyId);
                 sql += @" and companyId=@companyId";
             }
-            sql += " order by  departmentName ";
+            sql += " order by  name ";
             DataTable dt = AppMember.DbHelper.GetDataSet(sql,paras).Tables[0];
             return dt;
         }

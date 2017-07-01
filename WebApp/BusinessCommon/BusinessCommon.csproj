@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonBusiness\TreeBusiness.cs" />
     <Compile Include="Models\SystemLog\EntryModel.cs" />
     <Compile Include="Models\Tools\EntryModel.cs" />
     <Compile Include="Models\PasswordModifiy\EntryModel.cs" />

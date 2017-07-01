@@ -160,19 +160,19 @@ namespace BusinessLogic.BasicData.Repositorys
         public DataTable GetStoreSiteTree(UserInfo sysUser)
         {
             Dictionary<string, object> paras = new Dictionary<string, object>();
-            string sql = @"select departmentId storeSiteId,parentId,departmentName storeSiteName,1 isOpen ,'false' checked from AppDepartment where isCompany='Y' ";
+            string sql = @"select departmentId id,parentId,departmentName name,1 isOpen ,'false' checked from AppDepartment where isCompany='Y' ";
             paras.Add("companyId", sysUser.CompanyId);
             if (sysUser.UserNo!="sa" && sysUser.IsHeaderOffice != "Y")
             {             
                 sql += @" and companyId=@companyId";
             }
             sql += " union all ";
-            sql += @"select storeSiteId,parentId,storeSiteName,0 isOpen ,'false' checked from StoreSite where 1=1  ";
+            sql += @"select storeSiteId id,parentId,storeSiteName name,0 isOpen ,'false' checked from StoreSite where 1=1  ";
             if (sysUser.UserNo!="sa" && sysUser.IsHeaderOffice != "Y")
             {
                 sql += @" and companyId=@companyId";
             }
-            sql += " order by storeSiteName";
+            sql += " order by name";
             DataTable dt = AppMember.DbHelper.GetDataSet(sql,paras).Tables[0];
             return dt;
         }

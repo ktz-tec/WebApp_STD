@@ -18,7 +18,10 @@
                         if (jsonObj != "0") {
                             $("#DivDialogTree" + pageId + treeId).empty();
                             $("#DivDialogTree" + pageId + treeId).append(jsonObj);
-                        } 
+                        }
+                        else {
+                            $("#DivDialogTree" + pageId + treeId).empty();
+                        }
                     }
                 });
             }

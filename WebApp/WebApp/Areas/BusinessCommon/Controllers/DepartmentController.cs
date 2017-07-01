@@ -16,6 +16,7 @@ using BaseCommon.Repositorys;
 using WebCommon.HttpBase;
 using BaseControl.HtmlHelpers;
 using BaseCommon.Models;
+using BusinessCommon.CommonBusiness;
 
 namespace WebApp.Areas.BusinessCommon.Controllers
 {
@@ -130,11 +131,10 @@ namespace WebApp.Areas.BusinessCommon.Controllers
             {
                 list = (DataTable)HttpContext.Cache["DepartmentTree"];
             }
-            DataRow[] drs = list.Select(" departmentName like '%" + pySearch.ToUpper() + "%'");
-            if (drs.Length > 0)
+            var dtResult = TreeBusiness.GetSearchDataTable(pySearch, list);
+            if (dtResult.Rows.Count > 0)
             {
-                DataTable dt = drs.CopyToDataTable();
-                string treeString = AppTreeView.TreeViewString(pageId, TreeId.DepartmentTreeId, dt, "", false);
+                string treeString = AppTreeView.TreeViewString(pageId, TreeId.DepartmentTreeId, dtResult, "", false);
                 return Content(treeString, "text/html");
             }
             else

@@ -17,6 +17,7 @@ using BaseCommon.Repositorys;
 using WebCommon.HttpBase;
 using BaseControl.HtmlHelpers;
 using BaseCommon.Models;
+using BusinessCommon.CommonBusiness;
 
 namespace WebApp.Areas.BasicData.Controllers
 {
@@ -39,10 +40,10 @@ namespace WebApp.Areas.BasicData.Controllers
         }
 
         [AppAuthorize]
-        public ActionResult List(string pageId, string viewTitle )
+        public ActionResult List(string pageId, string viewTitle)
         {
             ListModel model = new ListModel();
-            SetParentListModel(pageId, viewTitle,  model);
+            SetParentListModel(pageId, viewTitle, model);
             model.GridPkField = "storeSiteId";
             return View(model);
         }
@@ -96,7 +97,7 @@ namespace WebApp.Areas.BasicData.Controllers
             if (HttpContext.Cache["StoreSiteTree"] == null)
             {
                 StoreSiteRepository srep = new StoreSiteRepository();
-                list = srep.GetStoreSiteTree(sysUser); 
+                list = srep.GetStoreSiteTree(sysUser);
                 HttpContext.Cache.Add("StoreSiteTree", list, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero, CacheItemPriority.High, null);
             }
             else
@@ -133,11 +134,10 @@ namespace WebApp.Areas.BasicData.Controllers
             {
                 list = (DataTable)HttpContext.Cache["StoreSiteTree"];
             }
-            DataRow[] drs = list.Select(" storeSiteName like '%" + pySearch.ToUpper() + "%'");
-            if (drs.Length > 0)
+            var dtResult = TreeBusiness.GetSearchDataTable(pySearch, list);
+            if (dtResult.Rows.Count > 0)
             {
-                DataTable dt = drs.CopyToDataTable();
-                string treeString = AppTreeView.TreeViewString(pageId, TreeId.StoreSiteTreeId, dt, "", false);
+                string treeString = AppTreeView.TreeViewString(pageId, TreeId.StoreSiteTreeId, dtResult, "", false);
                 return Content(treeString, "text/html");
             }
             else
@@ -145,7 +145,27 @@ namespace WebApp.Areas.BasicData.Controllers
                 return Content("0", "text/html");
             }
 
+        }
 
+        private List<DataRow> DistinctParent(List<string> parentIds, DataTable dtAll)
+        {
+            string insql = "";
+            foreach (string pid in parentIds)
+            {
+                insql += "'" + pid + "',";
+            }
+            insql = insql.Substring(0, insql.Length - 1);
+            var parentDrs = dtAll.Select(string.Format(" storeSiteId in ({0})", insql));
+            List<DataRow> retList = new List<DataRow>();
+            retList.AddRange(parentDrs);
+            var pIds = parentDrs.Select(m => m.Field<string>("parentId")).Distinct().ToList();
+            if (pIds.Count > 0)
+            {
+                var pDrs = DistinctParent(pIds, dtAll);
+                retList.AddRange(pDrs);
+            }
+            return retList;
+            //return retList.Distinct().ToList();
         }
 
 
@@ -162,7 +182,7 @@ namespace WebApp.Areas.BasicData.Controllers
             ClearClientPageCache(Response);
             UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
             StoreSiteRepository rep = new StoreSiteRepository();
-            DataTable source = rep.GetDropListSource(sysUser.UserId, currentId,sysUser);
+            DataTable source = rep.GetDropListSource(sysUser.UserId, currentId, sysUser);
             List<DropListSource> dropList = rep.DropList(source, "");
             return DropListJson(dropList);
         }

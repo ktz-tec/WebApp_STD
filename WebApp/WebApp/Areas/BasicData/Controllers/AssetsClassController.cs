@@ -18,6 +18,7 @@ using WebCommon.HttpBase;
 using BusinessLogic.AssetsBusiness.Repositorys;
 using BaseCommon.Models;
 using BaseControl.HtmlHelpers;
+using BusinessCommon.CommonBusiness;
 
 namespace WebApp.Areas.BasicData.Controllers
 {
@@ -129,11 +130,10 @@ namespace WebApp.Areas.BasicData.Controllers
             {
                 list = (DataTable)HttpContext.Cache["AssetsClassTree"];
             }
-            DataRow[] drs = list.Select(" assetsClassName like '%" + pySearch.ToUpper() + "%'");
-            if (drs.Length > 0)
+            var dtResult = TreeBusiness.GetSearchDataTable(pySearch, list);
+            if (dtResult.Rows.Count > 0)
             {
-                DataTable dt = drs.CopyToDataTable();
-                string treeString = AppTreeView.TreeViewString(pageId, TreeId.AssetsClassTreeId, dt, "", false);
+                string treeString = AppTreeView.TreeViewString(pageId, TreeId.AssetsClassTreeId, dtResult, "", false);
                 return Content(treeString, "text/html");
             }
             else
