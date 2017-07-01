@@ -1,11 +1,11 @@
-﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<BusinessCommon.Models.Group.SelectModel>" %>
+﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<BaseCommon.Models.DropMultipleSelectModel>" %>
 <%@ Import Namespace="BaseControl.HtmlHelpers" %>
 <%@ Import Namespace="BaseCommon.Basic" %>
 <%@ Import Namespace="WebCommon.Data" %>
 <script type="text/javascript">
     $(document).ready(function () {
         var pageId = '<%=Model.PageId%>';
-        var treeId = '<%=TreeId.GroupTreeId%>';
+        var treeId = '<%=Model.TreeId%>';
         $("#btnConfirm" + pageId).click(function (event) {
             var fieldIdObj = $("#FieldIdObj" + pageId).val();
             if (fieldIdObj.substring(0, 1) != "#") {
@@ -33,6 +33,7 @@
             else {
                 $(fieldIdObj).val(displaystring.substring(0, displaystring.length - 1) + "[" + valstring.substring(0, valstring.length - 1) + "]");
             }
+
             setTimeout(function () { $(fieldIdObj).change(); }, 800);
             $(fieldIdObj + "DropDiv").hide();
         });
@@ -45,10 +46,10 @@
         });
     });
 </script>
-<div id="DivGroupTree<%=Model.PageId %>">
-    <%:Html.AppTreeViewFor(Model.PageId, TreeId.GroupTreeId, Model.GroupTree, Model.ShowCheckBox, Model.GroupId)%>
+<div id="DivDropMultipleTree<%=Model.PageId %>">
+    <%:Html.AppTreeViewFor(Model.PageId, Model.TreeId, Model.DataTree, Model.ShowCheckBox, Model.PkId)%>
 </div>
-<div style="float:right">
+<div style="float: right">
     <%:Html.AppNormalButton(Model.PageId, "btnConfirm", AppMember.AppText["BtnConfirm"])%>
     <%:Html.AppNormalButton(Model.PageId, "btnCancel", AppMember.AppText["BtnCancel"])%>
 </div>

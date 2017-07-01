@@ -118,6 +118,7 @@
     <Compile Include="Models\ReportEntryViewModel.cs" />
     <Compile Include="Models\QueryEntryViewModel.cs" />
     <Compile Include="Models\PlotViewModel.cs" />
+    <Compile Include="Models\DropMultipleSelectModel.cs" />
     <Compile Include="Repositorys\AppRegisterRepository.cs" />
     <Compile Include="Repositorys\ApproveMasterRepositoryFactory.cs" />
     <Compile Include="Repositorys\ApproveRepository.cs" />

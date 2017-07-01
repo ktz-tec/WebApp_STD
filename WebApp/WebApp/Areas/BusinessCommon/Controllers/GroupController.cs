@@ -14,6 +14,7 @@ using BusinessCommon.Repositorys;
 using BaseCommon.Repositorys;
 using WebCommon.HttpBase;
 using WebCommon.Data;
+using BaseCommon.Models;
 
 namespace WebApp.Areas.BusinessCommon.Controllers
 {
@@ -82,16 +83,17 @@ namespace WebApp.Areas.BusinessCommon.Controllers
 
         public ActionResult Select(string pageId, string showCheckbox, string selectVal, string fieldIdObj)
         {
-            SelectModel model = new SelectModel();
+            DropMultipleSelectModel model = new DropMultipleSelectModel();
             model.PageId = pageId;
-            model.TreeId = TreeId.DepartmentTreeId;
+            model.TreeId = TreeId.GroupTreeId;
             model.FieldIdObj = fieldIdObj;
             UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            model.GroupTree = model.Repository.GetGroupTree(sysUser);
+            GroupRepository grep = new GroupRepository();
+            model.DataTree = grep.GetGroupTree(sysUser);
             if (showCheckbox == "true")
                 model.ShowCheckBox = true;
-            model.GroupId = selectVal;
-            return PartialView("GroupSelect", model); 
+            model.PkId = selectVal;
+            return PartialView("DropMultipleSelect", model); 
         }
 
 

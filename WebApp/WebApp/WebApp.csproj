@@ -260,7 +260,6 @@
     <Content Include="Areas\BasicData\Views\DepreciationRule\Entry.aspx" />
     <Content Include="Areas\BasicData\Views\DepreciationRule\List.aspx" />
     <Content Include="Areas\BusinessCommon\Views\MainIndex\Entry.aspx" />
-    <Content Include="Areas\BusinessCommon\Views\Shared\GroupSelect.ascx" />
     <Content Include="Areas\BusinessCommon\Views\SystemLog\Entry.aspx" />
     <Content Include="Areas\BusinessCommon\Views\Authority\Entry.aspx" />
     <Content Include="Areas\BusinessCommon\Views\Group\Entry.aspx" />
@@ -706,6 +705,7 @@
     <Content Include="Views\Home\Login.aspx" />
     <Content Include="Views\Home\NoAccess.aspx" />
     <Content Include="Views\Home\ApproveSucessed.aspx" />
+    <Content Include="Views\Shared\DropMultipleSelect.ascx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
