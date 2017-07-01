@@ -162,7 +162,7 @@ namespace BusinessLogic.BasicData.Repositorys
 
         public DataTable GetAssetsClassTree()
         {
-            string sql = @"select assetsClassId,parentId,assetsClassName,0 isOpen ,'false' checked from AssetsClass ";
+            string sql = @"select assetsClassId,parentId,assetsClassName,0 isOpen ,'false' checked from AssetsClass order by assetsClassName";
             DataTable dt = AppMember.DbHelper.GetDataSet(sql).Tables[0];
             return dt;
         }

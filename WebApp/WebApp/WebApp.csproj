@@ -241,8 +241,6 @@
     <Content Include="Areas\BasicData\Views\ScrapType\Entry.aspx" />
     <Content Include="Areas\BasicData\Views\ScrapType\List.aspx" />
     <Content Include="Areas\BasicData\Views\Shared\AccountSubjectSelect.ascx" />
-    <Content Include="Areas\BasicData\Views\Shared\AssetsClassSelect.ascx" />
-    <Content Include="Areas\BasicData\Views\Shared\StoreSiteSelect.ascx" />
     <Content Include="Areas\BasicData\Views\Supplier\Entry.aspx" />
     <Content Include="Areas\BasicData\Views\Supplier\List.aspx" />
     <Content Include="Areas\BasicData\Views\Unit\Entry.aspx" />
@@ -266,7 +264,6 @@
     <Content Include="Areas\BusinessCommon\Views\Group\List.aspx" />
     <Content Include="Areas\BusinessCommon\Views\Post\Entry.aspx" />
     <Content Include="Areas\BusinessCommon\Views\Post\List.aspx" />
-    <Content Include="Areas\BusinessCommon\Views\Shared\DepartmentSelect.ascx" />
     <Content Include="Areas\BusinessCommon\Views\Test\Entry.aspx" />
     <Content Include="Areas\BusinessCommon\Views\DataImport\Entry.aspx" />
     <Content Include="Areas\BusinessCommon\Views\User\Entry.aspx" />
@@ -350,6 +347,8 @@
     <Content Include="Content\css\PageCss\BusinessCommon\Company.css" />
     <Content Include="Content\css\PageCss\BusinessCommon\SetBooks.css" />
     <Content Include="Content\css\PageCss\BusinessCommon\MainIndex.css" />
+    <Content Include="Content\css\PageCss\BusinessCommon\Common.css" />
+    <Content Include="Content\css\PageCss\BusinessCommon\Special.css" />
     <Content Include="Content\css\PageCss\Report\AssetsBorrowReturnQuery.css" />
     <Content Include="Content\css\PageCss\Report\AssetsCheckQuery.css" />
     <Content Include="Content\css\PageCss\Report\AssetsChangeReport.css" />
@@ -705,6 +704,7 @@
     <Content Include="Views\Home\Login.aspx" />
     <Content Include="Views\Home\NoAccess.aspx" />
     <Content Include="Views\Home\ApproveSucessed.aspx" />
+    <Content Include="Views\Shared\TreeSelect.ascx" />
     <Content Include="Views\Shared\DropMultipleSelect.ascx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -732,6 +732,7 @@
     <Content Include="WebService\DataService.asmx" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Areas\BusinessCommon\Views\Shared\" />
     <Folder Include="Content\text\en\genaral\" />
     <Folder Include="Content\text\en\grid\" />
   </ItemGroup>

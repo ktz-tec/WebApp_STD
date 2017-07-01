@@ -93,7 +93,7 @@ namespace WebApp.Areas.BusinessCommon.Controllers
         protected virtual void SetThisEntryModel(EntryModel model)
         {
             model.DepartmentUrl = Url.Action("DropList", "Department", new { Area = "BusinessCommon", currentId = model.DepartmentIdDisplay });
-            model.DepartmentDialogUrl = Url.Action("Select", "Department", new { Area = "BusinessCommon", showCheckbox = "true", departmentId = model.DepartmentId });
+            model.DepartmentDialogUrl = Url.Action("Select", "Department", new { Area = "BusinessCommon", showCheckbox = "true", selectIds = model.DepartmentId }); 
             model.DepartmentAddFavoritUrl = Url.Action("AddFavorit", "Department", new { Area = "BusinessCommon", tableName = "AppDepartment" });
             model.DepartmentReplaceFavoritUrl = Url.Action("ReplaceFavorit", "Department", new { Area = "BusinessCommon", tableName = "AppDepartment" });
             if (AppMember.UsePeopleControlLevel == UsePeopleControlLevel.Low)

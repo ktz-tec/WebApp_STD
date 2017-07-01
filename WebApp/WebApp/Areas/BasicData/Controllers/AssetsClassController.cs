@@ -16,6 +16,8 @@ using WebCommon.Data;
 using BaseCommon.Repositorys;
 using WebCommon.HttpBase;
 using BusinessLogic.AssetsBusiness.Repositorys;
+using BaseCommon.Models;
+using BaseControl.HtmlHelpers;
 
 namespace WebApp.Areas.BasicData.Controllers
 {
@@ -82,15 +84,63 @@ namespace WebApp.Areas.BasicData.Controllers
             }
         }
 
-        public ActionResult Select(string pageId)
+        public ActionResult Select(string pageId, string showCheckbox, string selectIds)
         {
-            SelectModel model = new SelectModel();
+            TreeSelectModel model = new TreeSelectModel();
             model.PageId = pageId;
             model.TreeId = TreeId.AssetsClassTreeId;
-            model.AssetsClassTree = model.Repository.GetAssetsClassTree();
-            return PartialView("AssetsClassSelect", model);
+            DataTable list = new DataTable();
+            if (HttpContext.Cache["AssetsClassTree"] == null)
+            {
+                AssetsClassRepository crep = new AssetsClassRepository();
+                list = crep.GetAssetsClassTree();
+                HttpContext.Cache.Add("AssetsClassTree", list, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero, CacheItemPriority.High, null);
+            }
+            else
+            {
+                list = (DataTable)HttpContext.Cache["AssetsClassTree"];
+            }
+            model.DataTree = list;
+            if (showCheckbox == "true")
+                model.ShowCheckBox = true;
+            model.SelectId = selectIds;
+            model.SearchUrl = Url.Action("SearchTree", "AssetsClass", new { Area = "BasicData" });
+            return PartialView("TreeSelect", model);
         }
 
+        [HttpPost]
+        public ActionResult SearchTree(string pageId, string pySearch)
+        {
+            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+            AssetsClassRepository urep = new AssetsClassRepository();
+            DataTable list = new DataTable();
+            if (HttpContext.Cache["AssetsClassTree"] == null)
+            {
+                list = urep.GetAssetsClassTree();
+                //DataColumn col = new DataColumn("PY");
+                //list.Columns.Add(col);
+                //foreach (DataRow dr in list.Rows)
+                //{
+                //    dr["PY"] = PinYin.GetFirstPinyin(DataConvert.ToString(dr["assetsClassName"]));
+                //}
+                HttpContext.Cache.Add("AssetsClassTree", list, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero, CacheItemPriority.High, null);
+            }
+            else
+            {
+                list = (DataTable)HttpContext.Cache["AssetsClassTree"];
+            }
+            DataRow[] drs = list.Select(" assetsClassName like '%" + pySearch.ToUpper() + "%'");
+            if (drs.Length > 0)
+            {
+                DataTable dt = drs.CopyToDataTable();
+                string treeString = AppTreeView.TreeViewString(pageId, TreeId.AssetsClassTreeId, dt, "", false);
+                return Content(treeString, "text/html");
+            }
+            else
+            {
+                return Content("0", "text/html");
+            }
+        }
        
 
         private void SetThisEntryModel(EntryModel model)

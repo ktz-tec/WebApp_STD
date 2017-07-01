@@ -15,6 +15,7 @@ using WebCommon.Data;
 using BaseCommon.Repositorys;
 using WebCommon.HttpBase;
 using BaseControl.HtmlHelpers;
+using BaseCommon.Models;
 
 namespace WebApp.Areas.BusinessCommon.Controllers
 {
@@ -83,17 +84,29 @@ namespace WebApp.Areas.BusinessCommon.Controllers
             }
         }
 
-        public ActionResult Select(string pageId,string showCheckbox,string departmentId)
+        public ActionResult Select(string pageId,string showCheckbox,string selectIds)
         {
-            SelectModel model = new SelectModel();
+            TreeSelectModel model = new TreeSelectModel();
             model.PageId = pageId;
             model.TreeId =TreeId.DepartmentTreeId ;
             UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            model.DepartmentTree = model.Repository.GetDepartmentTree(sysUser);
+            DataTable list = new DataTable();
+            if (HttpContext.Cache["DepartmentTree"] == null)
+            {
+                DepartmentRepository drep = new DepartmentRepository();
+                list = drep.GetDepartmentTree(sysUser);
+                HttpContext.Cache.Add("DepartmentTree", list, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero, CacheItemPriority.High, null);
+            }
+            else
+            {
+                list = (DataTable)HttpContext.Cache["DepartmentTree"];
+            }
+            model.DataTree = list;
             if (showCheckbox == "true")
                 model.ShowCheckBox = true;
-            model.DepartmentId = departmentId;
-            return PartialView("DepartmentSelect", model);
+            model.SelectId = selectIds;
+            model.SearchUrl = Url.Action("SearchTree", "Department", new { Area = "BusinessCommon" });
+            return PartialView("TreeSelect", model);
         }
 
         [HttpPost]
@@ -105,19 +118,19 @@ namespace WebApp.Areas.BusinessCommon.Controllers
             if (HttpContext.Cache["DepartmentTree"] == null)
             {
                 list = urep.GetDepartmentTree(sysUser);
-                DataColumn col = new DataColumn("PY");
-                list.Columns.Add(col);
-                foreach (DataRow dr in list.Rows)
-                {
-                    dr["PY"] = PinYin.GetFirstPinyin(DataConvert.ToString(dr["departmentName"]));
-                }
+                //DataColumn col = new DataColumn("PY");
+                //list.Columns.Add(col);
+                //foreach (DataRow dr in list.Rows)
+                //{
+                //    dr["PY"] = PinYin.GetFirstPinyin(DataConvert.ToString(dr["departmentName"]));
+                //}
                 HttpContext.Cache.Add("DepartmentTree", list, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero, CacheItemPriority.High, null);
             }
             else
             {
                 list = (DataTable)HttpContext.Cache["DepartmentTree"];
             }
-            DataRow[] drs = list.Select(" PY like '%" + pySearch.ToUpper() + "%'");
+            DataRow[] drs = list.Select(" departmentName like '%" + pySearch.ToUpper() + "%'");
             if (drs.Length > 0)
             {
                 DataTable dt = drs.CopyToDataTable();

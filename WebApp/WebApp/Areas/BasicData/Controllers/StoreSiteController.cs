@@ -16,6 +16,7 @@ using WebCommon.Data;
 using BaseCommon.Repositorys;
 using WebCommon.HttpBase;
 using BaseControl.HtmlHelpers;
+using BaseCommon.Models;
 
 namespace WebApp.Areas.BasicData.Controllers
 {
@@ -85,14 +86,29 @@ namespace WebApp.Areas.BasicData.Controllers
             }
         }
 
-        public ActionResult Select(string pageId)
+        public ActionResult Select(string pageId, string showCheckbox, string selectIds)
         {
-            SelectModel model = new SelectModel();
+            TreeSelectModel model = new TreeSelectModel();
             model.PageId = pageId;
             model.TreeId = TreeId.StoreSiteTreeId;
             UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            model.StoreSiteTree = model.Repository.GetStoreSiteTree(sysUser);
-            return PartialView("StoreSiteSelect", model);
+            DataTable list = new DataTable();
+            if (HttpContext.Cache["StoreSiteTree"] == null)
+            {
+                StoreSiteRepository srep = new StoreSiteRepository();
+                list = srep.GetStoreSiteTree(sysUser); 
+                HttpContext.Cache.Add("StoreSiteTree", list, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero, CacheItemPriority.High, null);
+            }
+            else
+            {
+                list = (DataTable)HttpContext.Cache["StoreSiteTree"];
+            }
+            model.DataTree = list;
+            if (showCheckbox == "true")
+                model.ShowCheckBox = true;
+            model.SelectId = selectIds;
+            model.SearchUrl = Url.Action("SearchTree", "StoreSite", new { Area = "BasicData" });
+            return PartialView("TreeSelect", model);
         }
 
         [HttpPost]
@@ -104,19 +120,20 @@ namespace WebApp.Areas.BasicData.Controllers
             if (HttpContext.Cache["StoreSiteTree"] == null)
             {
                 list = urep.GetStoreSiteTree(sysUser);
-                DataColumn col = new DataColumn("PY");
-                list.Columns.Add(col);
-                foreach (DataRow dr in list.Rows)
-                {
-                    dr["PY"] = PinYin.GetFirstPinyin(DataConvert.ToString(dr["storeSiteName"]));
-                }
+                //根据拼音首字母检索，现不用。
+                //DataColumn col = new DataColumn("PY");
+                //list.Columns.Add(col);
+                //foreach (DataRow dr in list.Rows)
+                //{
+                //    dr["PY"] = PinYin.GetFirstPinyin(DataConvert.ToString(dr["storeSiteName"]));
+                //}
                 HttpContext.Cache.Add("StoreSiteTree", list, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero, CacheItemPriority.High, null);
             }
             else
             {
                 list = (DataTable)HttpContext.Cache["StoreSiteTree"];
             }
-            DataRow[] drs = list.Select(" PY like '%" + pySearch.ToUpper() + "%'");
+            DataRow[] drs = list.Select(" storeSiteName like '%" + pySearch.ToUpper() + "%'");
             if (drs.Length > 0)
             {
                 DataTable dt = drs.CopyToDataTable();

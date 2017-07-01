@@ -47,7 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Group\SelectModel.cs" />
     <Compile Include="Models\SystemLog\EntryModel.cs" />
     <Compile Include="Models\Tools\EntryModel.cs" />
     <Compile Include="Models\PasswordModifiy\EntryModel.cs" />
@@ -72,7 +71,6 @@
     <Compile Include="Models\BarcodeStyle\ListModel.cs" />
     <Compile Include="Models\Department\EntryModel.cs" />
     <Compile Include="Models\Department\ListModel.cs" />
-    <Compile Include="Models\Department\SelectModel.cs" />
     <Compile Include="Models\Group\EntryModel.cs" />
     <Compile Include="Models\Group\ListModel.cs" />
     <Compile Include="Models\Post\EntryModel.cs" />

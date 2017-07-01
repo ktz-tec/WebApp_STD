@@ -119,7 +119,6 @@
     <Compile Include="BasicData\Models\AccountSubject\SelectModel.cs" />
     <Compile Include="BasicData\Models\AssetsClass\EntryModel.cs" />
     <Compile Include="BasicData\Models\AssetsClass\ListModel.cs" />
-    <Compile Include="BasicData\Models\AssetsClass\SelectModel.cs" />
     <Compile Include="BasicData\Models\AssetsType\EntryModel.cs" />
     <Compile Include="BasicData\Models\AssetsType\ListModel.cs" />
     <Compile Include="BasicData\Models\AssetsUses\EntryModel.cs" />
@@ -139,7 +138,6 @@
     <Compile Include="BasicData\Models\ScrapType\ListModel.cs" />
     <Compile Include="BasicData\Models\StoreSite\EntryModel.cs" />
     <Compile Include="BasicData\Models\StoreSite\ListModel.cs" />
-    <Compile Include="BasicData\Models\StoreSite\SelectModel.cs" />
     <Compile Include="BasicData\Models\Supplier\EntryModel.cs" />
     <Compile Include="BasicData\Models\Supplier\ListModel.cs" />
     <Compile Include="BasicData\Models\Unit\EntryModel.cs" />

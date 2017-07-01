@@ -1,0 +1,29 @@
+﻿.labelCommon
+{
+	width:80px;
+	float:left;
+	text-align:left;
+}
+.textCommon
+{
+	width:100px;
+	float:left;
+	text-align:left;
+}
+.selectCommon
+{
+	width:100px;
+	float:left;
+	text-align:left;
+}
+.dialogCommon
+{
+	width:105px;
+	float:left;
+	text-align:left;
+}
+.CommonColumn
+{
+	width:220px;
+	float:left;
+}

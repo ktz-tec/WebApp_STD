@@ -172,6 +172,7 @@ namespace BusinessLogic.BasicData.Repositorys
             {
                 sql += @" and companyId=@companyId";
             }
+            sql += " order by storeSiteName";
             DataTable dt = AppMember.DbHelper.GetDataSet(sql,paras).Tables[0];
             return dt;
         }
