@@ -7,7 +7,7 @@
     <Header name="assetsName" caption="资产名称"  index="assetsName" align="Left" hidden="false" width="150"/>
     <Header name="assetsClassId" caption="资产分类"  index="assetsClassId" align="Left" hidden="false" width="150"/>
     <Header name="assetsTypeId" caption="资产类型"  index="assetsTypeId" align="Left" hidden="true" width="150"/>
-    <Header name="assetsUsesId" caption="资产用途"  index="assetsUsesId" align="Left" hidden="false" width="150"/>
+    <Header name="assetsUsesId" caption="资产用途"  index="assetsUsesId" align="Left" hidden="true" width="150"/>
     <Header name="companyId" caption="公司"  index="companyId" align="Left" hidden="false" width="150" />
     <Header name="departmentId" caption="使用部门"  index="departmentId" align="Left" hidden="true" width="150"/>
     <Header name="departmentName" caption="使用部门"  index="departmentName" align="Left" hidden="false" width="150"/>

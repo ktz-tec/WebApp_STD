@@ -101,17 +101,21 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
             }
             if (DataConvert.ToString(model.AssetsClassId) != "")
             {
-                wcd.Sql += @" and Assets.assetsClassId=@assetsClassId";
+                //wcd.Sql += @" and Assets.assetsClassId=@assetsClassId";
+                wcd.Sql += @" and exists (select 1 from AssetsClass SS where Assets.assetsClassId=SS.assetsClassId and SS.assetsClassPath like '%'+@assetsClassId+'%' )";
                 wcd.DBPara.Add("assetsClassId", model.AssetsClassId);
             }
             if (DataConvert.ToString(model.DepartmentId) != "")
             {
-                wcd.Sql += @" and Assets.departmentId=@departmentId";
+                //wcd.Sql += @" and Assets.departmentId=@departmentId";
+                wcd.Sql += @" and exists (select 1 from AppDepartment SS where Assets.departmentId=SS.departmentId and SS.departmentPath like '%'+@departmentId+'%' )";
                 wcd.DBPara.Add("departmentId", model.DepartmentId);
             }
             if (DataConvert.ToString(model.StoreSiteId) != "")
             {
-                wcd.Sql += @" and Assets.storeSiteId=@storeSiteId";
+                //wcd.Sql += @" and Assets.storeSiteId=@storeSiteId";
+                //解决可根据父级节点查询自己和所有子节点的资产问题。
+                wcd.Sql += @" and exists (select 1 from StoreSite SS where Assets.storeSiteId=SS.storeSiteId and SS.storeSitePath like '%'+@storeSiteId+'%' )";
                 wcd.DBPara.Add("storeSiteId", model.StoreSiteId);
             }
             if (DataConvert.ToString(model.AssetsState) != "")
