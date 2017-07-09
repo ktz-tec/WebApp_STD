@@ -25,7 +25,7 @@
     <Header name="assetsNetValue" caption="资产净值"  index="assetsNetValue" align="right" hidden="false" width="100"/>
     <Header name="assetsRemainValue" caption="资产残值"  index="assetsRemainValue" align="right" hidden="false" width="100"/>
     <Header name="purchaseDate" caption="入库日期"  index="purchaseDate" align="Center" hidden="false" width="100"  />
-    <Header name="duetoDate" caption="到期日期"  index="duetoDate" align="Center" hidden="false" width="100"  />
+    <Header name="duetoDate" caption="到期日期"  index="duetoDate" align="Center" hidden="true" width="100"  />
     <Header name="purchaseDate2" caption="购买日期"  index="purchaseDate2" align="Center" hidden="false" width="100"  />
     <Header name="purchaseNo" caption="购买编号"  index="purchaseNo" align="Left" hidden="true" width="100"/>
     <Header name="invoiceNo" caption="发票编号"  index="invoiceNo" align="Left" hidden="true" width="100"/>

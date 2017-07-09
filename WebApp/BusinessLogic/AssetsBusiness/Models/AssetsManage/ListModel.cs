@@ -21,7 +21,7 @@ namespace BusinessLogic.AssetsBusiness.Models.AssetsManage
         [AppDisplayNameAttribute("AssetsBarcode")]
         public string AssetsBarcode { get; set; }
 
-
+        //资产分类
         [AppDisplayNameAttribute("AssetsClassId")]
         public string AssetsClassId { get; set; }
         public string AssetsClassUrl { get; set; }

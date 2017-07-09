@@ -142,19 +142,35 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
             return sqliteDb.FillDataSet(sql);
         }
 
-
-        protected int UpdateAssetsCheckDetail(string assetsCheckId, string assetsId, string actualStoreSiteId, string actualCheckDate)
+        /// <summary>
+        /// 更新盘点结果状态，O为正常,L为缺失，U为存放地变更。
+        /// </summary>
+        /// <param name="assetsCheckId"></param>
+        /// <param name="assetsId"></param>
+        /// <param name="actualStoreSiteId"></param>
+        /// <param name="actualCheckDate"></param>
+        /// <param name="checkStatus">O为正常,L为缺失，U为存放地变更</param>
+        /// <returns></returns>
+        protected int UpdateAssetsCheckDetail(string assetsCheckId, string assetsId, string actualStoreSiteId, string actualCheckDate,string checkStatus)
         {
             Dictionary<string, object> paras = new Dictionary<string, object>();
             paras.Add("actualStoreSiteId", actualStoreSiteId);
             paras.Add("assetsCheckId", assetsCheckId);
             paras.Add("assetsId", assetsId);
             paras.Add("actualCheckDate", actualCheckDate);
-            string sql = @" update AssetsCheckDetail set actualStoreSiteId=@actualStoreSiteId,actualCheckDate=@actualCheckDate ,checkResult='O',isFinished='Y' 
-                        where assetsCheckId=@assetsCheckId and assetsId=@assetsId";
+            paras.Add("checkStatus", checkStatus);
+            //只更新actualStoreSiteId=空的记录，如果不为空说明已经更新过，不需要更新。
+            string sql = @" update AssetsCheckDetail set actualStoreSiteId=@actualStoreSiteId,actualCheckDate=@actualCheckDate ,checkResult=@checkStatus,isFinished='Y' 
+                        where assetsCheckId=@assetsCheckId and assetsId=@assetsId and isnull(actualStoreSiteId,'')='' ";
             return AppMember.DbHelper.ExecuteSql(sql, paras);
         }
 
+        /// <summary>
+        /// 更新资产的盘点标记字段。N:非盘点中，Y:盘点中；I:盘点审批中（如果盘点管理不带审批流程，无此状态）
+        /// </summary>
+        /// <param name="assetsId"></param>
+        /// <param name="actualStoreSiteId"></param>
+        /// <returns></returns>
         protected int UpdateChecking(string assetsId, string actualStoreSiteId = "")
         {
             Dictionary<string, object> paras = new Dictionary<string, object>();
@@ -173,10 +189,23 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
                 {
                     if (DataConvert.ToString(dr["actualStoreSiteId"]) != "")
                     {
-                        UpdateAssetsCheckDetail(DataConvert.ToString(dr["assetsCheckId"]), DataConvert.ToString(dr["assetsId"]),
-                                DataConvert.ToString(dr["actualStoreSiteId"]), DataConvert.ToString(dr["actualCheckDate"]));
-                        UpdateChecking(DataConvert.ToString(dr["assetsId"]), DataConvert.ToString(dr["actualStoreSiteId"]));
+                        if (DataConvert.ToString(dr["actualStoreSiteId"]) == DataConvert.ToString(dr["storeSiteId"]))
+                        {
+                            UpdateAssetsCheckDetail(DataConvert.ToString(dr["assetsCheckId"]), DataConvert.ToString(dr["assetsId"]),
+                             DataConvert.ToString(dr["actualStoreSiteId"]), DataConvert.ToString(dr["actualCheckDate"]),"O");
+                        }
+                        else if (DataConvert.ToString(dr["actualStoreSiteId"]) != DataConvert.ToString(dr["storeSiteId"]))
+                        {
+                            UpdateAssetsCheckDetail(DataConvert.ToString(dr["assetsCheckId"]), DataConvert.ToString(dr["assetsId"]),
+                             DataConvert.ToString(dr["actualStoreSiteId"]), DataConvert.ToString(dr["actualCheckDate"]), "U");
+                        }
                     }
+                    else
+                    {
+                        UpdateAssetsCheckDetail(DataConvert.ToString(dr["assetsCheckId"]), DataConvert.ToString(dr["assetsId"]),
+                         DataConvert.ToString(dr["actualStoreSiteId"]), DataConvert.ToString(dr["actualCheckDate"]), "L");
+                    }
+                    UpdateChecking(DataConvert.ToString(dr["assetsId"]), DataConvert.ToString(dr["actualStoreSiteId"]));
                 }
             }
             return 1;
