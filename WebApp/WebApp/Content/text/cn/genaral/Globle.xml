@@ -16,6 +16,7 @@
   <Text name="BtnConfirm" value="确定"/>
   <Text name="BtnCancel" value="取消"/>
   <Text name="BtnExport" value="导出"/>
+  <Text name="BtnClose" value="关闭"/>
   <Text name="BtnExportImage" value="显示图片"/>
   <Text name="BtnStyleDesign" value="样式设计"/>
   <Text name="BtnStyleNew" value="新建"/>

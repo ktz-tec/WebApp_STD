@@ -159,13 +159,28 @@ namespace BaseControl.HtmlHelpers
             //按钮单击事件
             sb.AppendFormat(@"AppDropMultipleDiv('{0}','{1}','{2}','{3}');", inputID, pageId, dropUrl, selectVal);
 
-            sb.AppendLine("$('" + inputID + "Display').click(function (){;");
+            sb.AppendLine("$('" + inputID + "Display').click(function (){");
             sb.AppendLine(@"$('#"+id+"DropDiv').show();");
             sb.AppendLine("});");
 
-            //sb.AppendLine("$('" + inputID + "DropDiv').focusout(function (){;");
-            //sb.AppendLine(@"$('#" + id + "DropDiv').hide();");
-            //sb.AppendLine("});");
+            //非当前控件获取焦点时，将多选div隐藏
+            sb.AppendLine("$(':input').not('" + inputID + "Display').focus(function () {");
+            sb.AppendLine("$('#" + id + "DropDiv').hide();");
+            sb.AppendLine("});");
+            //鼠标移出多选div时，隐藏div
+            sb.AppendLine("$('" + inputID + "DropDiv').mouseout(function (e){");
+            sb.AppendLine("var offset =$('" + inputID + "DropDiv').offset();");
+            //sb.AppendLine(" alert('DropDiv:'+'left:'+offset.left+'top:'+offset.top);");
+           // sb.AppendLine(" alert('current:'+'left:'+e.pageX+'top:'+ e.pageY);");
+            sb.AppendLine("var divwidth =$('" + inputID + "DropDiv').width();");
+            sb.AppendLine("var divheight =$('" + inputID + "DropDiv').height();");
+            //sb.AppendLine("$('" + inputID + "Display').val('current:'+'left:'+e.pageX+'top:'+ e.pageY);");
+            sb.AppendLine(" if((e.pageY>=offset.top-21)&&(e.pageY<=offset.top+divheight)&&(e.pageX>=offset.left-2)&&(e.pageX<=offset.left+divwidth)){");
+            sb.AppendLine("$('#" + id + "DropDiv').show();");
+            sb.AppendLine("}else{");
+            sb.AppendLine("$('#" + id + "DropDiv').hide();");
+            sb.AppendLine("}");
+            sb.AppendLine("});");
 
             sb.AppendLine("});");
             sb.AppendLine("</script>");
