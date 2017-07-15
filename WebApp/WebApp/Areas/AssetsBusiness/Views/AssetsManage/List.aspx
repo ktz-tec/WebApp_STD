@@ -94,11 +94,27 @@
         $(document).ready(function () {
             //#region 公共变量
             var pageId = '<%=Model.PageId %>';
+            var formId = '<%=Model.FormId %>';
+            var gridId = '<%=Model.GridId %>';
+            var formId = '<%=Model.FormId %>';
             //#endregion 公共变量
 
             var departmentIdObj = "#DepartmentId" + pageId;
             var usePeopleObj = "#UsePeople" + pageId;
             var keeperObj = "#Keeper" + pageId;
+
+            //            var x = $('#' + formId + pageId).serializeArray();
+            //            $.each(x, function (i, field) {
+            //                // 由于会出现"双引号字符会导致接下来的数据打包失败，故此对元素内容进行encodeURI编码  
+            //                // 后台PHP采用urldecode()函数还原数据  
+            //                m.push('"' + field.name + '":"' + encodeURI(field.value) + '"');
+            //            });
+            var inputs = $("form[id=" + formId + pageId + "] :input").keydown(function (event) {
+                if (event.keyCode == 13) {
+                    $('#query'  +gridId + pageId, '#t_' + gridId + pageId).click();
+                }
+            });
+
             $(departmentIdObj).change(function () {
                 var departmentId = $(departmentIdObj).val();
                 if ($.trim(departmentId) == "") {

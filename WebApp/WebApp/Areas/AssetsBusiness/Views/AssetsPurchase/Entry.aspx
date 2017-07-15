@@ -22,13 +22,13 @@
                 <%:Html.AppDatePickerFor(m => m.PurchaseDate, Model.PageId, "AssetsPurchaseEntry")%>
             </div>
             <%:Html.ValidationMessageFor(m => m.AssetsPurchaseNo)%>
-             <%:Html.ValidationMessageFor(m => m.AssetsPurchaseName)%>
-            <%:Html.ValidationMessageFor(m => m.PurchaseDate)%> 
+            <%:Html.ValidationMessageFor(m => m.AssetsPurchaseName)%>
+            <%:Html.ValidationMessageFor(m => m.PurchaseDate)%>
         </div>
         <%:Html.AppHiddenFor(m => m.AssetsPurchaseId, Model.PageId)%>
         <%:Html.AppHiddenFor(m=>m.EntryGridId,Model.PageId)%>
     </fieldset>
-    <%:Html.AppEntryGridFor(this.Url, Model.PageId, Model.EntryGridId, Url.Action("EntryGridData", new { formMode = Model.FormMode, primaryKey = Model.AssetsPurchaseId }), Model.EntryGridLayout, 350,false, 0,true,false, "btnSave", "AssetsPurchase")%>
+    <%:Html.AppEntryGridFor(this.Url, Model.PageId, Model.EntryGridId, Url.Action("EntryGridData", new { formMode = Model.FormMode, primaryKey = Model.AssetsPurchaseId }), Model.EntryGridLayout, 350,0,"btnSave", "AssetsPurchase")%>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
     <script type="text/javascript">
@@ -44,10 +44,10 @@
             }
 
             loadGridCompleteAssetsPurchase = function () {
-                if (formMode == "new" || formMode == "new2") {
-                    $('#btnAdd' + gridId, '#t_' + gridId).show();
-                    $('#btnDelete' + gridId, '#t_' + gridId).show();
-                }
+                //                if (formMode == "new" || formMode == "new2") {
+                //                    $('#btnAdd' + gridId, '#t_' + gridId).show();
+                //                    $('#btnDelete' + gridId, '#t_' + gridId).show();
+                //                }
 
                 if (formMode == "fix") {
                     var btnFixed = 'btnFixed' + gridId;
@@ -103,49 +103,53 @@
                     });
                 }
 
-                $('#btnAdd' + gridId, '#t_' + gridId).click(function () {
-                    var spageId = pageId + "dtl";
-                    $.ajax({
-                        type: "POST",
-                        url: '<%:Model.DetailUrl %>',
-                        data: { pageId: spageId, detailMode: "add" },
-                        datatype: "html",
-                        success: function (data) {
-                            $("#SelectDialog" + pageId).html(data).dialog({
-                                title: '<%=AppMember.AppText["PurchaseDetailInfo"]%>',
-                                height: 180,
-                                width: 750,
-                                modal: true,
-                                resizable: true,
-                                buttons: {
-                                    '<%=AppMember.AppText["BtnConfirm"]%>': function () {
-                                        var departmentName = $("#DepartmentId" + spageId + " option:selected").text();
-                                        var storeSiteName = $("#StoreSiteId" + spageId + " option:selected").text();
-                                        var dataRow = { assetsName: $('#AssetsName' + spageId).val(),
-                                            departmentId: $('#DepartmentId' + spageId).val(), departmentName: departmentName,
-                                            storeSiteId: $('#StoreSiteId' + spageId).val(), storeSiteName: storeSiteName,
-                                            usePeople: $('#UsePeople' + spageId).val(), keeper: $('#Keeper' + spageId).val(),
-                                            hasFixed: 'N', hasFixedText: '否',
-                                            remark: $('#Remark' + spageId).val(), assetsValue: $('#AssetsValue' + spageId).val()
-                                        };
-                                        $('#' + gridId).jqGrid('addRowData', 1, dataRow);
-                                        $(this).dialog("close");
-                                    },
-                                    '<%=AppMember.AppText["BtnCancel"]%>': function () {
-                                        $(this).dialog("close");
-                                    }
-                                }
-                            });
-                        }
-                    });
-                });
-
+                //                $('#btnAdd' + gridId, '#t_' + gridId).click(function () {
+                //                    var spageId = pageId + "dtl";
+                //                    $.ajax({
+                //                        type: "POST",
+                //                        url: '<%:Model.DetailUrl %>',
+                //                        data: { pageId: spageId, detailMode: "add" },
+                //                        datatype: "html",
+                //                        success: function (data) {
+                //                            $("#SelectDialog" + pageId).html(data).dialog({
+                //                                title: '<%=AppMember.AppText["PurchaseDetailInfo"]%>',
+                //                                height: 180,
+                //                                width: 750,
+                //                                modal: true,
+                //                                resizable: true,
+                //                                buttons: {
+                //                                    '<%=AppMember.AppText["BtnConfirm"]%>': function () {
+                //                                        var departmentName = $("#DepartmentId" + spageId + " option:selected").text();
+                //                                        var storeSiteName = $("#StoreSiteId" + spageId + " option:selected").text();
+                //                                        var dataRow = { assetsName: $('#AssetsName' + spageId).val(),
+                //                                            departmentId: $('#DepartmentId' + spageId).val(), departmentName: departmentName,
+                //                                            storeSiteId: $('#StoreSiteId' + spageId).val(), storeSiteName: storeSiteName,
+                //                                            usePeople: $('#UsePeople' + spageId).val(), keeper: $('#Keeper' + spageId).val(),
+                //                                            hasFixed: 'N', hasFixedText: '否',
+                //                                            remark: $('#Remark' + spageId).val(), assetsValue: $('#AssetsValue' + spageId).val()
+                //                                        };
+                //                                        $('#' + gridId).jqGrid('addRowData', 1, dataRow);
+                //                                        $(this).dialog("close");
+                //                                    },
+                //                                    '<%=AppMember.AppText["BtnCancel"]%>': function () {
+                //                                        $(this).dialog("close");
+                //                                    }
+                //                                }
+                //                            });
+                //                        }
+                //                    });
+                //                });
 
             }
 
             if (formMode == "approveinfo") {
                 $('#' + 'btnAdd' + pageId).hide();
                 $('#' + 'btnDelete' + pageId).hide();
+            }
+            else if (formMode == "fix") {
+                $('#' + 'btnAdd' + pageId).hide();
+                $('#' + 'btnDelete' + pageId).hide();
+                $('#' + 'btnSave' + pageId).hide();
             }
 
             $('#btnAutoNo' + pageId).click(function () {
@@ -174,14 +178,94 @@
                     $('#' + 'btnSave' + pageId).attr('disabled', false);
                     $('#' + 'btnApproveReturn' + pageId).attr('disabled', false);
                 })
-                $('#' + id + "_" + "ScrapTypeName", '#' + gridId).live("change", function () {
-                    var sId = $('#' + id + "_" + "ScrapTypeName", '#' + gridId).val();
-                    jQuery('#' + gridId).jqGrid('setRowData', id, { ScrapTypeId: sId });
-                })
             }
             $('#btnDelete' + pageId).click(function () {
                 var id = jQuery('#' + gridId).jqGrid('getGridParam', 'selrow');
                 $('#' + gridId).jqGrid('delRowData', id);
+                $('#' + 'btnSave' + pageId).attr('disabled', false);
+            });
+            $('#btnAdd' + pageId).click(function () {
+                var spageId = pageId + "dtl";
+                $.ajax({
+                    type: "POST",
+                    url: '<%:Model.DetailUrl %>',
+                    data: { pageId: spageId, detailMode: "add" },
+                    datatype: "html",
+                    success: function (data) {
+                        $("#SelectDialog" + pageId).html(data).dialog({
+                            title: '<%=AppMember.AppText["PurchaseDetailInfo"]%>',
+                            height: 180,
+                            width: 750,
+                            modal: true,
+                            resizable: true,
+                            buttons: {
+                                '<%=AppMember.AppText["BtnConfirm"]%>': function () {
+                                    var departmentName = $("#DepartmentId" + spageId + " option:selected").text();
+                                    var storeSiteName = $("#StoreSiteId" + spageId + " option:selected").text();
+                                    var dataRow = { assetsName: $('#AssetsName' + spageId).val(),
+                                        departmentId: $('#DepartmentId' + spageId).val(), departmentName: departmentName,
+                                        storeSiteId: $('#StoreSiteId' + spageId).val(), storeSiteName: storeSiteName,
+                                        usePeople: $('#UsePeople' + spageId).val(), keeper: $('#Keeper' + spageId).val(),
+                                        hasFixed: 'N', hasFixedText: '否',
+                                        remark: $('#Remark' + spageId).val(), assetsValue: $('#AssetsValue' + spageId).val()
+                                    };
+                                    $('#' + gridId).jqGrid('addRowData', 1, dataRow);
+                                    $(this).dialog("close");
+                                },
+                                '<%=AppMember.AppText["BtnCancel"]%>': function () {
+                                    $(this).dialog("close");
+                                }
+                            }
+                        });
+                    }
+                });
+                $('#' + 'btnSave' + pageId).attr('disabled', false);
+            });
+            $('#btnFix' + pageId).click(function () {
+                var spageId = pageId + "9";
+                var id = jQuery('#' + gridId).jqGrid('getGridParam', 'selrow');
+                var rowdata = jQuery('#' + gridId).getRowData(id);
+                var purchaseobj = JSON.stringify(rowdata);
+
+                var selid = $('#' + gridId).jqGrid('getGridParam', 'selrow');
+                if (!selid) {
+                    AppMessage(pageId, '<%=AppMember.AppText["MessageTitle"]%>', '请选择一行！', 'warning', function () { });
+                    return;
+                }
+
+                var urlStr = '<%=Url.Action("HadApproved", "AssetsPurchase", new { Area = "AssetsBusiness"}) %>';
+                $.ajax({
+                    url: urlStr,
+                    type: "POST",
+                    dataType: "text",
+                    data: { purchaseObj: purchaseobj },
+                    success: function (data) {
+                        if (data == "true") {
+                            var maintab = jQuery('#tabs', '#RightPane');
+                            var st = "#t" + spageId;
+                            if ($(st).html() != null) {
+                                maintab.tabs('select', st);
+                            } else {
+                                maintab.tabs('add', st, "资产转固[" + id + "]");
+                                //$(st,"#tabs").load(treedata.url);
+                                var navurl = '<%:Model.AssetsFixUrl %>';
+                                $.ajax({
+                                    url: '<%:Model.AssetsFixUrl %>',
+                                    type: "GET",
+                                    dataType: "html",
+                                    data: { pageId: spageId, formMode: "new2", viewTitle: "资产转固", purchaseObj: purchaseobj },
+                                    complete: function (req, err) {
+                                        $(st, "#tabs").append(req.responseText);
+                                    }
+                                });
+                            }
+                        }
+                        else {
+                            AppMessage(pageId, '<%=AppMember.AppText["MessageTitle"]%>', '审批没有完成不能转固！', 'warning', function () { });
+                        }
+                    }
+                });
+
             });
             //#endregion grid操作
         });
@@ -192,9 +276,15 @@
 <asp:Content ID="Content4" ContentPlaceHolderID="TabsDivContent" runat="server">
 </asp:Content>
 <asp:Content ID="Content6" ContentPlaceHolderID="ButtonContent" runat="server">
-<%-- <%if (Model.FormMode != "approve" && !Model.FormMode.Contains("view"))
+
+    <%if (Model.FormMode != "approve" && !Model.FormMode.Contains("view"))
       { %>
     <%:Html.AppNormalButton(Model.PageId, "btnAdd", AppMember.AppText["BtnAdd"])%>
     <%:Html.AppNormalButton(Model.PageId, "btnDelete", AppMember.AppText["BtnDelete"])%>
-    <% } %>--%>
+    <% } %>
+
+    <% if (Model.FormMode == "fix")
+         { %>
+    <%:Html.AppNormalButton(Model.PageId, "btnFix", AppMember.AppText["BtnFix"])%>
+    <% } %>
 </asp:Content>

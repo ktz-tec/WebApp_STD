@@ -25,6 +25,7 @@
   <Text name="BtnLock" value="锁定"/>
   <Text name="BtnUnLock" value="解锁"/>
   <Text name="BtnLoad" value="加载"/>
+  <Text name="BtnFix" value="转固"/>
   <Text name="CreateId" value="创建者："/>
   <Text name="CreateTime" value="创建日期："/>
   <Text name="UpdateId" value="最后更新者："/>

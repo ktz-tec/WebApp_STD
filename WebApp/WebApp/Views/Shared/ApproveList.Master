@@ -4,6 +4,22 @@
 <%@ Import Namespace="BaseCommon.Basic" %>
 <%@ Import Namespace="BaseCommon.Data" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
+<script type="text/javascript">
+    $(document).ready(function () {
+        var pageId = '<%=Model.PageId %>';
+        var formId = '<%=Model.FormId %>';
+        var gridId = '<%=Model.GridId %>';
+        var formId = '<%=Model.FormId %>';
+        var viewTitle = '<%=Model.ViewTitle %>';
+        var curtab = $("#tabs A[href='#t" + pageId + "']");
+        curtab.text(viewTitle);
+        var inputs = $("form[id=" + formId + pageId + "] :input").keydown(function (event) {
+            if (event.keyCode == 13) {
+                $('#query' + gridId + pageId, '#t_' + gridId + pageId).click();
+            }
+        });
+    });
+    </script>
     <asp:ContentPlaceHolder ID="HeadContent" runat="server">
     </asp:ContentPlaceHolder>
 </asp:Content>

@@ -137,7 +137,7 @@
                         var applyType = jQuery('#' + gridId).getCell(id, 'ApplyType');
                         var pk = jQuery('#' + gridId).getCell(id, 'RefId');
                         if (applyType == "采购申请") {
-                            var spageId = "3010"+id;
+                            var spageId = "3010" + id;
                             var urlStr = '<%=Url.Action("Entry", "AssetsPurchase", new { Area = "AssetsBusiness"}) %>';
                             var maintab = jQuery('#tabs', '#RightPane');
                             var st = "#t" + spageId;
@@ -158,7 +158,7 @@
                             }
                         }
                         else if (applyType == "调拨申请") {
-                            var spageId =  "3015"+id;
+                            var spageId = "3015" + id;
                             var urlStr = '<%=Url.Action("Entry", "AssetsTransfer", new { Area = "AssetsBusiness"}) %>';
                             var maintab = jQuery('#tabs', '#RightPane');
                             var st = "#t" + spageId;
@@ -179,7 +179,7 @@
                             }
                         }
                         else if (applyType == "报废申请") {
-                            var spageId =  "3065"+id;
+                            var spageId = "3065" + id;
                             var urlStr = '<%=Url.Action("Entry", "AssetsScrap", new { Area = "AssetsBusiness"}) %>';
                             var maintab = jQuery('#tabs', '#RightPane');
                             var st = "#t" + spageId;
@@ -220,6 +220,23 @@
 
 
             //#endregion grid操作
+
+            $(document).keydown(function (e) {
+                //shift+p,购买申请快捷键
+                if (e.shiftKey && e.which == 80) {
+                    $('#btnPurchaseApply' + pageId).click();
+                }
+                //shift+s,报废申请快捷键
+                else if (e.shiftKey && e.which == 83) {
+                    $('#btnScrapApply' + pageId).click();
+                }
+                //shift+T,调拨申请快捷键
+                else if (e.shiftKey && e.which == 84) {
+                    $('#btnTransferApply' + pageId).click();
+                }
+            });
+
+
         });
     </script>
 </asp:Content>
