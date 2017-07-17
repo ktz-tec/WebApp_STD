@@ -63,16 +63,24 @@ namespace WebCommon.HttpBase
                 return true;
             else
             {
-                paras.Add("groupId", sysUser.GroupId);
-                sql = @"select A.url
+                string[] gids = sysUser.GroupId.Split(',');
+                string gidwhere = "";
+                foreach (string gid in gids)
+                {
+                    gidwhere += "'" + gid + "',";
+                }
+                if (gidwhere.Length > 0)
+                    gidwhere = gidwhere.Substring(0, gidwhere.Length - 1);
+                //paras.Add("groupId", sysUser.GroupId);
+                sql =string.Format( @"select A.url
                           from AppAuthority,(select AppMenu.menuId, (case when formMode!='' and formMode is not null then url+'/?formMode='+formMode
                                             else
                                             url
                                             end) url
                                             from AppMenu ) A
                     where AppAuthority.menuId=A.menuId
-                    and AppAuthority.groupId=@groupId
-                    and A.url=@url ";
+                    and AppAuthority.groupId  in ({0}) 
+                    and A.url=@url ",gidwhere);
                  dtGrid = AppMember.DbHelper.GetDataSet(sql, paras).Tables[0];
                  if (dtGrid.Rows.Count > 0)
                      return true;

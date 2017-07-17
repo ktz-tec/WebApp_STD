@@ -206,8 +206,8 @@
     <!-- #LeftPane -->
     <div id="RightPane" class="ui-layout-center ui-helper-reset ui-widget-content">
         <!-- Tabs pane -->
-        <div id="switcher">
-        </div>
+       <%-- <div id="switcher">
+        </div>--%>
         <div id="tabs" class="jqgtabs">
             <ul>
                 <li><a href="#tabs-1">主页</a></li>

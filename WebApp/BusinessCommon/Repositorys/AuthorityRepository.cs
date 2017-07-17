@@ -39,8 +39,16 @@ namespace BusinessCommon.Repositorys
                          where userId=@userId";
                 dtGrid = AppMember.DbHelper.GetDataSet(sql, paras).Tables[0];
                 string groupId = DataConvert.ToString(dtGrid.Rows[0]["groupId"]);
-                paras.Add("groupId", groupId);
-                sql = @"select AppMenu.menuId,
+                string[] gids = groupId.Split(',');
+                string gidwhere = "";
+                foreach (string gid in gids)
+                {
+                    gidwhere += "'" + gid + "',";
+                }
+                if(gidwhere.Length>0)
+                    gidwhere = gidwhere.Substring(0, gidwhere.Length - 1);
+                //paras.Add("groupId", groupId);
+                sql =string.Format( @"select distinct AppMenu.menuId,
                         AppMenu.menuName,
                         AppMenu.url,
                         AppMenu.appLevel,
@@ -51,8 +59,8 @@ namespace BusinessCommon.Repositorys
                          from AppAuthority,AppMenu
                         where AppAuthority.menuId=AppMenu.menuId
                         and AppMenu.isBtnMenu=0
-                        and AppAuthority.groupId=@groupId
-                        and AppMenu.languageVer=@languageVer";
+                        and AppAuthority.groupId in ({0}) 
+                        and AppMenu.languageVer=@languageVer", gidwhere);
                 dtGrid = AppMember.DbHelper.GetDataSet(sql, paras).Tables[0];
 
             }
@@ -61,6 +69,7 @@ namespace BusinessCommon.Repositorys
 
         public DataTable GetUserGridButton(string userId, string parentId, string gridId)
         {
+            //根据用户权限查
             string sql = @"select AppMenu.menuId ,
                         AppMenu.menuName text,
                         AppMenu.url url,
@@ -83,6 +92,7 @@ namespace BusinessCommon.Repositorys
             DataTable dtGrid = AppMember.DbHelper.GetDataSet(sql, paras).Tables[0];
             if (dtGrid.Rows.Count < 1)
             {
+                //根据角色权限查
                 sql = @"select AppMenu.menuId ,
                         AppMenu.menuName text,
                         AppMenu.url url,
@@ -92,7 +102,7 @@ namespace BusinessCommon.Repositorys
                         AppMenu.formMode formMode
                          from AppAuthority,AppMenu,AppUser
                         where AppAuthority.menuId=AppMenu.menuId
-                        and AppAuthority.groupId=AppUser.groupId 
+                        and AppUser.groupId like '%'+AppAuthority.groupId+'%'
                         and AppMenu.isBtnMenu=1
                         and AppUser.userId=@userId
                         and AppMenu.parentId=@parentId

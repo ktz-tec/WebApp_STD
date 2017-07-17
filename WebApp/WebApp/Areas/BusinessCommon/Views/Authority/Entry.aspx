@@ -62,7 +62,7 @@
                     if ($.trim(groupid) == "") {
                         groupid = "none";
                     }
-                    var urlStr = '<%=Url.Action("DropList", "User", new { Area = "BusinessCommon" }) %>' + '/?filterExpression=groupId=' + '<%=DFT.SQ %>' + groupid + '<%=DFT.SQ %>';
+                    var urlStr = '<%=Url.Action("DropList", "User", new { Area = "BusinessCommon" }) %>' + '/?filterExpression=groupId like ' + '<%=DFT.SQ %>%' + groupid + '%<%=DFT.SQ %>';
                     $.getJSON(urlStr, function (data) {
                         AppAppendSelect2(data, userIdObj, urlStr);
                     });

@@ -174,6 +174,29 @@ namespace BaseCommon.Repositorys
         }
 
         /// <summary>
+        /// 获取该角色下的所有用户where条件
+        /// </summary>
+        /// <param name="groupId">流程管理设置的角色，可以为多个，多个以逗号隔开</param>
+        /// <returns></returns>
+        private string GetGroupIdLikeSql(string groupId) 
+        {
+            var groupIds = groupId.Split('[');
+            string groupIdArea = "";
+            if (groupIds.Length > 1)
+                groupIdArea = groupIds[1].Substring(0, groupIds[1].Length - 1);
+            else
+                groupIdArea = groupIds[0].Substring(0, groupIds[0].Length - 1);
+            var inGroupIds = groupIdArea.Split(',');
+            string likes = " and (";
+            foreach (string id in inGroupIds)
+            {
+                likes += string.Format(" groupId like '%{0}%' or", DataConvert.ToString(id));
+            }
+            likes = likes.Substring(0, likes.Length - 2) + ")";
+            return likes;
+        }
+
+        /// <summary>
         /// 获取审批人，如果审批范围为1（所有），则找到审批角色下的所有人，如果审批范围为2（自己部门），则找到申请人所在部门下的这个角色的审批人。
         /// </summary>
         /// <param name="tableName"></param>
@@ -197,26 +220,48 @@ namespace BaseCommon.Repositorys
                 if (dtCreateUserDeparment.Rows.Count > 0)
                 {
                     string departmentIds =DataConvert.ToString( dtCreateUserDeparment.Rows[0]["departmentId"]);
-                    string[] ids = departmentIds.Split(',');
-                    if(ids.Length<1)
-                        throw new Exception(AppMember.AppText["ApplyerHasnotDepartment"]);
-                    string likes = " and (";
-                    foreach (string id in ids)
-                    {
-                        if (DataConvert.ToString(id).StartsWith("CMY"))
-                            continue;
-                        likes += string.Format(" departmentId like '%{0}%' or", DataConvert.ToString(id));
-                    }
-                    likes =likes.Substring(0,likes.Length-2)+ ")";
-                    sql = @"select * from AppUser where groupId in ({0}) and hasApproveAuthority='Y' "+likes;
+                    //string[] ids = departmentIds.Split(',');
+                    //if(ids.Length<1)
+                    //    throw new Exception(AppMember.AppText["ApplyerHasnotDepartment"]);
+                    //string likes = " and (";
+                    //foreach (string id in ids)
+                    //{
+                    //    if (DataConvert.ToString(id).StartsWith("CMY"))
+                    //        continue;
+                    //    likes += string.Format(" departmentId like '%{0}%' or", DataConvert.ToString(id));
+                    //}
+                    //likes =likes.Substring(0,likes.Length-2)+ ")";
+                    string departMentLike = GetCreateUserDepartMent(departmentIds);
+                    sql = @"select * from AppUser where  hasApproveAuthority='Y' " + GetGroupIdLikeSql(groupId) + departMentLike;
                 }
             }
             else
-                sql = @"select * from AppUser where groupId in ({0}) and hasApproveAuthority='Y' ";
-            string groupIdWhereIn = GetGroupIdWhereInSql(groupId);
-            sql = string.Format(sql, groupIdWhereIn);
+                sql = @"select * from AppUser where hasApproveAuthority='Y' " + GetGroupIdLikeSql(groupId);
+            //string groupIdWhereIn = GetGroupIdWhereInSql(groupId);
+            //sql = string.Format(sql, groupIdWhereIn);
             DataTable dtUser = AppMember.DbHelper.GetDataSet(sql, DbUpdate.cmd).Tables[0];
             return dtUser;
+        }
+
+        /// <summary>
+        /// 获取申请人的部门wheresql 
+        /// </summary>
+        /// <param name="departmentIds">申请人的部门，可能为多个，多个以逗号隔开</param>
+        /// <returns></returns>
+        private string GetCreateUserDepartMent(string departmentIds)
+        {
+            string[] ids = departmentIds.Split(',');
+            if (ids.Length < 1)
+                throw new Exception(AppMember.AppText["ApplyerHasnotDepartment"]);
+            string likes = " and (";
+            foreach (string id in ids)
+            {
+                if (DataConvert.ToString(id).StartsWith("CMY"))
+                    continue;
+                likes += string.Format(" departmentId like '%{0}%' or", DataConvert.ToString(id));
+            }
+            likes = likes.Substring(0, likes.Length - 2) + ")";
+            return likes;
         }
 
         private bool PassCondition(string tableName, string pkFiled, string refId, string pathConditon)

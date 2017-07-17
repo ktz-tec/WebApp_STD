@@ -214,10 +214,7 @@
                     hadInitBtn = 'true';
                     $('#' + gridId).trigger('reloadGrid');
                 });
-
-
             }
-
 
             //#endregion grid操作
 
