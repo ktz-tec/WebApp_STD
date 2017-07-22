@@ -10,7 +10,7 @@ namespace BaseControl.HtmlHelpers
 {
     public static class AppCheckBox
     {
-        public static MvcHtmlString AppCheckBoxFor<TModel>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, bool>> expression, string pageId, string styleTage)
+        public static MvcHtmlString AppCheckBoxFor<TModel>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, bool>> expression, string pageId, string styleTage = "Common")
         {
             string name = ExpressionHelper.GetExpressionText(expression);
             string id = name + pageId ;

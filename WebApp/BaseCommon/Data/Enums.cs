@@ -20,9 +20,18 @@ namespace BaseCommon.Data
 
     public enum TextType
     {
+        /// <summary>
+        /// 文本框
+        /// </summary>
         Text,
+        /// <summary>
+        /// 密码框
+        /// </summary>
         Password,
-        Hidden
+        /// <summary>
+        /// 隐藏框
+        /// </summary>
+        Hidden 
     }
 
     public enum CondtionType

@@ -5,20 +5,20 @@
 <%@ Import Namespace="BaseCommon.Data" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <div class="editor-field">
-        <%:Html.AppLabelFor(m => m.GroupNo, Model.PageId, "GroupEntry")%>
-        <%:Html.AppTextBoxFor(m=>m.GroupNo,Model.PageId,"GroupEntry") %>
+        <%:Html.AppLabelFor(m => m.GroupNo, Model.PageId)%>
+        <%:Html.AppTextBoxFor(m=>m.GroupNo,Model.PageId) %>
         <%:Html.AppRequiredFlag()%>
         <%:Html.ValidationMessageFor(m=>m.GroupNo) %>
     </div>
     <div class="editor-field">
-        <%:Html.AppLabelFor(m => m.GroupName, Model.PageId, "GroupEntry")%>
-        <%:Html.AppTextBoxFor(m => m.GroupName, Model.PageId, "GroupEntry")%>
+        <%:Html.AppLabelFor(m => m.GroupName, Model.PageId)%>
+        <%:Html.AppTextBoxFor(m => m.GroupName, Model.PageId)%>
         <%:Html.AppRequiredFlag()%>
         <%:Html.ValidationMessageFor(m => m.GroupName)%>
     </div>
     <div class="editor-field">
-        <%:Html.AppLabelFor(m => m.Remark, Model.PageId, "GroupEntry")%>
-        <%:Html.AppTextBoxFor(m => m.Remark, Model.PageId, "GroupEntry")%>
+        <%:Html.AppLabelFor(m => m.Remark, Model.PageId)%>
+        <%:Html.AppTextBoxFor(m => m.Remark, Model.PageId)%>
         <%:Html.ValidationMessageFor(m => m.Remark)%>
     </div>
       <%:Html.AppHiddenFor(m => m.IsFixed, Model.PageId)%>

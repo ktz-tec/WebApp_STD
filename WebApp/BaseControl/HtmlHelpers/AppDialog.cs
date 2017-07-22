@@ -55,7 +55,7 @@ namespace BaseControl.HtmlHelpers
             return MvcHtmlString.Create(Environment.NewLine + tg.ToString(TagRenderMode.Normal) + sb.ToString());
         }
 
-        public static MvcHtmlString AppTreeDialogFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string pageId, string dropUrl, string dialogUrl, string dialogTitle, string dialogTreeId, string addFavoritUrl, string replaceFavoritUrl, string styleTage)
+        public static MvcHtmlString AppTreeDialogFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string pageId, string dropUrl, string dialogUrl, string dialogTitle, string dialogTreeId, string addFavoritUrl, string replaceFavoritUrl, string styleTage = "Common")
         {
             string name = ExpressionHelper.GetExpressionText(expression);
             object data = ModelMetadata.FromLambdaExpression<TModel, TProperty>(expression, htmlHelper.ViewData).Model;
@@ -125,7 +125,7 @@ namespace BaseControl.HtmlHelpers
             return MvcHtmlString.Create(Environment.NewLine + tg.ToString(TagRenderMode.Normal) + sb.ToString());
         }
 
-        public static MvcHtmlString AppTreeDialogMultipleFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string display, string pageId, string dropUrl, string dialogUrl, string dialogTitle, string dialogTreeId, string addFavoritUrl, string replaceFavoritUrl, string styleTage)
+        public static MvcHtmlString AppTreeDialogMultipleFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string display, string pageId, string dropUrl, string dialogUrl, string dialogTitle, string dialogTreeId, string addFavoritUrl, string replaceFavoritUrl, string styleTage = "Common")
         {
             string name = ExpressionHelper.GetExpressionText(expression);
             object data = ModelMetadata.FromLambdaExpression<TModel, TProperty>(expression, htmlHelper.ViewData).Model;

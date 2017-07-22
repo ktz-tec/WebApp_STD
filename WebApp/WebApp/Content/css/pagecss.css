@@ -2321,33 +2321,92 @@
 }
 .labelCommon
 {
-	width:80px;
+	width:75px;
+	float:left;
+	text-align:left;
+}
+.labelCommon90
+{
+	width:90px;
 	float:left;
 	text-align:left;
 }
 .textCommon
 {
+	width:135px;
+	float:left;
+	text-align:left;
+}
+.textCommon100
+{
 	width:100px;
+	float:left;
+	text-align:left;
+}
+.textCommon150
+{
+	width:150px;
 	float:left;
 	text-align:left;
 }
 .selectCommon
 {
-	width:100px;
+	width:140px;
+	float:left;
+	text-align:left;
+}
+.selectCommon100
+{
+	width:14px;
+	float:left;
+	text-align:left;
+}
+.selectCommon150
+{
+	width:155px;
 	float:left;
 	text-align:left;
 }
 .dialogCommon
 {
-	width:105px;
+	width:135px;
+	float:left;
+	text-align:left;
+}
+.dialogCommon100
+{
+	width:100px;
+	float:left;
+	text-align:left;
+}
+.dialogCommon150
+{
+	width:150px;
+	float:left;
+	text-align:left;
+}
+.checkboxCommon
+{
+	width:100px;
 	float:left;
 	text-align:left;
 }
 .CommonColumn
 {
+	width:260px;
+	float:left;
+}
+.CommonColumn220
+{
 	width:220px;
 	float:left;
 }
+.CommonColumn270
+{
+	width:250px;
+	float:left;
+}
+
 
 .labelCompanyList
 {

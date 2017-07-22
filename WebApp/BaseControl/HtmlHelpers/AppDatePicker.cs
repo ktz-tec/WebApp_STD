@@ -23,7 +23,7 @@ namespace BaseControl.HtmlHelpers
         /// <param name="backColor">背景色</param>
         /// <param name="ctrWidth">宽度</param>
         /// <returns></returns>
-        public static MvcHtmlString AppDatePickerFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string pageId, string styleTage)
+        public static MvcHtmlString AppDatePickerFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string pageId, string styleTage = "Common")
         {
             string name = ExpressionHelper.GetExpressionText(expression);
             string id = name + pageId;

@@ -5,13 +5,13 @@
 <%@ Import Namespace="BaseCommon.Data" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <div class="editor-field">
-        <div class="GroupListColumn1">
-            <%:Html.AppLabelFor(m => m.GroupNo, Model.PageId, "GroupList")%>
-            <%:Html.AppTextBoxFor(m => m.GroupNo, Model.PageId,"GroupList")%>
+        <div class="CommonColumn">
+            <%:Html.AppLabelFor(m => m.GroupNo, Model.PageId)%>
+            <%:Html.AppTextBoxFor(m => m.GroupNo, Model.PageId)%>
         </div>
-        <div class="GroupListColumn2">
-            <%:Html.AppLabelFor(m => m.GroupName, Model.PageId, "GroupList")%>
-            <%:Html.AppTextBoxFor(m => m.GroupName, Model.PageId,"GroupList")%>
+        <div class="CommonColumn">
+            <%:Html.AppLabelFor(m => m.GroupName, Model.PageId)%>
+            <%:Html.AppTextBoxFor(m => m.GroupName, Model.PageId)%>
         </div>
     </div>
 </asp:Content>

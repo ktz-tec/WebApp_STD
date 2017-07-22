@@ -11,7 +11,7 @@ namespace BaseControl.HtmlHelpers
 {
     public static class AppTextBox
     {
-        public static MvcHtmlString AppTextBoxFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string pageId, string styleTage, TextType textType = TextType.Text)
+        public static MvcHtmlString AppTextBoxFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string pageId, string styleTage = "Common", TextType textType = TextType.Text)
         {
             string name = ExpressionHelper.GetExpressionText(expression);
             string id = name + pageId ;

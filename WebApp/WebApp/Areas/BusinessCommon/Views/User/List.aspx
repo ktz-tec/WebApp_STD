@@ -6,23 +6,23 @@
 <%@ Import Namespace="WebCommon.Data" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <div class="editor-field">
-        <div class="UserListColumn1">
-            <%:Html.AppLabelFor(m => m.UserNo, Model.PageId, "UserList")%>
-            <%:Html.AppTextBoxFor(m => m.UserNo, Model.PageId, "UserList")%>
+        <div class="CommonColumn">
+            <%:Html.AppLabelFor(m => m.UserNo, Model.PageId)%>
+            <%:Html.AppTextBoxFor(m => m.UserNo, Model.PageId)%>
         </div>
-        <div class="UserListColumn2">
-            <%:Html.AppLabelFor(m => m.UserName, Model.PageId, "UserList")%>
-            <%:Html.AppTextBoxFor(m => m.UserName, Model.PageId, "UserList")%>
+        <div class="CommonColumn">
+            <%:Html.AppLabelFor(m => m.UserName, Model.PageId)%>
+            <%:Html.AppTextBoxFor(m => m.UserName, Model.PageId)%>
         </div>
     </div>
     <div class="editor-field">
-        <div class="UserListColumn1">
-            <%:Html.AppLabelFor(m => m.GroupId, Model.PageId, "UserList")%>
-            <%:Html.AppDropDownListFor(m => m.GroupId, Model.PageId, Url.Action("DropList", "Group", new { Area = "BusinessCommon" }), "UserList")%>
+        <div class="CommonColumn">
+            <%:Html.AppLabelFor(m => m.GroupId, Model.PageId)%>
+            <%:Html.AppDropDownListFor(m => m.GroupId, Model.PageId, Url.Action("DropList", "Group", new { Area = "BusinessCommon" }))%>
         </div>
-        <div class="UserListColumn2">
-            <%:Html.AppLabelFor(m => m.DepartmentId, Model.PageId, "UserList")%>
-            <%:Html.AppTreeDialogFor(m => m.DepartmentId, Model.PageId, Model.DepartmentUrl, Model.DepartmentDialogUrl, AppMember.AppText["DepartmentSelect"], TreeId.DepartmentTreeId, Model.DepartmentAddFavoritUrl, Model.DepartmentReplaceFavoritUrl, "UserList")%>
+        <div class="CommonColumn">
+            <%:Html.AppLabelFor(m => m.DepartmentId, Model.PageId)%>
+            <%:Html.AppTreeDialogFor(m => m.DepartmentId, Model.PageId, Model.DepartmentUrl, Model.DepartmentDialogUrl, AppMember.AppText["DepartmentSelect"], TreeId.DepartmentTreeId, Model.DepartmentAddFavoritUrl, Model.DepartmentReplaceFavoritUrl)%>
         </div>
     </div>
 </asp:Content>

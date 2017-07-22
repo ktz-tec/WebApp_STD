@@ -6,20 +6,20 @@
 <%@ Import Namespace="BaseCommon.Data" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <div class="editor-field">
-        <%:Html.AppLabelFor(m => m.UserNo, Model.PageId, "UserEntry")%>
-        <%:Html.AppTextBoxFor(m => m.UserNo, Model.PageId, "UserEntry")%>
+        <%:Html.AppLabelFor(m => m.UserNo, Model.PageId, "Common90")%>
+        <%:Html.AppTextBoxFor(m => m.UserNo, Model.PageId)%>
         <%:Html.AppRequiredFlag()%>
         <%:Html.ValidationMessageFor(m => m.UserNo)%>
     </div>
     <div class="editor-field">
-        <%:Html.AppLabelFor(m => m.UserName, Model.PageId, "UserEntry")%>
-        <%:Html.AppTextBoxFor(m => m.UserName, Model.PageId, "UserEntry")%>
+        <%:Html.AppLabelFor(m => m.UserName, Model.PageId, "Common90")%>
+        <%:Html.AppTextBoxFor(m => m.UserName, Model.PageId)%>
         <%:Html.AppRequiredFlag()%>
         <%:Html.ValidationMessageFor(m => m.UserName)%>
     </div>
     <div class="editor-field">
-        <%:Html.AppLabelFor(m => m.DepartmentId, Model.PageId, "UserEntry")%>
-        <%:Html.AppTreeDialogMultipleFor(m => m.DepartmentId,Model.DepartmentIdDisplay, Model.PageId, Model.DepartmentUrl, Model.DepartmentDialogUrl, AppMember.AppText["DepartmentSelect"], TreeId.DepartmentTreeId, Model.DepartmentAddFavoritUrl, Model.DepartmentReplaceFavoritUrl, "UserEntry")%>
+        <%:Html.AppLabelFor(m => m.DepartmentId, Model.PageId, "Common90")%>
+        <%:Html.AppTreeDialogMultipleFor(m => m.DepartmentId,Model.DepartmentIdDisplay, Model.PageId, Model.DepartmentUrl, Model.DepartmentDialogUrl, AppMember.AppText["DepartmentSelect"], TreeId.DepartmentTreeId, Model.DepartmentAddFavoritUrl, Model.DepartmentReplaceFavoritUrl)%>
         <%:Html.AppRequiredFlag()%>
         <%:Html.ValidationMessageFor(m => m.DepartmentId)%>
     </div>
@@ -29,8 +29,8 @@
         <%:Html.ValidationMessageFor(m => m.GroupId)%>
     </div >--%>
    <div class="editor-field">
-        <%:Html.AppLabelFor(m => m.GroupId, Model.PageId, "UserEntry")%>
-        <%:Html.AppDropDownListMultipleFor(m => m.GroupId,Model.GroupIdDisplay, Model.PageId, Url.Action("Select", "Group", new { Area = "BusinessCommon" }),Model.GroupId, "UserEntry")%>
+        <%:Html.AppLabelFor(m => m.GroupId, Model.PageId, "Common90")%>
+        <%:Html.AppDropDownListMultipleFor(m => m.GroupId,Model.GroupIdDisplay, Model.PageId, Url.Action("Select", "Group", new { Area = "BusinessCommon" }),Model.GroupId)%>
         <%:Html.ValidationMessageFor(m => m.GroupId)%>
     </div>
  <%--   <div class="editor-field">
@@ -39,41 +39,41 @@
         <%:Html.ValidationMessageFor(m => m.PostId)%>
     </div>--%>
     <div class="editor-field">
-        <%:Html.AppLabelFor(m => m.Tel, Model.PageId, "UserEntry")%>
-        <%:Html.AppTextBoxFor(m => m.Tel, Model.PageId, "UserEntry")%>
+        <%:Html.AppLabelFor(m => m.Tel, Model.PageId, "Common90")%>
+        <%:Html.AppTextBoxFor(m => m.Tel, Model.PageId)%>
         <%:Html.ValidationMessageFor(m => m.Tel)%>
     </div>
     <div class="editor-field">
-        <%:Html.AppLabelFor(m => m.Email, Model.PageId, "UserEntry")%>
-        <%:Html.AppTextBoxFor(m => m.Email, Model.PageId, "UserEntry")%>
+        <%:Html.AppLabelFor(m => m.Email, Model.PageId, "Common90")%>
+        <%:Html.AppTextBoxFor(m => m.Email, Model.PageId)%>
         <%:Html.ValidationMessageFor(m => m.Email)%>
     </div>
     <div class="editor-field">
-        <%:Html.AppLabelFor(m => m.Address, Model.PageId, "UserEntry")%>
-        <%:Html.AppTextBoxFor(m => m.Address, Model.PageId, "UserEntry")%>
+        <%:Html.AppLabelFor(m => m.Address, Model.PageId, "Common90")%>
+        <%:Html.AppTextBoxFor(m => m.Address, Model.PageId)%>
         <%:Html.ValidationMessageFor(m => m.Address)%>
     </div>
 
      <div class="editor-field">
-        <%:Html.AppLabelFor(m => m.HasApproveAuthority, Model.PageId, "UserEntry")%>
-        <%:Html.AppCheckBoxFor(m => m.HasApproveAuthority, Model.PageId, "UserEntry")%>
+        <%:Html.AppLabelFor(m => m.HasApproveAuthority, Model.PageId, "Common90")%>
+        <%:Html.AppCheckBoxFor(m => m.HasApproveAuthority, Model.PageId)%>
         <%:Html.ValidationMessageFor(m => m.HasApproveAuthority)%>
     </div>
     <div id="UserRadio" class="editor-field">
-        <%:Html.AppLabelFor(m => m.Sex, Model.PageId, "UserEntry")%>
+        <%:Html.AppLabelFor(m => m.Sex, Model.PageId, "Common90")%>
         <%:Html.RadioButtonFor(m=>m.Sex, "M", true)%><%=AppMember.AppText["Man"].ToString()%>
         <%:Html.RadioButtonFor(m => m.Sex, "W", true)%><%=AppMember.AppText["Women"].ToString()%>
     </div>
     <%if (AppMember.UsePeopleControlLevel == UsePeopleControlLevel.High)
       { %>
     <div class="editor-field">
-        <%:Html.AppLabelFor(m => m.IsSysUser, Model.PageId, "UserEntry")%>
-        <%:Html.AppCheckBoxFor(m => m.IsSysUser, Model.PageId, "UserEntry")%>
+        <%:Html.AppLabelFor(m => m.IsSysUser, Model.PageId, "Common90")%>
+        <%:Html.AppCheckBoxFor(m => m.IsSysUser, Model.PageId)%>
         <%:Html.ValidationMessageFor(m => m.IsSysUser)%>
     </div>
     <%} %>
     <div id="AccessLevelGroup" class="editor-field">
-        <%:Html.AppLabelFor(m => m.AccessLevel, Model.PageId, "UserEntry")%>
+        <%:Html.AppLabelFor(m => m.AccessLevel, Model.PageId, "Common90")%>
         <%:Html.RadioButtonFor(m => m.AccessLevel, "A", true)%><%=AppMember.AppText["AllLevel"].ToString()%>
         <%:Html.RadioButtonFor(m => m.AccessLevel, "C", true)%><%=AppMember.AppText["CompanyLevel"].ToString()%>
         <%:Html.RadioButtonFor(m => m.AccessLevel, "D", true)%><%=AppMember.AppText["DepartmentLevel"].ToString()%>
