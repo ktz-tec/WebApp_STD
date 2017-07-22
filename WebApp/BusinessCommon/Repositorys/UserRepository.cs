@@ -50,12 +50,12 @@ namespace BusinessCommon.Repositorys
             }
             if (DataConvert.ToString(model.GroupId) != "")
             {
-                wcd.Sql += @" and AppUser.groupId=@groupId ";
+                wcd.Sql += @" and AppUser.groupId  like '%'+ @groupId +'%'";
                 wcd.DBPara.Add("groupId", model.GroupId);
             }
             if (DataConvert.ToString(model.DepartmentId) != "")
             {
-                wcd.Sql += @" and AppUser.departmentId=@departmentId ";
+                wcd.Sql += @" and AppUser.departmentId like '%'+ @departmentId +'%'";
                 wcd.DBPara.Add("departmentId", model.DepartmentId);
             }
             return wcd;

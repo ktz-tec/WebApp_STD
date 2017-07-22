@@ -152,7 +152,7 @@ namespace BusinessLogic.BasicData.Repositorys
                     //if (dtp2.Rows.Count > 0)
                     //    path = DataConvert.ToString(dtp2.Rows[0]["storeSitePath"]);
                 }
-                dr["storeSitePath"] = path == "" ? (model.CompanyId) : path + "," + model.StoreSiteId;
+                dr["storeSitePath"] = path == "" ? (model.CompanyId + "," + model.StoreSiteId) : (path + "," + model.StoreSiteId);
             }
         }
 
