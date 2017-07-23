@@ -11,6 +11,17 @@ namespace BaseControl.HtmlHelpers
 {
     public static class AppTextBox
     {
+        /// <summary>
+        /// 文本输入控件
+        /// </summary>
+        /// <typeparam name="TModel"></typeparam>
+        /// <typeparam name="TProperty"></typeparam>
+        /// <param name="htmlHelper"></param>
+        /// <param name="expression"></param>
+        /// <param name="pageId"></param>
+        /// <param name="styleTage">对text设置样式,为空时默认为.textCommon样式</param>
+        /// <param name="textType">控件类型</param>
+        /// <returns></returns>
         public static MvcHtmlString AppTextBoxFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string pageId, string styleTage = "Common", TextType textType = TextType.Text)
         {
             string name = ExpressionHelper.GetExpressionText(expression);

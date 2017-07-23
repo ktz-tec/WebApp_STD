@@ -32,7 +32,7 @@ namespace BaseCommon.Data
                 paras.Add("autoNoId", Guid.NewGuid());
                 paras.Add("indexValue", index);
                 sql = @"insert into AppAutoNo(autoNoId,tableName,indexValue,prefixStr,numLength)
-                    values(@autoNoId,@tableName,@indexValue,'FA'," + numLength.ToString() + ")";
+                    values(@autoNoId,@tableName,@indexValue,'" + defaultPrefixstr + "'," + numLength.ToString() + ")";
                 AppMember.DbHelper.ExecuteSql(sql, paras);
                 prefixStr = defaultPrefixstr;
             }
@@ -60,7 +60,7 @@ namespace BaseCommon.Data
                      where tableName=@tableName";
                 AppMember.DbHelper.ExecuteSql(sql, paras);
                 numLength = DataConvert.ToInt32(dt.Rows[0]["numLength"]);
-                prefixStr = DataConvert.ToString(dt.Rows[0]["prefixStr"]);
+                //prefixStr = DataConvert.ToString(dt.Rows[0]["prefixStr"]);
             }
             else
             {
