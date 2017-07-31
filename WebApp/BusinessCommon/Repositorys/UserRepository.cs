@@ -123,8 +123,8 @@ namespace BusinessCommon.Repositorys
         {
             string sqlcnt = @"select * from AppUser where isSysUser='Y'";
             DataTable dtcnt = AppMember.DbHelper.GetDataSet(sqlcnt).Tables[0];
-            //if (dtcnt.Rows.Count >= 5)
-            //    throw new Exception(AppMember.AppText["MaxUserCount"]);
+            if (dtcnt.Rows.Count >= 45)
+                throw new Exception("可创建的最大用户数为45，不能继续创建，请联系供应商。");
             string sql = @"select * from AppUser where 1<>1 ";
             DataTable dt = AppMember.DbHelper.GetDataSet(sql).Tables[0];
             dt.TableName = "AppUser";
