@@ -24,10 +24,13 @@
             <%:Html.AppLabelFor(m => m.ApproveState, Model.PageId, "AssetsScrapList")%>
             <%:Html.AppDropDownListFor(m => m.ApproveState, Model.PageId, Url.Action("DropList", "CodeTable", new { Area = "", filter = "ApproveState!P|A" }), "AssetsScrapList")%>
         </div>
+           <%if (Model.ListMode == "approve" || Model.ListMode == "reapply")
+          { %>
          <div class="AssetsScrapListColumn2">
             <%:Html.AppLabelFor(m => m.QueryAllApproveRecord, Model.PageId, "AssetsTransferList")%>
             <%:Html.AppCheckBoxFor(m => m.QueryAllApproveRecord, Model.PageId, "AssetsTransferList")%>
         </div>
+         <% } %>
     </div>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">

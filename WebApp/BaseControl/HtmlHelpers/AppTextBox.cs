@@ -72,5 +72,34 @@ namespace BaseControl.HtmlHelpers
 
             return MvcHtmlString.Create(tg.ToString(TagRenderMode.Normal));
         }
+
+        public static MvcHtmlString AppTextAreaFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string pageId, int rows, int cols, string styleTage = "Common")
+        {
+            string name = ExpressionHelper.GetExpressionText(expression);
+            string id = name + pageId;
+            object data = ModelMetadata.FromLambdaExpression<TModel, TProperty>(expression, htmlHelper.ViewData).Model;
+
+            TagBuilder tg = new TagBuilder("textarea");
+            tg.MergeAttribute("name", name, true);
+            tg.MergeAttribute("class", "textarea" + styleTage);
+            tg.MergeAttribute("rows", rows.ToString());
+            if (cols != 0)
+                tg.MergeAttribute("cols", cols.ToString());
+            tg.GenerateId(id);
+
+            StringBuilder sb = new StringBuilder();
+
+            if (data != null)
+            {
+                sb.AppendLine("<script type=\"text/javascript\">");
+                sb.AppendLine("$(document).ready(function () {");
+                sb.AppendLine(string.Format("$('#{0}').val('{1}'); ", id, data));
+                sb.AppendLine("});");
+                sb.AppendLine("</script>");
+            }
+
+            return MvcHtmlString.Create(tg.ToString(TagRenderMode.Normal) + sb.ToString());
+        }
+
     }
 }
