@@ -46,8 +46,7 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
         {
             if (formMode == "approve")
             {
-                AssetsTransferRepository trep = new AssetsTransferRepository();
-                if (trep.IsReapply(primaryKey))
+                if (Repository.IsReapply(primaryKey))
                     formMode = "reapply";
             }
             ClearClientPageCache(Response);

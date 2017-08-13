@@ -44,6 +44,11 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
 
         public ActionResult Entry(string pageId, string primaryKey, string formMode, string viewTitle, string isDirectCall)
         {
+            if (formMode == "approve")
+            {
+                if (Repository.IsReapply(primaryKey))
+                    formMode = "reapply";
+            }
             ClearClientPageCache(Response);
             EntryModel model = new EntryModel();
             Repository.SetModel(primaryKey, formMode, model);

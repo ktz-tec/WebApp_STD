@@ -41,9 +41,22 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pageId"></param>
+        /// <param name="primaryKey"></param>
+        /// <param name="formMode"></param>
+        /// <param name="viewTitle"></param>
+        /// <param name="isDirectCall">直接调用，不是从list画面点击进来，是从主页点击进来的。</param>
+        /// <returns></returns>
         public ActionResult Entry(string pageId, string primaryKey, string formMode, string viewTitle, string isDirectCall)
         {
+            if (formMode == "approve")
+            {
+                if (Repository.IsReapply(primaryKey))
+                    formMode = "reapply";
+            }
             ClearClientPageCache(Response);
             EntryModel model = new EntryModel();
             Repository.SetModel(primaryKey, formMode, model);
