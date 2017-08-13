@@ -79,8 +79,8 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
         protected override string ListSql(ListCondition condition)
         {
             ApproveListCondition acondition = condition as ApproveListCondition;
-            
-            string subViewSql = @"select  AssetsTransfer.assetsTransferId assetsTransferId,
+
+            string subViewSql = @"select distinct AssetsTransfer.assetsTransferId assetsTransferId,
                         AssetsTransfer.assetsTransferNo assetsTransferNo,
                         AssetsTransfer.assetsTransferName assetsTransferName,
                          convert(nvarchar(100), (select top 1 transferDate from AssetsTransferDetail where assetsTransferId=AssetsTransfer.assetsTransferId),23)  transferDate,
@@ -100,8 +100,6 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
 
            
             string lsql = " where 1=1";
-            string where1 = ""; //审批where条件
-            string where2 = ""; //再申请where条件
             ListModel model = JsonHelper.Deserialize<ListModel>(acondition.ListModelString);
             if (model == null || (model!=null && !model.QueryAllApproveRecord))
             {
@@ -109,32 +107,25 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
                 {
                     if (DataConvert.ToString(acondition.ListMode) == "approve")
                     {
-                        where1 = @",AppApprove
-                     where AppApprove.tableName='AssetsTransfer' and AppApprove.approveState='O' 
+                        lsql = @",AppApprove
+                     where AppApprove.tableName='AssetsTransfer' and AppApprove.approveState in ('O','B')
                       and AssetsTransfer.assetsTransferId=AppApprove.refId and AppApprove.approver=@approver and isValid='Y'";
-                        where2 = @" where AssetsTransfer.createId=@approver and AssetsTransfer.approveState='R' ";
-                        subViewSql = subViewSql + where1 + " union all " + subViewSql + where2;
                     }
                     else if (DataConvert.ToString(acondition.ListMode) == "reapply")
                     {
-                        lsql = @" where AssetsTransfer.createId=@approver and AssetsTransfer.approveState='R' ";
-                        subViewSql = subViewSql + lsql;
-                    }
-                    else
-                    {
-                        subViewSql = subViewSql + lsql;
+                        lsql = @" ,AppApprove
+                     where AppApprove.tableName='AssetsTransfer' and AppApprove.approveState in ('B')
+                      and AssetsTransfer.assetsTransferId=AppApprove.refId and AppApprove.approver=@approver and isValid='Y'";
                     }
                 }
             }
             else
             {
-                where1 = @",AppApprove
+                lsql = @",AppApprove
                      where AppApprove.tableName='AssetsTransfer' 
                       and AssetsTransfer.assetsTransferId=AppApprove.refId and AppApprove.approver=@approver and (isValid='Y' or Approvetime is not null ) ";
-                where2 = @" where AssetsTransfer.createId=@approver ";
-                subViewSql = subViewSql + where1 + " union all " + subViewSql + where2;
             }
-
+            subViewSql = subViewSql + lsql;
             subViewSql = string.Format(" select * from ({0}) M where 1=1 ", subViewSql);
             return subViewSql;
         }

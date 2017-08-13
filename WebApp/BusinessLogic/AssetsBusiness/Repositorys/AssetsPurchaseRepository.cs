@@ -15,7 +15,7 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
     public class AssetsPurchase
     {
         public string assetsPurchaseDetailId { get; set; }
-        public string assetsPurchaseId { get; set; }   
+        public string assetsPurchaseId { get; set; }
         public string assetsName { get; set; }
         public string departmentId { get; set; }
         public string storeSiteId { get; set; }
@@ -23,7 +23,7 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
         public string usePeople { get; set; }
         public string keeper { get; set; }
         public string hasFixed { get; set; }
-        public string remark { get; set; } 
+        public string remark { get; set; }
     }
 
     public class AssetsPurchaseRepository : ApproveMasterRepository
@@ -76,8 +76,8 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
         protected override string ListSql(ListCondition condition)
         {
             ApproveListCondition acondition = condition as ApproveListCondition;
-         
-            string subViewSql = @"select AssetsPurchase.assetsPurchaseId assetsPurchaseId,
+
+            string subViewSql = @"select distinct AssetsPurchase.assetsPurchaseId assetsPurchaseId,
                         AssetsPurchase.assetsPurchaseNo assetsPurchaseNo,
                         AssetsPurchase.assetsPurchaseName assetsPurchaseName,
                            convert(nvarchar(100),AssetsPurchase.purchaseDate,23)  purchaseDate,
@@ -89,42 +89,33 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
                         AssetsPurchase.updateTime updateTime ,
                         AssetsPurchase.updatePro updatePro
                 from AssetsPurchase  ";
-               string lsql = " where 1=1";
-             string where1=""; //审批where条件
-            string where2=""; //再申请where条件
-              ListModel model = JsonHelper.Deserialize<ListModel>(acondition.ListModelString);
-              if (model == null || (model != null && !model.QueryAllApproveRecord))
-              {
-                  if (DataConvert.ToString(acondition.ListMode) != "")
-                  {
-                      if (DataConvert.ToString(acondition.ListMode) == "approve")
-                      {
-                          where1 = @",AppApprove
-                     where AppApprove.tableName='AssetsPurchase' and AppApprove.approveState='O' 
+            string lsql = " where 1=1";
+            ListModel model = JsonHelper.Deserialize<ListModel>(acondition.ListModelString);
+            if (model == null || (model != null && !model.QueryAllApproveRecord))
+            {
+                if (DataConvert.ToString(acondition.ListMode) != "")
+                {
+                    if (DataConvert.ToString(acondition.ListMode) == "approve")
+                    {
+                        lsql = @",AppApprove
+                     where AppApprove.tableName='AssetsPurchase' and AppApprove.approveState in ('O','B') 
                       and AssetsPurchase.assetsPurchaseId=AppApprove.refId and AppApprove.approver=@approver and isValid='Y'";
-                          where2 = @" where AssetsPurchase.createId=@approver and AssetsPurchase.approveState='R' ";
-                          subViewSql = subViewSql + where1 + " union all " + subViewSql + where2;
-                      }
-                      else if (DataConvert.ToString(acondition.ListMode) == "reapply")
-                      {
-                          lsql = @" where AssetsPurchase.createId=@approver and AssetsPurchase.approveState='R' ";
-                          subViewSql = subViewSql + lsql;
-                      }
-                      else
-                      {
-                          subViewSql = subViewSql + lsql;
-                      }
-                  }
-              }
-              else
-              {
-                  where1 = @",AppApprove
+                    }
+                    else if (DataConvert.ToString(acondition.ListMode) == "reapply")
+                    {
+                        lsql = @" ,AppApprove
+                     where AppApprove.tableName='AssetsPurchase' and AppApprove.approveState  in ('B') 
+                      and AssetsPurchase.assetsPurchaseId=AppApprove.refId and AppApprove.approver=@approver and isValid='Y' ";
+                    }
+                }
+            }
+            else
+            {
+                lsql = @",AppApprove
                      where AppApprove.tableName='AssetsPurchase' 
                       and AssetsPurchase.assetsPurchaseId=AppApprove.refId and AppApprove.approver=@approver and (isValid='Y' or Approvetime is not null )";
-                  where2 = @" where AssetsPurchase.createId=@approver and AssetsPurchase.approveState='R' ";
-                  subViewSql = subViewSql + where1 + " union all " + subViewSql + where2;
-              }
-
+            }
+            subViewSql = subViewSql + lsql;
             subViewSql = string.Format(" select * from ({0}) M where 1=1 ", subViewSql);
             return subViewSql;
         }
@@ -196,7 +187,7 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
             EntryModel myModel = model as EntryModel;
             dr["assetsPurchaseNo"] = myModel.AssetsPurchaseNo;
             dr["assetsPurchaseName"] = myModel.AssetsPurchaseName;
-            dr["purchaseDate"] =DataConvert.ToDBObject(myModel.PurchaseDate);
+            dr["purchaseDate"] = DataConvert.ToDBObject(myModel.PurchaseDate);
             string updateType = "Add";
             if (retApprove != 0)
             {

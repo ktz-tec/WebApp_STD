@@ -168,7 +168,18 @@ namespace WebCommon.Common
                 return 3;
             if (DataConvert.ToString(approveReturn) == "true")
             {
+                string createUser = rep.GetApplyUser(tableName, pkField, pkValue);
+                //修改当前的那条审批记录
                 rep.EditData(sysUser, viewTitle, tableName, pkField, pkValue, "R", approveMind,approveNode);
+
+                //插入一条状态为再申请的审批记录
+                Dictionary<string, object> objs = new Dictionary<string, object>();
+                objs.Add("refId", pkValue);
+                objs.Add("tableName", tableName);
+                objs.Add("approver", createUser);
+                objs.Add("isValid", "Y");
+                objs.Add("approveState", "B");
+                rep.AddData(objs, sysUser, viewTitle, tableName, pkField, pkValue, "B", true);
             }
             else
             {
@@ -348,6 +359,13 @@ namespace WebCommon.Common
                 rep.DbUpdate = dbUpdate;
                 if (model.FormMode != "approve")
                 {
+                    //再申请的，将状态由再申请初期变为再申请
+                    if (model.FormMode == "reapply")
+                    {
+                        ApproveRepository repApprove = new ApproveRepository();
+                        repApprove.DbUpdate = rep.DbUpdate;
+                        repApprove.EditData(sysUser, model.ViewTitle, model.ApproveTableName, model.ApprovePkField, model.ApprovePkValue, "A", model.ApproveMind, model.ApproveNode);
+                    }
                     if (CheckModelIsValid(model))
                         rep.Update(model, sysUser, model.FormMode, pkValue, model.ViewTitle);
                     else

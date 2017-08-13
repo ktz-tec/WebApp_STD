@@ -35,20 +35,20 @@ namespace BaseCommon.Repositorys
 
             if (dt.Rows.Count > 0)
             {
-                if (formMode == "reapply")
-                {
-                    ApproveRepository rep = new ApproveRepository();
-                    rep.DbUpdate = DbUpdate;
-                    Dictionary<string, object> objs = new Dictionary<string, object>();
-                    objs.Add("refId", refId);
-                    objs.Add("tableName", tableName);
-                    UserInfo sysUser = new UserInfo();
-                    sysUser.UserId = createUser;
-                    objs.Add("approver", createUser);
-                    objs.Add("isValid", "Y");
-                    objs.Add("approveState", "A");
-                    rep.AddData(objs, sysUser, viewTitle, tableName, pkFiled, refId, "A", true);
-                }
+                //if (formMode == "reapply")
+                //{
+                //    ApproveRepository rep = new ApproveRepository();
+                //    rep.DbUpdate = DbUpdate;
+                //    Dictionary<string, object> objs = new Dictionary<string, object>();
+                //    objs.Add("refId", refId);
+                //    objs.Add("tableName", tableName);
+                //    UserInfo sysUser = new UserInfo();
+                //    sysUser.UserId = createUser;
+                //    objs.Add("approver", createUser);
+                //    objs.Add("isValid", "Y");
+                //    objs.Add("approveState", "A");
+                //    rep.AddData(objs, sysUser, viewTitle, tableName, pkFiled, refId, "A", true);
+                //}
 
 
                 paras.Clear();

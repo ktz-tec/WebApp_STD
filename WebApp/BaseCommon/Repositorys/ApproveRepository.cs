@@ -25,7 +25,7 @@ namespace BaseCommon.Repositorys
                     (select CodeTable.codeName from CodeTable where AppApprove.approveState=CodeTable.codeNo and CodeTable.codeType='ApproveState' and CodeTable.languageVer='{0}' ) approveState ,
                     approveMind,approveLevel,approveTime  
                     from AppApprove 
-                    where tableName=@tableName and refId=@refId and AppApprove.approveState<>'O'
+                    where tableName=@tableName and refId=@refId and AppApprove.approveState not in('O','B') 
                     order by AppApprove.seqno , AppApprove.approveLevel,AppApprove.approveState ", AppMember.AppLanguage.ToString());
             DataTable dtGrid = AppMember.DbHelper.GetDataSet(sql, paras).Tables[0];
             return dtGrid;
@@ -41,6 +41,16 @@ namespace BaseCommon.Repositorys
             where tableName=@tableName and refId=@refId  and approver=@approver  and isValid='Y' ");
             DataTable dtGrid = AppMember.DbHelper.GetDataSet(sql, paras).Tables[0];
             return dtGrid.Rows[0];
+        }
+
+        public string GetApplyUser(string tableName, string pkField, string pkValue)
+        {
+            string sql = @"select createid  from " + tableName + " where " + pkField + "='" + pkValue + "'";
+            DataTable dtGrid = AppMember.DbHelper.GetDataSet(sql).Tables[0];
+            if (dtGrid.Rows.Count > 0)
+                return DataConvert.ToString(dtGrid.Rows[0]["createid"]);
+            else
+                return "";
         }
 
         public int AddData(Dictionary<string, object> objs, UserInfo sysUser, string viewTitle, string tableName, string pkField, string pkValue, string approveState, bool isInit = false)
@@ -60,7 +70,7 @@ namespace BaseCommon.Repositorys
             {
                 dr[kv.Key] = kv.Value;
             }
-            if (approveState == "A" && seqno == 0)
+            if (approveState == "B" && seqno == 0)
                 dr["seqno"] = seqno + 2;
             else
                 dr["seqno"] = seqno + 1;
@@ -113,10 +123,7 @@ namespace BaseCommon.Repositorys
                 {
                     dr["approveMind"] = approveMind;
                     dr["approveTime"] = DateTime.Now;
-                    if (approveState == "R")
-                        dr["approveState"] = "R";
-                    else
-                        dr["approveState"] = "P";
+                    dr["approveState"] = approveState;
                 }
                 if (approveState == "R")
                     dr["isValid"] = "N";
@@ -126,9 +133,12 @@ namespace BaseCommon.Repositorys
             }
             Update5Field(dt, sysUser.UserId, viewTitle);
             DbUpdate.Update(dt);
-            if (approveState != "R")
-                UpdateSameNodeOtherApprove(sysUser, viewTitle, tableName, pkField, pkValue, approveState, approveMind, approveNode);
-            OverrideRefTable(tableName, pkField, pkValue, sysUser, viewTitle, approveState, isEndNode);
+            if (approveState != "A")
+            {
+                if (approveState != "R")
+                    UpdateSameNodeOtherApprove(sysUser, viewTitle, tableName, pkField, pkValue, approveState, approveMind, approveNode);
+                OverrideRefTable(tableName, pkField, pkValue, sysUser, viewTitle, approveState, isEndNode);
+            }
             return 1;
         }
 
