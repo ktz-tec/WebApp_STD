@@ -219,16 +219,16 @@
             //#endregion grid操作
 
             $(document).keydown(function (e) {
-                //shift+p,购买申请快捷键
-                if (e.shiftKey && e.which == 80) {
+                //shift+alt+p,购买申请快捷键
+                if (e.ctrlKey && e.altKey && e.which == 80) {
                     $('#btnPurchaseApply' + pageId).click();
                 }
-                //shift+s,报废申请快捷键
-                else if (e.shiftKey && e.which == 83) {
+                //shift+alt+s,报废申请快捷键
+                else if (e.ctrlKey && e.altKey && e.which == 83) {
                     $('#btnScrapApply' + pageId).click();
                 }
-                //shift+T,调拨申请快捷键
-                else if (e.shiftKey && e.which == 84) {
+                //shift+alt+T,调拨申请快捷键
+                else if (e.ctrlKey && e.altKey && e.which == 84) {
                     $('#btnTransferApply' + pageId).click();
                 }
             });

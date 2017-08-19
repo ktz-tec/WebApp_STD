@@ -145,6 +145,7 @@
             if (formMode == "approveinfo") {
                 $('#' + 'btnAdd' + pageId).hide();
                 $('#' + 'btnDelete' + pageId).hide();
+                $('#' + 'btnEdit' + pageId).hide();
             }
             else if (formMode == "fix") {
                 $('#' + 'btnAdd' + pageId).hide();
@@ -324,16 +325,17 @@
 <asp:Content ID="Content4" ContentPlaceHolderID="TabsDivContent" runat="server">
 </asp:Content>
 <asp:Content ID="Content6" ContentPlaceHolderID="ButtonContent" runat="server">
-
     <%if (Model.FormMode != "approve" && !Model.FormMode.Contains("view"))
       { %>
-    <%:Html.AppNormalButton(Model.PageId, "btnAdd", AppMember.AppText["BtnAddRow"])%> 
+    <%:Html.AppNormalButton(Model.PageId, "btnAdd", AppMember.AppText["BtnAddRow"])%>
     <%:Html.AppNormalButton(Model.PageId, "btnDelete", AppMember.AppText["BtnDeleteRow"])%>
     <% } %>
-
-      <%:Html.AppNormalButton(Model.PageId, "btnEdit", AppMember.AppText["BtnEditRow"])%>
+    <%if (!Model.FormMode.Contains("view"))
+      { %>
+    <%:Html.AppNormalButton(Model.PageId, "btnEdit", AppMember.AppText["BtnEditRow"])%>
+    <% } %>
     <% if (Model.FormMode == "fix")
-         { %>
+       { %>
     <%:Html.AppNormalButton(Model.PageId, "btnFix", AppMember.AppText["BtnFix"])%>
     <% } %>
 </asp:Content>
