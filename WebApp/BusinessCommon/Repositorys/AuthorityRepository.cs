@@ -16,7 +16,7 @@ namespace BusinessCommon.Repositorys
         public DataTable GetUserMenu(string userId)
         {
 
-            string sql = @"select AppMenu.menuId,
+            string sql = @"select distinct AppMenu.menuId,
                         AppMenu.menuName,
                         AppMenu.url,
                         AppMenu.appLevel,
@@ -70,7 +70,7 @@ namespace BusinessCommon.Repositorys
         public DataTable GetUserGridButton(string userId, string parentId, string gridId)
         {
             //根据用户权限查
-            string sql = @"select AppMenu.menuId ,
+            string sql = @"select distinct AppMenu.menuId ,
                         AppMenu.menuName text,
                         AppMenu.url url,
                         AppMenu.btnId btnId,
@@ -93,7 +93,7 @@ namespace BusinessCommon.Repositorys
             if (dtGrid.Rows.Count < 1)
             {
                 //根据角色权限查
-                sql = @"select AppMenu.menuId ,
+                sql = @"select distinct AppMenu.menuId ,
                         AppMenu.menuName text,
                         AppMenu.url url,
                         AppMenu.btnId btnId,

@@ -7,6 +7,10 @@
   <Text name="BtnReturn" value="返回"/>
   <Text name="BtnPickup" value="计提"/>
   <Text name="BtnAdd" value="添加"/>
+  <Text name="BtnEdit" value="编辑"/>
+  <Text name="BtnAddRow" value="添加行"/>
+  <Text name="BtnEditRow" value="编辑行"/>
+  <Text name="BtnDeleteRow" value="删除行"/>
   <Text name="BtnQuery" value="查询"/>
   <Text name="BtnRetrieve" value="检索"/>
   <Text name="BtnPrint" value="打印"/>

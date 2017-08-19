@@ -30,7 +30,7 @@
             }
             if (formMode == "approve") {
                 $('#tabs' + pageId).tabs();
-                $('#tabs-basic-' + pageId + ' :input').attr('disabled', true);
+                //$('#tabs-basic-' + pageId + ' :input').attr('disabled', true);
                 $('#approve' + pageId).show();
                 $('#tabs-approve-' + pageId).show();
                 $('#' + 'btnApproveReturn' + pageId).show();

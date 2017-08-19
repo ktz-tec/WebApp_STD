@@ -48,6 +48,6 @@ namespace BusinessLogic.AssetsBusiness.Models.AssetsPurchase
         [AppDisplayNameAttribute("Remark")]
         public string Remark { get; set; }
 
-
+        public string AssetsPurchaseDetailId { get; set; }
     }
 }

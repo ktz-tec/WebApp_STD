@@ -263,8 +263,9 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
             DataTable dt = AppMember.DbHelper.GetDataSet(sql).Tables[0];
             dt.TableName = "AssetsPurchaseDetail";
             DataRow dr = dt.NewRow();
-            string assetsPurchaseDetailId = IdGenerator.GetMaxId(dt.TableName);
-            dr["assetsPurchaseDetailId"] = assetsPurchaseDetailId;
+            //string assetsPurchaseDetailId = IdGenerator.GetMaxId(dt.TableName);
+            //dr["assetsPurchaseDetailId"] = assetsPurchaseDetailId;
+            dr["assetsPurchaseDetailId"] = assetsPurchase.assetsPurchaseDetailId;
             dr["assetsPurchaseId"] = assetsPurchaseId;
             dr["assetsName"] = assetsPurchase.assetsName;
             dr["departmentId"] = assetsPurchase.departmentId;

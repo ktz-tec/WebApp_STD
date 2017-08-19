@@ -127,11 +127,27 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
             model.AssetsFixUrl = Url.Action("Entry", "AssetsManage", new { Area = "AssetsBusiness" });
         }
 
-        public ActionResult Detail(string pageId, string detailMode)
+        public ActionResult Detail(string pageId, string detailMode, string purchaseObj)
         {
             PurchaseModel model = new PurchaseModel();
             model.PageId = pageId;
             model.FormId = "DetailForm";
+            if (detailMode == "add")
+            {
+                model.AssetsPurchaseDetailId = IdGenerator.GetMaxId("AssetsPurchaseDetail");
+            }
+            if (detailMode == "edit" && DataConvert.ToString(purchaseObj) != "")
+            {
+                var obj = JsonHelper.Deserialize<AssetsPurchase>(purchaseObj);
+                model.AssetsName = obj.assetsName;
+                model.AssetsPurchaseDetailId = obj.assetsPurchaseDetailId;
+                model.DepartmentId = obj.departmentId;
+                model.StoreSiteId = obj.storeSiteId;
+                model.UsePeople = obj.usePeople;
+                model.Keeper = obj.keeper;
+                model.AssetsValue = DataConvert.ToInt32(obj.assetsValue);
+                model.Remark = obj.remark;
+            }
             SetThisDetailModel(model);
             return PartialView("PurchaseView", model);
         }

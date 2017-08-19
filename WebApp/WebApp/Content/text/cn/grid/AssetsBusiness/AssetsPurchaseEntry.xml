@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <gridLayout>
-  <gridTitle name="报废采购"/>
+  <gridTitle name="采购明细"/>
   <columnLayout>
     <Header name="assetsPurchaseDetailId" caption="资产采购明细主键" index="assetsPurchaseId" align="Left" hidden="true"  width="100"  />
     <Header name="assetsPurchaseId" caption="资产采购主键" index="assetsPurchaseId" align="Left" hidden="true"  width="100"  />

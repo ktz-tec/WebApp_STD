@@ -231,7 +231,8 @@ namespace BaseCommon.Data
                     gridHeadersInfo.Width = DataConvert.ToString(cnode.Attributes["width"].Value);
                 if (cnode.Attributes["index"] != null)
                     gridHeadersInfo.Index = DataConvert.ToString(cnode.Attributes["index"].Value);
-                if (formMode != "approve" && !formMode.Contains("view"))
+                //if (formMode != "approve" && !formMode.Contains("view"))
+                if (!formMode.Contains("view"))
                 {
                     if (cnode.Attributes["editable"] != null)
                         gridHeadersInfo.Editable = DataConvert.ToString(cnode.Attributes["editable"].Value);

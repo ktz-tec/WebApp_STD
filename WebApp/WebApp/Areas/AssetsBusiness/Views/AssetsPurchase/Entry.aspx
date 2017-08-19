@@ -194,22 +194,23 @@
                     success: function (data) {
                         $("#SelectDialog" + pageId).html(data).dialog({
                             title: '<%=AppMember.AppText["PurchaseDetailInfo"]%>',
-                            height: 180,
-                            width: 750,
+                            height: 300,
+                            width: 350,
                             modal: true,
                             resizable: true,
                             buttons: {
                                 '<%=AppMember.AppText["BtnConfirm"]%>': function () {
                                     var departmentName = $("#DepartmentId" + spageId + " option:selected").text();
                                     var storeSiteName = $("#StoreSiteId" + spageId + " option:selected").text();
-                                    var dataRow = { assetsName: $('#AssetsName' + spageId).val(),
+                                    var AssetsPurchaseDetailId = $('#AssetsPurchaseDetailId' + spageId).val();
+                                    var dataRow = { assetsPurchaseDetailId: AssetsPurchaseDetailId, assetsName: $('#AssetsName' + spageId).val(),
                                         departmentId: $('#DepartmentId' + spageId).val(), departmentName: departmentName,
                                         storeSiteId: $('#StoreSiteId' + spageId).val(), storeSiteName: storeSiteName,
                                         usePeople: $('#UsePeople' + spageId).val(), keeper: $('#Keeper' + spageId).val(),
                                         hasFixed: 'N', hasFixedText: '否',
                                         remark: $('#Remark' + spageId).val(), assetsValue: $('#AssetsValue' + spageId).val()
                                     };
-                                    $('#' + gridId).jqGrid('addRowData', 1, dataRow);
+                                    $('#' + gridId).jqGrid('addRowData', AssetsPurchaseDetailId, dataRow);
                                     $(this).dialog("close");
                                 },
                                 '<%=AppMember.AppText["BtnCancel"]%>': function () {
@@ -221,14 +222,61 @@
                 });
                 $('#' + 'btnSave' + pageId).attr('disabled', false);
             });
+            $('#btnEdit' + pageId).click(function () {
+                var spageId = pageId + "dtl";
+                var id = jQuery('#' + gridId).jqGrid('getGridParam', 'selrow');
+                var rowdata = jQuery('#' + gridId).getRowData(id);
+                var purchaseobj = JSON.stringify(rowdata);
+
+                if (!id) {
+                    AppMessage(pageId, '<%=AppMember.AppText["MessageTitle"]%>', '请选择一行！', 'warning', function () { });
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '<%:Model.DetailUrl %>',
+                    data: { pageId: spageId, detailMode: "edit", purchaseObj: purchaseobj },
+                    datatype: "html",
+                    success: function (data) {
+                        $("#SelectDialog" + pageId).html(data).dialog({
+                            title: '<%=AppMember.AppText["PurchaseDetailInfo"]%>',
+                            height: 300,
+                            width: 350,
+                            modal: true,
+                            resizable: true,
+                            buttons: {
+                                '<%=AppMember.AppText["BtnConfirm"]%>': function () {
+                                    var departmentName = $("#DepartmentId" + spageId + " option:selected").text();
+                                    var storeSiteName = $("#StoreSiteId" + spageId + " option:selected").text();
+                                    var AssetsPurchaseDetailId = $('#AssetsPurchaseDetailId' + spageId).val();
+                                    var dataRow = { assetsPurchaseDetailId: AssetsPurchaseDetailId, assetsName: $('#AssetsName' + spageId).val(),
+                                        departmentId: $('#DepartmentId' + spageId).val(), departmentName: departmentName,
+                                        storeSiteId: $('#StoreSiteId' + spageId).val(), storeSiteName: storeSiteName,
+                                        usePeople: $('#UsePeople' + spageId).val(), keeper: $('#Keeper' + spageId).val(),
+                                        hasFixed: 'N', hasFixedText: '否',
+                                        remark: $('#Remark' + spageId).val(), assetsValue: $('#AssetsValue' + spageId).val()
+                                    };
+                                    $('#' + gridId).jqGrid('setRowData', id, dataRow);
+                                    $(this).dialog("close");
+                                },
+                                '<%=AppMember.AppText["BtnCancel"]%>': function () {
+                                    $(this).dialog("close");
+                                }
+                            }
+                        });
+                    }
+                });
+                $('#' + 'btnSave' + pageId).attr('disabled', false);
+
+            });
             $('#btnFix' + pageId).click(function () {
                 var spageId = pageId + "9";
                 var id = jQuery('#' + gridId).jqGrid('getGridParam', 'selrow');
                 var rowdata = jQuery('#' + gridId).getRowData(id);
                 var purchaseobj = JSON.stringify(rowdata);
 
-                var selid = $('#' + gridId).jqGrid('getGridParam', 'selrow');
-                if (!selid) {
+                if (!id) {
                     AppMessage(pageId, '<%=AppMember.AppText["MessageTitle"]%>', '请选择一行！', 'warning', function () { });
                     return;
                 }
@@ -279,10 +327,11 @@
 
     <%if (Model.FormMode != "approve" && !Model.FormMode.Contains("view"))
       { %>
-    <%:Html.AppNormalButton(Model.PageId, "btnAdd", AppMember.AppText["BtnAdd"])%>
-    <%:Html.AppNormalButton(Model.PageId, "btnDelete", AppMember.AppText["BtnDelete"])%>
+    <%:Html.AppNormalButton(Model.PageId, "btnAdd", AppMember.AppText["BtnAddRow"])%> 
+    <%:Html.AppNormalButton(Model.PageId, "btnDelete", AppMember.AppText["BtnDeleteRow"])%>
     <% } %>
 
+      <%:Html.AppNormalButton(Model.PageId, "btnEdit", AppMember.AppText["BtnEditRow"])%>
     <% if (Model.FormMode == "fix")
          { %>
     <%:Html.AppNormalButton(Model.PageId, "btnFix", AppMember.AppText["BtnFix"])%>

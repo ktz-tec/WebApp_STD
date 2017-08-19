@@ -51,7 +51,9 @@ namespace BaseCommon.Repositorys
                             return ret;
                         }
                     case "reapply":
-                        return Modified(model, sysUser, pkValue, viewTitle , mode);
+                        return Modified(model, sysUser, pkValue, viewTitle + "[" + AppMember.AppText["reapply"].ToString() + "]", mode);
+                    case "approve":
+                        return Modified(model, sysUser, pkValue, viewTitle + "[" + AppMember.AppText["approve"].ToString() + "]", mode);
                     default:
                         return 0;
                 }

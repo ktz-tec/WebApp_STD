@@ -206,7 +206,7 @@
 <asp:Content ID="Content6" ContentPlaceHolderID="ButtonContent" runat="server">
     <% if (Model.FormMode != "approve" && !Model.FormMode.Contains("view"))
        { %>
-    <%:Html.AppNormalButton(Model.PageId, "btnAdd", AppMember.AppText["BtnAdd"])%>
-    <%:Html.AppNormalButton(Model.PageId, "btnDelete", AppMember.AppText["BtnDelete"])%>
+    <%:Html.AppNormalButton(Model.PageId, "btnAdd", AppMember.AppText["BtnAddRow"])%>
+    <%:Html.AppNormalButton(Model.PageId, "btnDelete", AppMember.AppText["BtnDeleteRow"])%>
     <% } %>
 </asp:Content>

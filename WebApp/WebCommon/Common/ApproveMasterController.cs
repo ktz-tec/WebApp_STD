@@ -87,7 +87,8 @@ namespace WebCommon.Common
         {
             string cacheName = "";
             string layoutName = "";
-            if (formMode == "approve" || formMode == "view")
+            //if (formMode == "approve" || formMode == "view")
+            if (formMode == "view")
             {
                 layoutName = ControllerName + "Entry";
                 cacheName = layoutName + "GridLayout" + "Disabled";
@@ -332,6 +333,14 @@ namespace WebCommon.Common
         //    }
         //}
 
+        /// <summary>
+        /// 处理审批信息
+        /// </summary>
+        /// <param name="repApproveMaster"></param>
+        /// <param name="model"></param>
+        /// <param name="approveReturn"></param>
+        /// <param name="aa"></param>
+        /// <returns></returns>
         protected int DealApprove(IApproveEntry repApproveMaster, ApproveEntryViewModel model, string approveReturn, string aa)
         {
             int ret = SaveApprove(repApproveMaster, approveReturn, model.ApproveTableName, model.ApprovePkField, model.ApprovePkValue, model.ApproveMind, model.ApproveLevel, model.ApproveNode, model.ViewTitle);
@@ -373,7 +382,9 @@ namespace WebCommon.Common
                 }
                 else
                 {
-                    ModelState.Clear();
+                    //ModelState.Clear();
+                    if (ApproveAndUpdate(rep, model, pkValue, approveReturn, sysUser) == 0)
+                        return 0;
                     int val= DealApprove(rep, model, approveReturn, "");
                     if (val == 0)
                         return 0;
@@ -393,6 +404,24 @@ namespace WebCommon.Common
             {
                 dbUpdate.Close();
             }
+        }
+
+        /// <summary>
+        /// 审批时同时可以修改提交的内容，如果想不允许修改提交内容，子类可以override该方法(只需ModelState.Clear();return 1;就这两行代码就好了)。
+        /// </summary>
+        /// <param name="rep"></param>
+        /// <param name="model"></param>
+        /// <param name="pkValue"></param>
+        /// <param name="approveReturn"></param>
+        /// <param name="sysUser"></param>
+        /// <returns></returns>
+        protected virtual int ApproveAndUpdate(IApproveEntry rep, ApproveEntryViewModel model, string pkValue, string approveReturn, UserInfo sysUser)
+        {
+            //ModelState.Clear();
+            if (CheckModelIsValid(model))
+                return rep.Update(model, sysUser, model.FormMode, pkValue, model.ViewTitle);
+            else
+                return 0;
         }
 
         public ActionResult Export(string formvar)
