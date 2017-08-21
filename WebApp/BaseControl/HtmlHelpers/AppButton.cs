@@ -12,6 +12,21 @@ namespace BaseControl.HtmlHelpers
 {
     public static class AppButton
     {
+        /// <summary>
+        /// 提交按钮
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="urlHelper"></param>
+        /// <param name="pageId"></param>
+        /// <param name="btnId"></param>
+        /// <param name="formId"></param>
+        /// <param name="text"></param>
+        /// <param name="submitUrl"></param>
+        /// <param name="formMode"></param>
+        /// <param name="IsDisabled"></param>
+        /// <param name="customClick"></param>
+        /// <param name="pageFlag"></param>
+        /// <returns></returns>
         public static MvcHtmlString AppSubmitButton(this HtmlHelper htmlHelper, UrlHelper urlHelper, string pageId, string btnId, string formId, string text, string submitUrl, string formMode, bool IsDisabled, bool customClick,string pageFlag)
         {
             string btnIdAct = btnId + pageId;

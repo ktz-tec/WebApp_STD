@@ -23,7 +23,7 @@
         <%:Html.AppHiddenFor(m => m.AssetsScrapId, Model.PageId)%>
         <%:Html.AppHiddenFor(m=>m.EntryGridId,Model.PageId)%>
     </fieldset>
-    <%:Html.AppEntryGridFor(this.Url, Model.PageId, Model.EntryGridId, Url.Action("EntryGridData", new { formMode = Model.FormMode, primaryKey = Model.AssetsScrapId }), Model.EntryGridLayout, 350, 0, "btnSave", "AssetsScrap")%>
+    <%:Html.AppEntryGridFor(this.Url, Model.PageId, Model.EntryGridId, Url.Action("EntryGridData", new { formMode = Model.FormMode, primaryKey = Model.AssetsScrapId }), Model.EntryGridLayout, 350, 0, "btnSave,btnApproveReturn", "AssetsScrap")%>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
     <script type="text/javascript">

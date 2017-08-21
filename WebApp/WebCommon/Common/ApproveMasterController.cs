@@ -418,6 +418,8 @@ namespace WebCommon.Common
         protected virtual int ApproveAndUpdate(IApproveEntry rep, ApproveEntryViewModel model, string pkValue, string approveReturn, UserInfo sysUser)
         {
             //ModelState.Clear();
+            if (approveReturn == "true")
+                return 1;
             if (CheckModelIsValid(model))
                 return rep.Update(model, sysUser, model.FormMode, pkValue, model.ViewTitle);
             else

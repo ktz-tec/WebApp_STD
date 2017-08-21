@@ -63,7 +63,7 @@
         <%:Html.AppHiddenFor(m => m.AssetsTransferId, Model.PageId)%>
         <%:Html.AppHiddenFor(m=>m.EntryGridId,Model.PageId)%>
     </fieldset>
-    <%:Html.AppEntryGridFor(this.Url, Model.PageId, Model.EntryGridId,  Url.Action("EntryGridData", new { formMode = Model.FormMode, primaryKey = Model.AssetsTransferId }), Model.EntryGridLayout, 400, 0, "btnSave", "AssetsTransfer")%>
+    <%:Html.AppEntryGridFor(this.Url, Model.PageId, Model.EntryGridId, Url.Action("EntryGridData", new { formMode = Model.FormMode, primaryKey = Model.AssetsTransferId }), Model.EntryGridLayout, 400, 0, "btnSave,btnApproveReturn", "AssetsTransfer")%>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
     <script type="text/javascript">

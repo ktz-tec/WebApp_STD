@@ -108,11 +108,24 @@ namespace BaseControl.HtmlHelpers
         }
 
 
+        private static string ProcessSubmitBtn(string submitBtn, string pageId)
+        {
+            string btnstring = "";
+            string[] btns = submitBtn.Split(',');
+            foreach (var btn in btns)
+            {
+                btnstring +="#" +DataConvert.ToString(btn) + pageId + "," ;
+            }
+            if (btnstring.Length > 0)
+                btnstring = btnstring.Substring(0, btnstring.Length - 1);
+            return btnstring;
+        }
 
         private static string EditGrid(UrlHelper urlHelper, string pageId, string gridId, string url, GridLayout gridLayout, string submitBtn, string primaryKey, bool hasToolbar, bool needAddEvent, int gridHeight, int gridWidth, bool isMultiSelect, string editFlag, bool hasClickEvent, string clickFlag, bool fixHeight = false,bool isLimit=false)
         {
             string actGridId = gridId + pageId;
-            submitBtn = submitBtn + pageId;
+            //submitBtn = submitBtn + pageId;
+            submitBtn = ProcessSubmitBtn(submitBtn,pageId);
             string pagerId = actGridId + "pager";
             string inputId = actGridId + AppMember.HideString;
             string inputName = gridId + AppMember.HideString;
@@ -168,6 +181,21 @@ namespace BaseControl.HtmlHelpers
             return MvcHtmlString.Create(str);
         }
 
+        /// <summary>
+        /// entry画面grid
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="urlHelper"></param>
+        /// <param name="pageId"></param>
+        /// <param name="gridId"></param>
+        /// <param name="url"></param>
+        /// <param name="gridLayout"></param>
+        /// <param name="gridHeight"></param>
+        /// <param name="gridWidth"></param>
+        /// <param name="submitBtn">用户点击提交按钮时，获取表格的json值，如果有多个按钮，以逗号分割</param>
+        /// <param name="editFlag"></param>
+        /// <param name="pageSizeLimit"></param>
+        /// <returns></returns>
         public static MvcHtmlString AppEntryGridFor(this HtmlHelper htmlHelper, UrlHelper urlHelper, string pageId, string gridId, string url, GridLayout gridLayout, int gridHeight, int gridWidth, string submitBtn, string editFlag,bool pageSizeLimit=false)
         {
             string str = EditGrid(urlHelper, pageId, gridId, url, gridLayout, submitBtn, "", false, false, gridHeight, gridWidth, false, editFlag, false, "", false, pageSizeLimit);
@@ -505,7 +533,8 @@ namespace BaseControl.HtmlHelpers
             }
             string ss = sbGrid.ToString();
             //sbGrid.AppendLine(" $('#" + btnSubmit + "').click(function () {");
-            sbGrid.AppendLine("$('#" + submitBtn + "').mouseup(function() {");
+            //sbGrid.AppendLine("$('#" + submitBtn + "').mouseup(function() {");
+            sbGrid.AppendLine("$('" + submitBtn + "').mouseup(function() {");  //修改后可支持多个按钮的提交，多个以逗号分割
             sbGrid.AppendFormat(@"var data = $('#{0}').getDataIDs();
                                                     for(i=0;i<data.length;i++){{
                                                         $('#{0}').jqGrid('saveRow',data[i]); 

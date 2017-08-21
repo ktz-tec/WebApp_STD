@@ -219,15 +219,15 @@
             //#endregion grid操作
 
             $(document).keydown(function (e) {
-                //shift+alt+p,购买申请快捷键
+                //ctrl+alt+p,购买申请快捷键
                 if (e.ctrlKey && e.altKey && e.which == 80) {
                     $('#btnPurchaseApply' + pageId).click();
                 }
-                //shift+alt+s,报废申请快捷键
+                //ctrl+alt+s,报废申请快捷键
                 else if (e.ctrlKey && e.altKey && e.which == 83) {
                     $('#btnScrapApply' + pageId).click();
                 }
-                //shift+alt+T,调拨申请快捷键
+                //ctrl+alt+T,调拨申请快捷键
                 else if (e.ctrlKey && e.altKey && e.which == 84) {
                     $('#btnTransferApply' + pageId).click();
                 }

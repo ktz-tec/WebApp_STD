@@ -19,7 +19,7 @@
             if (isDirectCall == "true") {
                 $('#' + 'btnReturn' + pageId).hide();
             }
-            if (formMode.indexOf("view")>=0) {
+            if (formMode.indexOf("view") >= 0) {
                 $('#' + 'btnSave' + pageId).hide();
             }
             if (formMode == "new2") {
@@ -49,7 +49,7 @@
                 $('#approve' + pageId).show();
                 $('#tabs-approve-' + pageId).show();
                 $('#' + 'btnApproveReturn' + pageId).hide();
-                $('#approveMind' + pageId).hide();
+                //$('#approveMind' + pageId).hide();
             }
             else if (formMode == "reapplyview") {
                 $('#tabs' + pageId).tabs();
@@ -111,9 +111,11 @@
        { %>
     <div id="approveMind<%=Model.PageId%>" class="editor-field">
         <%:Html.AppLabelFor(m => m.ApproveMind, Model.PageId, "ApproveEntry")%>
-        <%:Html.AppTextBoxFor(m => m.ApproveMind, Model.PageId, "ApproveEntry")%>
+        <%:Html.AppTextAreaFor(m => m.ApproveMind, Model.PageId,4,50 ,"ApproveEntry")%>
         <%:Html.ValidationMessageFor(m => m.ApproveMind)%>
     </div>
+    <br />
+    <br />
     <%} %>
     <br />
     <asp:ContentPlaceHolder ID="ButtonContent" runat="server">
@@ -121,7 +123,7 @@
     <%:Html.AppSubmitButton(this.Url, Model.PageId, "btnSave", Model.FormId, Model.SaveButtonText, Model.SaveUrl,Model.FormMode, Model.IsDisabled, Model.CustomClick,Model.PageFlag)%>
     <%:Html.AppSubmitButton(this.Url, Model.PageId, "btnApproveReturn", Model.FormId, AppMember.AppText["ApproveReturn"], Model.ApproveReturnUrl, Model.FormMode, Model.IsDisabled, Model.CustomClick, Model.PageFlag)%>
     <%:Html.AppLinkButton(Model.PageId, "btnReturn", AppMember.AppText["BtnReturn"], Model.ReturnUrl,Model.ViewTitle)%>
-    <div id="ProcessSaveTick<%=Model.PageId %>"  style="color:Red">
+    <div id="ProcessSaveTick<%=Model.PageId %>" style="color: Red">
     </div>
     <%:Html.AppHiddenFor(m => m.PageId, Model.PageId)%>
     <%:Html.AppHiddenFor(m => m.FormId, Model.PageId)%>
