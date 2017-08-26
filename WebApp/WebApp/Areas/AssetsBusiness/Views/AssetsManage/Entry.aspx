@@ -141,7 +141,7 @@
         <%:Html.ValidationMessageFor(m => m.MaintainDays)%>
     </div>
      <div class="editor-field">
-        <div class="AssetsEntryColumn2">
+        <div class="AssetsEntryColumn1">
             <%if (AppMember.DepreciationRuleOpen)
               { %>
             <%:Html.AppLabelFor(m => m.DepreciationRule, Model.PageId, "AssetsEntry")%>
@@ -153,6 +153,10 @@
             <%:Html.AppDropDownListFor(m => m.DepreciationType, Model.PageId, Url.Action("DropList", "CodeTable", new { Area = "", filter = "DepreciationType" }), "AssetsEntry")%>
             <%}  %>
         </div>
+        <div class="AssetsEntryColumn2">
+            <%:Html.AppLabelFor(m => m.SupplierName, Model.PageId, "AssetsEntry")%>
+            <%:Html.AppTextBoxFor(m => m.SupplierName, Model.PageId, "AssetsEntry")%>
+        </div>
         <%if (AppMember.DepreciationRuleOpen)
           { %>
         <%:Html.ValidationMessageFor(m => m.DepreciationRule)%>
@@ -161,6 +165,7 @@
           { %>
         <%:Html.ValidationMessageFor(m => m.DepreciationType)%>
         <%}  %>
+        <%:Html.ValidationMessageFor(m => m.SupplierName)%>
      <%--   <div class="AssetsEntryColumn2">
             <%:Html.AppLabelFor(m => m.AssetsUsesId, Model.PageId, "AssetsEntry")%>
             <%:Html.AppDropDownListFor(m => m.AssetsUsesId, Model.PageId, Url.Action("DropList", "AssetsUses", new { Area = "BasicData" }), "AssetsEntry")%>

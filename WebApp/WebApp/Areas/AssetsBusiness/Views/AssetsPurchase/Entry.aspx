@@ -49,59 +49,59 @@
                 //                    $('#btnDelete' + gridId, '#t_' + gridId).show();
                 //                }
 
-                if (formMode == "fix") {
-                    var btnFixed = 'btnFixed' + gridId;
-                    $('#t_' + gridId).append("<input id=" + btnFixed + " type='button' value='转固' style='height:20px;font-size:-1;line-height: 0.8;'/>");
-                    $('#' + btnFixed, '#t_' + gridId).button({
-                        text: true
-                    });
+//                if (formMode == "fix") {
+//                    var btnFixed = 'btnFixed' + gridId;
+//                    $('#t_' + gridId).append("<input id=" + btnFixed + " type='button' value='转固' style='height:20px;font-size:-1;line-height: 0.8;'/>");
+//                    $('#' + btnFixed, '#t_' + gridId).button({
+//                        text: true
+//                    });
 
-                    $('#' + btnFixed, '#t_' + gridId).click(function () {
-                        var spageId = pageId + "9";
-                        var id = jQuery('#' + gridId).jqGrid('getGridParam', 'selrow');
-                        var rowdata = jQuery('#' + gridId).getRowData(id);
-                        var purchaseobj = JSON.stringify(rowdata);
+//                    $('#' + btnFixed, '#t_' + gridId).click(function () {
+//                        var spageId = pageId + "9";
+//                        var id = jQuery('#' + gridId).jqGrid('getGridParam', 'selrow');
+//                        var rowdata = jQuery('#' + gridId).getRowData(id);
+//                        var purchaseobj = JSON.stringify(rowdata);
 
-                        var selid = $('#' + gridId).jqGrid('getGridParam', 'selrow');
-                        if (!selid) {
-                            AppMessage(pageId, '<%=AppMember.AppText["MessageTitle"]%>', '请选择一行！', 'warning', function () { });
-                            return;
-                        }
+//                        var selid = $('#' + gridId).jqGrid('getGridParam', 'selrow');
+//                        if (!selid) {
+//                            AppMessage(pageId, '<%=AppMember.AppText["MessageTitle"]%>', '请选择一行！', 'warning', function () { });
+//                            return;
+//                        }
 
-                        var urlStr = '<%=Url.Action("HadApproved", "AssetsPurchase", new { Area = "AssetsBusiness"}) %>';
-                        $.ajax({
-                            url: urlStr,
-                            type: "POST",
-                            dataType: "text",
-                            data: { purchaseObj: purchaseobj },
-                            success: function (data) {
-                                if (data == "true") {
-                                    var maintab = jQuery('#tabs', '#RightPane');
-                                    var st = "#t" + spageId;
-                                    if ($(st).html() != null) {
-                                        maintab.tabs('select', st);
-                                    } else {
-                                        maintab.tabs('add', st, "资产转固[" + id + "]");
-                                        //$(st,"#tabs").load(treedata.url);
-                                        var navurl = '<%:Model.AssetsFixUrl %>';
-                                        $.ajax({
-                                            url: '<%:Model.AssetsFixUrl %>',
-                                            type: "GET",
-                                            dataType: "html",
-                                            data: { pageId: spageId, formMode: "new2", viewTitle: "资产转固", purchaseObj: purchaseobj },
-                                            complete: function (req, err) {
-                                                $(st, "#tabs").append(req.responseText);
-                                            }
-                                        });
-                                    }
-                                }
-                                else {
-                                    AppMessage(pageId, '<%=AppMember.AppText["MessageTitle"]%>', '审批没有完成不能转固！', 'warning', function () { });
-                                }
-                            }
-                        });
-                    });
-                }
+//                        var urlStr = '<%=Url.Action("HadApproved", "AssetsPurchase", new { Area = "AssetsBusiness"}) %>';
+//                        $.ajax({
+//                            url: urlStr,
+//                            type: "POST",
+//                            dataType: "text",
+//                            data: { purchaseObj: purchaseobj },
+//                            success: function (data) {
+//                                if (data == "true") {
+//                                    var maintab = jQuery('#tabs', '#RightPane');
+//                                    var st = "#t" + spageId;
+//                                    if ($(st).html() != null) {
+//                                        maintab.tabs('select', st);
+//                                    } else {
+//                                        maintab.tabs('add', st, "资产转固[" + id + "]");
+//                                        //$(st,"#tabs").load(treedata.url);
+//                                        var navurl = '<%:Model.AssetsFixUrl %>';
+//                                        $.ajax({
+//                                            url: '<%:Model.AssetsFixUrl %>',
+//                                            type: "GET",
+//                                            dataType: "html",
+//                                            data: { pageId: spageId, formMode: "new2", viewTitle: "资产转固", purchaseObj: purchaseobj },
+//                                            complete: function (req, err) {
+//                                                $(st, "#tabs").append(req.responseText);
+//                                            }
+//                                        });
+//                                    }
+//                                }
+//                                else {
+//                                    AppMessage(pageId, '<%=AppMember.AppText["MessageTitle"]%>', '审批没有完成不能转固！', 'warning', function () { });
+//                                }
+//                            }
+//                        });
+//                    });
+//                }
 
                 //                $('#btnAdd' + gridId, '#t_' + gridId).click(function () {
                 //                    var spageId = pageId + "dtl";
@@ -195,7 +195,7 @@
                     success: function (data) {
                         $("#SelectDialog" + pageId).html(data).dialog({
                             title: '<%=AppMember.AppText["PurchaseDetailInfo"]%>',
-                            height: 300,
+                            height: 320,
                             width: 350,
                             modal: true,
                             resizable: true,
@@ -209,7 +209,8 @@
                                         storeSiteId: $('#StoreSiteId' + spageId).val(), storeSiteName: storeSiteName,
                                         usePeople: $('#UsePeople' + spageId).val(), keeper: $('#Keeper' + spageId).val(),
                                         hasFixed: 'N', hasFixedText: '否',
-                                        remark: $('#Remark' + spageId).val(), assetsValue: $('#AssetsValue' + spageId).val()
+                                        remark: $('#Remark' + spageId).val(), assetsValue: $('#AssetsValue' + spageId).val(),
+                                        supplierName: $('#SupplierName' + spageId).val(), 
                                     };
                                     $('#' + gridId).jqGrid('addRowData', AssetsPurchaseDetailId, dataRow);
                                     $(this).dialog("close");
@@ -242,7 +243,7 @@
                     success: function (data) {
                         $("#SelectDialog" + pageId).html(data).dialog({
                             title: '<%=AppMember.AppText["PurchaseDetailInfo"]%>',
-                            height: 300,
+                            height: 320,
                             width: 350,
                             modal: true,
                             resizable: true,
@@ -256,7 +257,8 @@
                                         storeSiteId: $('#StoreSiteId' + spageId).val(), storeSiteName: storeSiteName,
                                         usePeople: $('#UsePeople' + spageId).val(), keeper: $('#Keeper' + spageId).val(),
                                         hasFixed: 'N', hasFixedText: '否',
-                                        remark: $('#Remark' + spageId).val(), assetsValue: $('#AssetsValue' + spageId).val()
+                                        remark: $('#Remark' + spageId).val(), assetsValue: $('#AssetsValue' + spageId).val(),
+                                        supplierName: $('#SupplierName' + spageId).val()
                                     };
                                     $('#' + gridId).jqGrid('setRowData', id, dataRow);
                                     $(this).dialog("close");

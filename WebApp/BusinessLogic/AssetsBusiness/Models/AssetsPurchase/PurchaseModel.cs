@@ -8,6 +8,7 @@ using BaseCommon.Data;
 using BusinessLogic.AssetsBusiness;
 using BaseCommon.Models;
 using BusinessLogic.AssetsBusiness.Repositorys;
+using System.ComponentModel;
 
 namespace BusinessLogic.AssetsBusiness.Models.AssetsPurchase
 {
@@ -47,6 +48,9 @@ namespace BusinessLogic.AssetsBusiness.Models.AssetsPurchase
 
         [AppDisplayNameAttribute("Remark")]
         public string Remark { get; set; }
+
+        [DisplayNameAttribute("供应商")]
+        public string SupplierName { get; set; }
 
         public string AssetsPurchaseDetailId { get; set; }
     }

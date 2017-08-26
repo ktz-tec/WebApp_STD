@@ -418,8 +418,8 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
                 model.CEANo = DataConvert.ToString(dr["CEANo"]);
                 model.TagMaterial = DataConvert.ToString(dr["TagMaterial"]);
                 model.SupplierName = DataConvert.ToString(dr["supplierName"]);
-                model.Remark = DataConvert.ToString(dr["markMK"]);
-                model.MarkMK = DataConvert.ToString(dr["mujuNo"]);
+                model.MarkMK = DataConvert.ToString(dr["markMK"]);
+                model.MujuNo = DataConvert.ToString(dr["mujuNo"]);
                 model.ShengchanhuopinNo = DataConvert.ToString(dr["shengchanhuopinNo"]);
                 model.Mujuxueshu = DataConvert.ToString(dr["mujuxueshu"]);
                 model.Mujushouming = DataConvert.ToString(dr["mujushouming"]);

@@ -110,6 +110,8 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
                model.Keeper = obj.keeper;
                model.AssetsPurchaseDetailId = obj.assetsPurchaseDetailId;
                model.AssetsPurchaseId = obj.assetsPurchaseId;
+               model.Remark = obj.remark;
+               model.SupplierName = obj.supplierName;
             }
         }
 

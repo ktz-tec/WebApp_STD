@@ -12,6 +12,7 @@
     <Header name="assetsValue" caption="价值" index="assetsValue" align="Left" hidden="false"  width="100"  />
     <Header name="usePeople" caption="使用人"  index="usePeople" align="Left" hidden="false" width="150" />
     <Header name="keeper" caption="保管人" index="keeper" align="Left" hidden="false"  width="100"  />
+    <Header name="supplierName" caption="供应商" index="supplierName" align="Left" hidden="false"  width="100"  />
     <Header name="hasFixed" caption="是否已转固" index="hasFixed" align="Left" hidden="true"  width="100"  />
     <Header name="hasFixedText" caption="是否已转固" index="hasFixedText" align="Left" hidden="false"  width="100"  />
     <Header name="remark" caption="备注" index="remark" align="Left" hidden="false"  width="100"  />
