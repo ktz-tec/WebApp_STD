@@ -24,13 +24,20 @@ namespace WebApp.Areas.BusinessCommon.Controllers
         [AppAuthorize]
         public ActionResult Entry(string pageId, string viewTitle)
         {
-            EntryModel model = new EntryModel();
-            model.PageId = pageId;
-            model.ViewTitle = viewTitle;
-            model.FormId = "EntryForm";
-            model.CssMergeUrl = Url.Action("MergeCss", "Tools", new { Area = "BusinessCommon" });
-            return View(model);
-
+            try
+            {
+                EntryModel model = new EntryModel();
+                model.PageId = pageId;
+                model.ViewTitle = viewTitle;
+                model.FormId = "EntryForm";
+                model.CssMergeUrl = Url.Action("MergeCss", "Tools", new { Area = "BusinessCommon" });
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "ToolsController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         public ActionResult MergeCss()
@@ -52,8 +59,16 @@ namespace WebApp.Areas.BusinessCommon.Controllers
 
         public ActionResult DownloadPrintTools(string pageId, string primaryKey)
         {
-            string fileName = Server.MapPath("~/Content/uploads/sqlite/" + "PrintKit.zip");
-            return File(fileName, "text/plain", "PrintKit.zip");
+            try
+            {
+                string fileName = Server.MapPath("~/Content/uploads/sqlite/" + "PrintKit.zip");
+                return File(fileName, "text/plain", "PrintKit.zip");
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "ToolsController.DownloadPrintTools", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
 

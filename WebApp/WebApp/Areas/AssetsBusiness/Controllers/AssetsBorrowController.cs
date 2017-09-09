@@ -35,72 +35,104 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
         [AppAuthorize]
         public ActionResult List(string pageId, string viewTitle, string listMode)
         {
-            ListModel model = new ListModel();
-            SetParentListModel(pageId, viewTitle, listMode,  "AssetsBorrow", model);
-            model.GridPkField = "assetsBorrowId";
-            return View(model);
+            try
+            {
+                ListModel model = new ListModel();
+                SetParentListModel(pageId, viewTitle, listMode, "AssetsBorrow", model);
+                model.GridPkField = "assetsBorrowId";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsBorrowController.List", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
 
         [AppAuthorize]
         public ActionResult Entry(string pageId, string primaryKey, string formMode, string viewTitle)
         {
-            ClearClientPageCache(Response);
-            EntryModel model = new EntryModel();
-            Repository.SetModel(primaryKey, formMode, model);
-            SetParentEntryModel(pageId, primaryKey, formMode, viewTitle, model);
-            SetThisEntryModel(model);
-            return View(model);
+            try
+            {
+                ClearClientPageCache(Response);
+                EntryModel model = new EntryModel();
+                Repository.SetModel(primaryKey, formMode, model);
+                SetParentEntryModel(pageId, primaryKey, formMode, viewTitle, model);
+                SetThisEntryModel(model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsBorrowController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [AppAuthorize]
         [HttpPost]
         public ActionResult Entry(EntryModel model, string approveReturn)
         {
-            //if (model.FormMode != "approve")
-            //{
-            //    if (CheckModelIsValid(model))
-            //        Update(EntryRepository, model, model.FormMode, model.AssetsBorrowId, model.ViewTitle);
-            //    if (model.FormMode == "reapply")
-            //        return RedirectToAction("List", "AssetsBorrow", new { Area = "AssetsBusiness", pageId = model.PageId, viewTitle = model.ViewTitle, approvemode = model.FormMode });
-            //    else
-            //    {
-            //        SetMustModel(model);
-            //        return View(model);
-            //    }
-            //}
-            //else
-            //{
-            //    return DealApprove(EntryRepository, model, approveReturn);
-            //}
-            if (Update(Repository, model, model.AssetsBorrowId, approveReturn) == 1)
+            try
             {
-                if (model.FormMode == "approve" || model.FormMode == "reapply")
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle, listMode = model.FormMode });
-                else if (model.FormMode == "new" || model.FormMode == "new2")
+                //if (model.FormMode != "approve")
+                //{
+                //    if (CheckModelIsValid(model))
+                //        Update(EntryRepository, model, model.FormMode, model.AssetsBorrowId, model.ViewTitle);
+                //    if (model.FormMode == "reapply")
+                //        return RedirectToAction("List", "AssetsBorrow", new { Area = "AssetsBusiness", pageId = model.PageId, viewTitle = model.ViewTitle, approvemode = model.FormMode });
+                //    else
+                //    {
+                //        SetMustModel(model);
+                //        return View(model);
+                //    }
+                //}
+                //else
+                //{
+                //    return DealApprove(EntryRepository, model, approveReturn);
+                //}
+                if (Update(Repository, model, model.AssetsBorrowId, approveReturn) == 1)
                 {
-                    EntryModel newModel = new EntryModel();
-                    SetParentEntryModel(model.PageId, "", model.FormMode, model.ViewTitle, newModel);
-                    SetThisEntryModel(newModel);
-                    return View(newModel);
+                    if (model.FormMode == "approve" || model.FormMode == "reapply")
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle, listMode = model.FormMode });
+                    else if (model.FormMode == "new" || model.FormMode == "new2")
+                    {
+                        EntryModel newModel = new EntryModel();
+                        SetParentEntryModel(model.PageId, "", model.FormMode, model.ViewTitle, newModel);
+                        SetThisEntryModel(newModel);
+                        return View(newModel);
+                    }
+                    else
+                    {
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                    }
                 }
                 else
                 {
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                    SetThisEntryModel(model);
+                    return View(model);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                SetThisEntryModel(model);
-                return View(model);
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsBorrowController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
         }
 
         [HttpPost]
         public ActionResult GetAutoNo()
         {
-            string no = AutoNoGenerator.GetMaxNo("AssetsBorrow");
-            return Content(no, "text/html");
+            try
+            {
+                string no = AutoNoGenerator.GetMaxNo("AssetsBorrow");
+                return Content(no, "text/html");
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsBorrowController.GetAutoNo", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         protected virtual void SetThisEntryModel(EntryModel model)

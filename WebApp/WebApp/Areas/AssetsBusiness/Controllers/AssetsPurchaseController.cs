@@ -35,88 +35,120 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
         //[AppAuthorize]
         public ActionResult List(string pageId, string viewTitle, string listMode)
         {
-            ListModel model = new ListModel();
-            SetParentListModel(pageId, viewTitle, listMode, "AssetsPurchase", model);
-            model.GridPkField = "assetsPurchaseId";
-            return View(model);
+            try
+            {
+                ListModel model = new ListModel();
+                SetParentListModel(pageId, viewTitle, listMode, "AssetsPurchase", model);
+                model.GridPkField = "assetsPurchaseId";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsPurchaseController.List", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
 
         public ActionResult Entry(string pageId, string primaryKey, string formMode, string viewTitle, string isDirectCall)
         {
-            if (formMode == "approve")
+            try
             {
-                if (Repository.IsReapply(primaryKey))
-                    formMode = "reapply";
+                if (formMode == "approve")
+                {
+                    if (Repository.IsReapply(primaryKey))
+                        formMode = "reapply";
+                }
+                ClearClientPageCache(Response);
+                EntryModel model = new EntryModel();
+                Repository.SetModel(primaryKey, formMode, model);
+                SetParentEntryModel(pageId, primaryKey, formMode, viewTitle, model);
+                model.IsDirectCall = isDirectCall;
+                SetThisEntryModel(model);
+                return View(model);
             }
-            ClearClientPageCache(Response);
-            EntryModel model = new EntryModel();
-            Repository.SetModel(primaryKey, formMode, model);
-            SetParentEntryModel(pageId, primaryKey, formMode, viewTitle, model);
-            model.IsDirectCall = isDirectCall;
-            SetThisEntryModel(model);
-            return View(model);
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsPurchaseController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [HttpPost]
         public ActionResult Entry(EntryModel model, string approveReturn)
         {
-            //if (model.FormMode != "approve")
-            //{
-            //    if (CheckModelIsValid(model))
-            //        Update(EntryRepository, model, model.FormMode, model.AssetsPurchaseId, model.ViewTitle);
-            //    if (model.FormMode == "reapply")
-            //        return RedirectToAction("List", "AssetsPurchase", new { Area = "AssetsBusiness", pageId = model.PageId, viewTitle = model.ViewTitle, approvemode = model.FormMode });
-            //    else
-            //    {
-            //        SetMustModel(model);
-            //        return View(model);
-            //    }
-            //}
-            //else
-            //{
-            //    return DealApprove(EntryRepository, model, approveReturn);
-            //}
-
-            if (Update(Repository, model, model.AssetsPurchaseId, approveReturn) == 1)
+            try
             {
-                if (model.FormMode == "approve" || model.FormMode == "reapply")
+                //if (model.FormMode != "approve")
+                //{
+                //    if (CheckModelIsValid(model))
+                //        Update(EntryRepository, model, model.FormMode, model.AssetsPurchaseId, model.ViewTitle);
+                //    if (model.FormMode == "reapply")
+                //        return RedirectToAction("List", "AssetsPurchase", new { Area = "AssetsBusiness", pageId = model.PageId, viewTitle = model.ViewTitle, approvemode = model.FormMode });
+                //    else
+                //    {
+                //        SetMustModel(model);
+                //        return View(model);
+                //    }
+                //}
+                //else
+                //{
+                //    return DealApprove(EntryRepository, model, approveReturn);
+                //}
+
+                if (Update(Repository, model, model.AssetsPurchaseId, approveReturn) == 1)
                 {
-                    if (model.IsDirectCall == "true")
+                    if (model.FormMode == "approve" || model.FormMode == "reapply")
                     {
-                        return RedirectToAction("ApproveSucessed", "Home", new { Area = "" });
+                        if (model.IsDirectCall == "true")
+                        {
+                            return RedirectToAction("ApproveSucessed", "Home", new { Area = "" });
+                        }
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle, listMode = model.FormMode });
                     }
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle, listMode = model.FormMode });
-                }
-                else if (model.FormMode == "new" || model.FormMode == "new2")
-                {
-                    EntryModel newModel = new EntryModel();
-                    SetParentEntryModel(model.PageId, "", model.FormMode, model.ViewTitle, newModel);
-                    SetThisEntryModel(newModel);
-                    return View(newModel);
+                    else if (model.FormMode == "new" || model.FormMode == "new2")
+                    {
+                        EntryModel newModel = new EntryModel();
+                        SetParentEntryModel(model.PageId, "", model.FormMode, model.ViewTitle, newModel);
+                        SetThisEntryModel(newModel);
+                        return View(newModel);
+                    }
+                    else
+                    {
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                    }
                 }
                 else
                 {
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                    if (model.FormMode == "approve")
+                    {
+                        Repository.SetModel(model.ApprovePkValue, model.FormMode, model);
+                        SetParentEntryModel(model.PageId, model.ApprovePkValue, model.FormMode, model.ViewTitle, model);
+                    }
+                    SetThisEntryModel(model);
+                    return View(model);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                if (model.FormMode == "approve")
-                {
-                    Repository.SetModel(model.ApprovePkValue, model.FormMode, model);
-                    SetParentEntryModel(model.PageId, model.ApprovePkValue, model.FormMode, model.ViewTitle, model);
-                }
-                SetThisEntryModel(model);
-                return View(model);
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsPurchaseController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
         }
 
         [HttpPost]
         public ActionResult GetAutoNo()
         {
-            string no = AutoNoGenerator.GetMaxNo("AssetsPurchase",true,6,"PUR");
-            return Content(no, "text/html");
+            try
+            {
+                string no = AutoNoGenerator.GetMaxNo("AssetsPurchase", true, 6, "PUR");
+                return Content(no, "text/html");
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsPurchaseController.GetAutoNo", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         private void SetThisEntryModel(EntryModel model)
@@ -129,29 +161,37 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
 
         public ActionResult Detail(string pageId, string detailMode, string purchaseObj)
         {
-            PurchaseModel model = new PurchaseModel();
-            model.PageId = pageId;
-            model.FormId = "DetailForm";
-            if (detailMode == "add")
+            try
             {
-                model.AssetsPurchaseDetailId = IdGenerator.GetMaxId("AssetsPurchaseDetail");
+                PurchaseModel model = new PurchaseModel();
+                model.PageId = pageId;
+                model.FormId = "DetailForm";
+                if (detailMode == "add")
+                {
+                    model.AssetsPurchaseDetailId = IdGenerator.GetMaxId("AssetsPurchaseDetail");
+                }
+                if (detailMode == "edit" && DataConvert.ToString(purchaseObj) != "")
+                {
+                    var obj = JsonHelper.Deserialize<AssetsPurchase>(purchaseObj);
+                    model.AssetsName = obj.assetsName;
+                    model.AssetsPurchaseDetailId = obj.assetsPurchaseDetailId;
+                    model.DepartmentId = obj.departmentId;
+                    model.StoreSiteId = obj.storeSiteId;
+                    model.UsePeople = obj.usePeople;
+                    model.Keeper = obj.keeper;
+                    model.AssetsValue = DataConvert.ToInt32(obj.assetsValue);
+                    model.Remark = obj.remark;
+                    model.SupplierName = obj.supplierName;
+                    model.PurchaseNum = obj.purchaseNum;
+                }
+                SetThisDetailModel(model);
+                return PartialView("PurchaseView", model);
             }
-            if (detailMode == "edit" && DataConvert.ToString(purchaseObj) != "")
+            catch (Exception ex)
             {
-                var obj = JsonHelper.Deserialize<AssetsPurchase>(purchaseObj);
-                model.AssetsName = obj.assetsName;
-                model.AssetsPurchaseDetailId = obj.assetsPurchaseDetailId;
-                model.DepartmentId = obj.departmentId;
-                model.StoreSiteId = obj.storeSiteId;
-                model.UsePeople = obj.usePeople;
-                model.Keeper = obj.keeper;
-                model.AssetsValue = DataConvert.ToInt32(obj.assetsValue);
-                model.Remark = obj.remark;
-                model.SupplierName = obj.supplierName;
-                model.PurchaseNum = obj.purchaseNum;
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsPurchaseController.Detail", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
-            SetThisDetailModel(model);
-            return PartialView("PurchaseView", model);
         }
 
         private void SetThisDetailModel(PurchaseModel model)
@@ -171,12 +211,21 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
         [HttpPost]
         public ActionResult HadApproved(string purchaseObj)
         {
-            var obj = JsonHelper.Deserialize<AssetsPurchase>(purchaseObj);
-            AssetsPurchaseRepository rep = new AssetsPurchaseRepository();
-            if( rep.HadApprove(obj.assetsPurchaseId))
-               return Content("true" ,"text/html");
-            else
-                return Content("false", "text/html");
+            try
+            {
+                var obj = JsonHelper.Deserialize<AssetsPurchase>(purchaseObj);
+                AssetsPurchaseRepository rep = new AssetsPurchaseRepository();
+                if (rep.HadApprove(obj.assetsPurchaseId))
+                    return Content("true", "text/html");
+                else
+                    return Content("false", "text/html");
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsPurchaseController.HadApproved", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
+
         }
     }
 }

@@ -25,14 +25,22 @@ namespace WebApp.Areas.BusinessCommon.Controllers
         [AppAuthorize]
         public ActionResult Entry(string pageId, string viewTitle)
         {
-            EntryModel model = new EntryModel();
-            model.PageId = pageId;
-            model.ViewTitle = viewTitle;
-            model.FormId = "EntryForm";
-            model.SaveUrl = Url.Action("Entry");
-            model.EntryGridLayout = EntryGridLayout();
-            model.CustomClick = false;
-            return View(model);
+            try
+            {
+                EntryModel model = new EntryModel();
+                model.PageId = pageId;
+                model.ViewTitle = viewTitle;
+                model.FormId = "EntryForm";
+                model.SaveUrl = Url.Action("Entry");
+                model.EntryGridLayout = EntryGridLayout();
+                model.CustomClick = false;
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "DataImportController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
 
         }
 
@@ -40,35 +48,43 @@ namespace WebApp.Areas.BusinessCommon.Controllers
         [HttpPost]
         public ActionResult Entry(EntryModel model)
         {
-            DataImportRepository rep = new DataImportRepository();
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            string path = Server.MapPath("~/Content/uploads/excel/");
-            string fileNames = Request.Form["listExcelFileString"].ToString();
-            DataUpdate dbUpdate = new DataUpdate();
             try
             {
-                dbUpdate.BeginTransaction();
-                rep.DbUpdate = dbUpdate;
-                rep.Import(path, fileNames, sysUser, model.ViewTitle);
-                dbUpdate.Commit();
-                model.HasError = "false";
+                DataImportRepository rep = new DataImportRepository();
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                string path = Server.MapPath("~/Content/uploads/excel/");
+                string fileNames = Request.Form["listExcelFileString"].ToString();
+                DataUpdate dbUpdate = new DataUpdate();
+                try
+                {
+                    dbUpdate.BeginTransaction();
+                    rep.DbUpdate = dbUpdate;
+                    rep.Import(path, fileNames, sysUser, model.ViewTitle);
+                    dbUpdate.Commit();
+                    model.HasError = "false";
+                }
+                catch (Exception ex)
+                {
+                    dbUpdate.Rollback();
+                    model.Message = ex.Message;
+                    model.HasError = "true";
+                    AppLog.WriteLog(sysUser.UserName, LogType.Error, "UpdateError", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                }
+                finally
+                {
+                    dbUpdate.Close();
+                }
+                model.EntryGridLayout = EntryGridLayout();
+                if (model.HasError == "false")
+                    return RedirectToAction("Entry", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                else
+                    return View(model);
             }
             catch (Exception ex)
             {
-                dbUpdate.Rollback();
-                model.Message = ex.Message;
-                model.HasError = "true";
-                AppLog.WriteLog(sysUser.UserName, LogType.Error, "UpdateError", ex.Message);
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "DataImportController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
-            finally
-            {
-                dbUpdate.Close();
-            }
-            model.EntryGridLayout = EntryGridLayout();
-            if (model.HasError == "false")
-                return RedirectToAction("Entry", new { pageId = model.PageId, viewTitle = model.ViewTitle });
-            else
-                return View(model);
 
         }
 
@@ -84,11 +100,18 @@ namespace WebApp.Areas.BusinessCommon.Controllers
         [HttpPost]
         public JsonResult EntryGridData()
         {
-       
-            var result = new JsonResult();
-            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
-            //result.Data = new { page = 1, total = rows.Length, rows = rows };
-            return result;
+            try
+            {
+                var result = new JsonResult();
+                result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+                //result.Data = new { page = 1, total = rows.Length, rows = rows };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "DataImportController.EntryGridData", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
         }
     }
 }

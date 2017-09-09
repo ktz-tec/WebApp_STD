@@ -17,7 +17,7 @@ namespace WebCommon.Common
 {
     public abstract class MasterController : BaseController
     {
-       
+
         private ILoadList ListRepository { get; set; }
 
         private IEntry EntryRepository { get; set; }
@@ -42,29 +42,37 @@ namespace WebCommon.Common
         [HttpPost]
         public JsonResult GridData(string filterString)
         {
-            ListCondition condition = new ListCondition();
-            condition.SortField = DataConvert.ToString(Request.Form["sidx"]);
-            condition.SortType = DataConvert.ToString(Request.Params["sord"]);
-            condition.PageIndex = DataConvert.ToInt32(Request.Params["page"]);
-            condition.PageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
-            condition.FilterString = filterString;
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            condition.SysUser = sysUser;
-            //if (Request.Form.AllKeys.Contains("isQuery") && DataConvert.ToString(Request.Form["isQuery"]) == "true")
-            //    condition.PageIndex = 1;
-            if (Request.Form.AllKeys.Contains("formVar"))
-                condition.ListModelString = DataConvert.ToString(Request.Form["formVar"]);
-            int cnt = ListRepository.GetGridDataCount(condition);
-            condition.TotalRowNum = cnt;
-            DataTable dt = ListRepository.GetGridDataTable(condition);
+            try
+            {
+                ListCondition condition = new ListCondition();
+                condition.SortField = DataConvert.ToString(Request.Form["sidx"]);
+                condition.SortType = DataConvert.ToString(Request.Params["sord"]);
+                condition.PageIndex = DataConvert.ToInt32(Request.Params["page"]);
+                condition.PageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
+                condition.FilterString = filterString;
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                condition.SysUser = sysUser;
+                //if (Request.Form.AllKeys.Contains("isQuery") && DataConvert.ToString(Request.Form["isQuery"]) == "true")
+                //    condition.PageIndex = 1;
+                if (Request.Form.AllKeys.Contains("formVar"))
+                    condition.ListModelString = DataConvert.ToString(Request.Form["formVar"]);
+                int cnt = ListRepository.GetGridDataCount(condition);
+                condition.TotalRowNum = cnt;
+                DataTable dt = ListRepository.GetGridDataTable(condition);
 
-            var rows = DataTable2Object.Data(dt, GridLayout().GridLayouts);
-            double aa = (double)cnt / condition.PageRowNum;
-            double pageCnt = Math.Ceiling(aa);
-            var result = new JsonResult();
-            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
-            result.Data = new { page = condition.PageIndex, records = cnt, total = pageCnt, rows = rows };
-            return result;
+                var rows = DataTable2Object.Data(dt, GridLayout().GridLayouts);
+                double aa = (double)cnt / condition.PageRowNum;
+                double pageCnt = Math.Ceiling(aa);
+                var result = new JsonResult();
+                result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+                result.Data = new { page = condition.PageIndex, records = cnt, total = pageCnt, rows = rows };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "GroupController.List", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult(); 
+            }
         }
 
         protected GridLayout GridLayout()
@@ -153,7 +161,7 @@ namespace WebCommon.Common
         protected virtual int Update(IEntry rep, EntryViewModel model, string pkValue)
         {
             UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            DataUpdate dbUpdate = new DataUpdate(); 
+            DataUpdate dbUpdate = new DataUpdate();
             try
             {
                 if (CheckModelIsValid(model))
@@ -208,23 +216,23 @@ namespace WebCommon.Common
                 List<DropListSource> filterDrop = new List<DropListSource>();
                 foreach (var obj in dropList)
                 {
-                  string pyf=  PinYin.GetFirstPinyin(DataConvert.ToString(obj.Text)).ToUpper();
-                  string[] pyfs = pyf.Split(',');
-                  foreach (string py in pyfs)
-                  {
-                      if (py.StartsWith(pySearch.ToUpper()) && !filterDrop.Contains(obj))
-                      {
-                          filterDrop.Add(obj);
-                      }
-                  }
-                 
+                    string pyf = PinYin.GetFirstPinyin(DataConvert.ToString(obj.Text)).ToUpper();
+                    string[] pyfs = pyf.Split(',');
+                    foreach (string py in pyfs)
+                    {
+                        if (py.StartsWith(pySearch.ToUpper()) && !filterDrop.Contains(obj))
+                        {
+                            filterDrop.Add(obj);
+                        }
+                    }
+
                 }
                 return DropListJson(filterDrop);
             }
             return DropListJson(dropList);
         }
 
-     
+
 
         public ActionResult AddFavorit(string tableName, string pkValue)
         {

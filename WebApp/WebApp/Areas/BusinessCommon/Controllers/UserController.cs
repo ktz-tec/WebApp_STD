@@ -37,56 +37,80 @@ namespace WebApp.Areas.BusinessCommon.Controllers
         [AppAuthorize]
         public ActionResult List(string pageId, string viewTitle)
         {
-            ListModel model = new ListModel();
-            SetParentListModel(pageId, viewTitle,  model);
-            model.GridPkField = "userId";
-            model.GridHeight = 345;
-            model.DepartmentUrl = Url.Action("DropList", "Department", new { Area = "BusinessCommon", currentId = model.DepartmentId });
-            model.DepartmentDialogUrl = Url.Action("Select", "Department", new { Area = "BusinessCommon" });
-            model.DepartmentAddFavoritUrl = Url.Action("AddFavorit", "Department", new { Area = "BusinessCommon", tableName = "AppDepartment" });
-            model.DepartmentReplaceFavoritUrl = Url.Action("ReplaceFavorit", "Department", new { Area = "BusinessCommon", tableName = "AppDepartment" });
-            return View(model);
+            try
+            {
+                ListModel model = new ListModel();
+                SetParentListModel(pageId, viewTitle, model);
+                model.GridPkField = "userId";
+                model.GridHeight = 345;
+                model.DepartmentUrl = Url.Action("DropList", "Department", new { Area = "BusinessCommon", currentId = model.DepartmentId });
+                model.DepartmentDialogUrl = Url.Action("Select", "Department", new { Area = "BusinessCommon" });
+                model.DepartmentAddFavoritUrl = Url.Action("AddFavorit", "Department", new { Area = "BusinessCommon", tableName = "AppDepartment" });
+                model.DepartmentReplaceFavoritUrl = Url.Action("ReplaceFavorit", "Department", new { Area = "BusinessCommon", tableName = "AppDepartment" });
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "UserController.List", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [AppAuthorize]
         public ActionResult Entry(string pageId, string primaryKey, string formMode, string viewTitle)
         {
-            ClearClientPageCache(Response);
-            EntryModel model = new EntryModel();
-            Repository.SetModel(primaryKey, formMode, model);
-            SetParentEntryModel(pageId, formMode, viewTitle, model);
-            SetThisEntryModel(model);
-            return View(model);
+            try
+            {
+                ClearClientPageCache(Response);
+                EntryModel model = new EntryModel();
+                Repository.SetModel(primaryKey, formMode, model);
+                SetParentEntryModel(pageId, formMode, viewTitle, model);
+                SetThisEntryModel(model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "UserController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [AppAuthorize]
         [HttpPost]
         public ActionResult Entry(EntryModel model)
         {
-            ClearClientPageCache(Response);
-            //if (model.IsFixed == "Y")
-            //{
-            //    ModelState.AddModelError("UserNo", AppMember.AppText["IsFixed"]);
-            //    return View(model);
-            //}
-            if (AppMember.UsePeopleControlLevel == UsePeopleControlLevel.Low)
+            try
             {
-                model.IsSysUser = true;
-            }
-            if (Update(Repository, model, model.UserId) == 1)
-            {
-                if (model.FormMode == "new")
+                ClearClientPageCache(Response);
+                //if (model.IsFixed == "Y")
+                //{
+                //    ModelState.AddModelError("UserNo", AppMember.AppText["IsFixed"]);
+                //    return View(model);
+                //}
+                if (AppMember.UsePeopleControlLevel == UsePeopleControlLevel.Low)
+                {
+                    model.IsSysUser = true;
+                }
+                if (Update(Repository, model, model.UserId) == 1)
+                {
+                    if (model.FormMode == "new")
+                    {
+                        SetThisEntryModel(model);
+                        return View(model);
+                    }
+                    else
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                }
+                else
                 {
                     SetThisEntryModel(model);
                     return View(model);
                 }
-                else
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
             }
-            else
+            catch (Exception ex)
             {
-                SetThisEntryModel(model);
-                return View(model);
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "UserController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
         }
 

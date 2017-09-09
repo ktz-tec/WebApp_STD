@@ -36,59 +36,99 @@ namespace WebApp.Areas.BusinessCommon.Controllers
         [AppAuthorize]
         public ActionResult List(string pageId, string viewTitle)
         {
-            ListModel model = new ListModel();
-            SetParentListModel(pageId, viewTitle, model);
-            model.GridPkField = "departmentId";
-            return View(model);
+            try
+            {
+                ListModel model = new ListModel();
+                SetParentListModel(pageId, viewTitle, model);
+                model.GridPkField = "departmentId";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "CompanyController.List", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
 
         [AppAuthorize]
         public ActionResult Entry(string pageId, string primaryKey, string formMode, string viewTitle)
         {
-            ClearClientPageCache(Response);
-            EntryModel model = new EntryModel();
-            Repository.SetModel(primaryKey, formMode, model);
-            SetParentEntryModel(pageId, formMode, viewTitle, model);
-            return View(model);
+            try
+            {
+                ClearClientPageCache(Response);
+                EntryModel model = new EntryModel();
+                Repository.SetModel(primaryKey, formMode, model);
+                SetParentEntryModel(pageId, formMode, viewTitle, model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "CompanyController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [AppAuthorize]
         [HttpPost]
         public ActionResult Entry(EntryModel model)
         {
-            if (Update(Repository, model, model.DepartmentId) == 1)
+            try
             {
-                if (model.FormMode == "new")
+                if (Update(Repository, model, model.DepartmentId) == 1)
+                {
+                    if (model.FormMode == "new")
+                    {
+                        return View(model);
+                    }
+                    else
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                }
+                else
                 {
                     return View(model);
                 }
-                else
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
             }
-            else
+            catch (Exception ex)
             {
-                return View(model);
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "CompanyController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
         }
 
  
         public override JsonResult DropList(string currentId,string pySearch)
         {
-            ClearClientPageCache(Response);
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            CompanyRepository rep = new CompanyRepository();
-            DataTable source = rep.GetDropListSource(sysUser);
-            List<DropListSource> dropList = rep.DropList(source, "");
-            return DropListJson(dropList);
+            try
+            {
+                ClearClientPageCache(Response);
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                CompanyRepository rep = new CompanyRepository();
+                DataTable source = rep.GetDropListSource(sysUser);
+                List<DropListSource> dropList = rep.DropList(source, "");
+                return DropListJson(dropList);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "CompanyController.DropList", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
         }
 
         public JsonResult AllDropList()
         {
-            DepartmentRepository rep = new DepartmentRepository();
-            DataTable source = rep.GetDropListSource();
-            List<DropListSource> dropList = rep.DropList(source, "");
-            return DropListJson(dropList);
+            try
+            {
+                DepartmentRepository rep = new DepartmentRepository();
+                DataTable source = rep.GetDropListSource();
+                List<DropListSource> dropList = rep.DropList(source, "");
+                return DropListJson(dropList);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "CompanyController.AllDropList", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
         }
 
     }

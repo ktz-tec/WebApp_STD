@@ -35,46 +35,70 @@ namespace WebApp.Areas.BasicData.Controllers
         [AppAuthorize]
         public ActionResult List(string pageId, string viewTitle )
         {
-            ListModel model = new ListModel();
-            SetParentListModel(pageId, viewTitle,  model);
-            model.GridPkField = "purchaseTypeId";
-            return View(model);
+            try
+            {
+                ListModel model = new ListModel();
+                SetParentListModel(pageId, viewTitle, model);
+                model.GridPkField = "purchaseTypeId";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "PurchaseTypeController.List", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
        [AppAuthorize]
         public ActionResult Entry(string pageId, string primaryKey, string formMode, string viewTitle)
         {
-            ClearClientPageCache(Response);
-            EntryModel model = new EntryModel();
-            Repository.SetModel(primaryKey, formMode, model);
-            SetParentEntryModel(pageId, formMode, viewTitle, model);
-            return View(model);
+            try
+            {
+                ClearClientPageCache(Response);
+                EntryModel model = new EntryModel();
+                Repository.SetModel(primaryKey, formMode, model);
+                SetParentEntryModel(pageId, formMode, viewTitle, model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "PurchaseTypeController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [AppAuthorize]
         [HttpPost]
         public ActionResult Entry(EntryModel model)
         {
-            //if (CheckModelIsValid(model))
-            //{
-            //    Update(EntryRepository, model, model.FormMode, model.PurchaseTypeId, model.ViewTitle);
-               
-            //}
-            //return View(model);
-            if (model.IsFixed == "Y")
+            try
             {
-                ModelState.AddModelError("PurchaseTypeNo", AppMember.AppText["IsFixed"]);
-                return View(model);
-            }
-            if (Update(Repository, model, model.PurchaseTypeId) == 1)
-            {
-                if (model.FormMode == "new")
+                //if (CheckModelIsValid(model))
+                //{
+                //    Update(EntryRepository, model, model.FormMode, model.PurchaseTypeId, model.ViewTitle);
+
+                //}
+                //return View(model);
+                if (model.IsFixed == "Y")
+                {
+                    ModelState.AddModelError("PurchaseTypeNo", AppMember.AppText["IsFixed"]);
                     return View(model);
+                }
+                if (Update(Repository, model, model.PurchaseTypeId) == 1)
+                {
+                    if (model.FormMode == "new")
+                        return View(model);
+                    else
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                }
                 else
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                    return View(model);
             }
-            else
-                return View(model);
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "PurchaseTypeController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
 

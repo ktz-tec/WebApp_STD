@@ -41,104 +41,144 @@ namespace WebApp.Areas.BasicData.Controllers
         [AppAuthorize]
         public ActionResult List(string pageId, string viewTitle)
         {
-            ListModel model = new ListModel();
-            SetParentListModel(pageId, viewTitle, model);
-            model.GridPkField = "assetsClassId";
-            return View(model);
+            try
+            {
+                ListModel model = new ListModel();
+                SetParentListModel(pageId, viewTitle, model);
+                model.GridPkField = "assetsClassId";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsClassController.List", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [AppAuthorize]
         public ActionResult Entry(string pageId, string primaryKey, string formMode, string viewTitle)
         {
-            ClearClientPageCache(Response);
-            EntryModel model = new EntryModel();
-            Repository.SetModel(primaryKey, formMode, model);
-            SetParentEntryModel(pageId, formMode, viewTitle, model);
-            SetThisEntryModel(model);
-            return View(model);
+            try
+            {
+                ClearClientPageCache(Response);
+                EntryModel model = new EntryModel();
+                Repository.SetModel(primaryKey, formMode, model);
+                SetParentEntryModel(pageId, formMode, viewTitle, model);
+                SetThisEntryModel(model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsClassController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [AppAuthorize]
         [HttpPost]
         public ActionResult Entry(EntryModel model)
         {
-            //if (CheckModelIsValid(model))
-            //{
-            //    Update(EntryRepository, model, model.FormMode, model.AssetsClassId, model.ViewTitle);
-            //}
-            //SetThisEntryModel(model);
-            //return View(model);
-            if (Update(Repository, model, model.AssetsClassId) == 1)
+            try
             {
-                if (model.FormMode == "new")
+                //if (CheckModelIsValid(model))
+                //{
+                //    Update(EntryRepository, model, model.FormMode, model.AssetsClassId, model.ViewTitle);
+                //}
+                //SetThisEntryModel(model);
+                //return View(model);
+                if (Update(Repository, model, model.AssetsClassId) == 1)
+                {
+                    if (model.FormMode == "new")
+                    {
+                        SetThisEntryModel(model);
+                        return View(model);
+                    }
+                    else
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                }
+                else
                 {
                     SetThisEntryModel(model);
                     return View(model);
                 }
-                else
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
             }
-            else
+            catch (Exception ex)
             {
-                SetThisEntryModel(model);
-                return View(model);
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsClassController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
         }
 
         public ActionResult Select(string pageId, string showCheckbox, string selectIds)
         {
-            TreeSelectModel model = new TreeSelectModel();
-            model.PageId = pageId;
-            model.TreeId = TreeId.AssetsClassTreeId;
-            DataTable list = new DataTable();
-            if (HttpContext.Cache["AssetsClassTree"] == null)
+            try
             {
-                AssetsClassRepository crep = new AssetsClassRepository();
-                list = crep.GetAssetsClassTree();
-                HttpContext.Cache.Add("AssetsClassTree", list, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero, CacheItemPriority.High, null);
+                TreeSelectModel model = new TreeSelectModel();
+                model.PageId = pageId;
+                model.TreeId = TreeId.AssetsClassTreeId;
+                DataTable list = new DataTable();
+                if (HttpContext.Cache["AssetsClassTree"] == null)
+                {
+                    AssetsClassRepository crep = new AssetsClassRepository();
+                    list = crep.GetAssetsClassTree();
+                    HttpContext.Cache.Add("AssetsClassTree", list, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero, CacheItemPriority.High, null);
+                }
+                else
+                {
+                    list = (DataTable)HttpContext.Cache["AssetsClassTree"];
+                }
+                model.DataTree = list;
+                if (showCheckbox == "true")
+                    model.ShowCheckBox = true;
+                model.SelectId = selectIds;
+                model.SearchUrl = Url.Action("SearchTree", "AssetsClass", new { Area = "BasicData" });
+                return PartialView("TreeSelect", model);
             }
-            else
+            catch (Exception ex)
             {
-                list = (DataTable)HttpContext.Cache["AssetsClassTree"];
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsClassController.Select", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
-            model.DataTree = list;
-            if (showCheckbox == "true")
-                model.ShowCheckBox = true;
-            model.SelectId = selectIds;
-            model.SearchUrl = Url.Action("SearchTree", "AssetsClass", new { Area = "BasicData" });
-            return PartialView("TreeSelect", model);
         }
 
         [HttpPost]
         public ActionResult SearchTree(string pageId, string pySearch)
         {
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            AssetsClassRepository urep = new AssetsClassRepository();
-            DataTable list = new DataTable();
-            if (HttpContext.Cache["AssetsClassTree"] == null)
+            try
             {
-                list = urep.GetAssetsClassTree();
-                //DataColumn col = new DataColumn("PY");
-                //list.Columns.Add(col);
-                //foreach (DataRow dr in list.Rows)
-                //{
-                //    dr["PY"] = PinYin.GetFirstPinyin(DataConvert.ToString(dr["assetsClassName"]));
-                //}
-                HttpContext.Cache.Add("AssetsClassTree", list, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero, CacheItemPriority.High, null);
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                AssetsClassRepository urep = new AssetsClassRepository();
+                DataTable list = new DataTable();
+                if (HttpContext.Cache["AssetsClassTree"] == null)
+                {
+                    list = urep.GetAssetsClassTree();
+                    //DataColumn col = new DataColumn("PY");
+                    //list.Columns.Add(col);
+                    //foreach (DataRow dr in list.Rows)
+                    //{
+                    //    dr["PY"] = PinYin.GetFirstPinyin(DataConvert.ToString(dr["assetsClassName"]));
+                    //}
+                    HttpContext.Cache.Add("AssetsClassTree", list, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero, CacheItemPriority.High, null);
+                }
+                else
+                {
+                    list = (DataTable)HttpContext.Cache["AssetsClassTree"];
+                }
+                var dtResult = TreeBusiness.GetSearchDataTable(pySearch, list);
+                if (dtResult.Rows.Count > 0)
+                {
+                    string treeString = AppTreeView.TreeViewString(pageId, TreeId.AssetsClassTreeId, dtResult, "", false);
+                    return Content(treeString, "text/html");
+                }
+                else
+                {
+                    return Content("0", "text/html");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                list = (DataTable)HttpContext.Cache["AssetsClassTree"];
-            }
-            var dtResult = TreeBusiness.GetSearchDataTable(pySearch, list);
-            if (dtResult.Rows.Count > 0)
-            {
-                string treeString = AppTreeView.TreeViewString(pageId, TreeId.AssetsClassTreeId, dtResult, "", false);
-                return Content(treeString, "text/html");
-            }
-            else
-            {
-                return Content("0", "text/html");
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsClassController.SearchTree", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
         }
        
@@ -153,28 +193,46 @@ namespace WebApp.Areas.BasicData.Controllers
 
         public JsonResult GetDefaultByAssetsClass(string assetsClassId)
         {
-            ClearClientPageCache(Response);
-            DataRow dr = Repository.GetModel(assetsClassId);
-            string assetsClassNo = DataConvert.ToString(dr["assetsClassNo"]);
-            AssetsRepository arep = new AssetsRepository();
-            var selectList = new { remainRate = DataConvert.ToDouble(dr["RemainRate"]),
-                                   durableYears = DataConvert.ToInt32(dr["durableYears"]),
-                                   unitId = DataConvert.ToString(dr["unitId"]),
-                                   depreciationType = DataConvert.ToString(dr["depreciationType"]),
-                                   assetsBarcode = arep.GetAssetsBarcode(assetsClassNo)
-            };
-            return Json(selectList, JsonRequestBehavior.AllowGet);
+            try
+            {
+                ClearClientPageCache(Response);
+                DataRow dr = Repository.GetModel(assetsClassId);
+                string assetsClassNo = DataConvert.ToString(dr["assetsClassNo"]);
+                AssetsRepository arep = new AssetsRepository();
+                var selectList = new
+                {
+                    remainRate = DataConvert.ToDouble(dr["RemainRate"]),
+                    durableYears = DataConvert.ToInt32(dr["durableYears"]),
+                    unitId = DataConvert.ToString(dr["unitId"]),
+                    depreciationType = DataConvert.ToString(dr["depreciationType"]),
+                    assetsBarcode = arep.GetAssetsBarcode(assetsClassNo)
+                };
+                return Json(selectList, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsClassController.GetDefaultByAssetsClass", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
         }
 
 
         public override JsonResult DropList(string currentId, string pySearch)
         {
-            ClearClientPageCache(Response);
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            AssetsClassRepository rep = new AssetsClassRepository();
-            DataTable source = rep.GetDropListSource(sysUser.UserId, currentId);
-            List<DropListSource> dropList = rep.DropList(source, "");
-            return DropListJson(dropList);
+            try
+            {
+                ClearClientPageCache(Response);
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                AssetsClassRepository rep = new AssetsClassRepository();
+                DataTable source = rep.GetDropListSource(sysUser.UserId, currentId);
+                List<DropListSource> dropList = rep.DropList(source, "");
+                return DropListJson(dropList);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsClassController.DropList", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
         }
 
     }

@@ -37,142 +37,206 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
         //[AppAuthorize]
         public ActionResult List(string pageId, string viewTitle, string listMode)
         {
-            ListModel model = new ListModel();
-            SetParentListModel(pageId, viewTitle, listMode, "AssetsCheck", model);
-            model.GridPkField = "assetsCheckId";
-            return View(model);
+            try
+            {
+                ListModel model = new ListModel();
+                SetParentListModel(pageId, viewTitle, listMode, "AssetsCheck", model);
+                model.GridPkField = "assetsCheckId";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsCheckController.List", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [HttpPost]
         public override JsonResult EntryGridData(string formVar, string formMode, string primaryKey)
         {
-            int pageIndex = DataConvert.ToInt32(Request.Params["page"]);
-            int pageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
+            try
+            {
+                int pageIndex = DataConvert.ToInt32(Request.Params["page"]);
+                int pageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
 
-            Dictionary<string, object> paras = new Dictionary<string, object>();
-            int cnt = Repository.GetEntryGridCount(paras, formMode, primaryKey, formVar);
-            double aa = (double)cnt / pageRowNum;
-            double pageCnt = Math.Ceiling(aa);
+                Dictionary<string, object> paras = new Dictionary<string, object>();
+                int cnt = Repository.GetEntryGridCount(paras, formMode, primaryKey, formVar);
+                double aa = (double)cnt / pageRowNum;
+                double pageCnt = Math.Ceiling(aa);
 
 
-            paras.Add("pageIndex", pageIndex);
-            paras.Add("pageRowNum", pageRowNum);
+                paras.Add("pageIndex", pageIndex);
+                paras.Add("pageRowNum", pageRowNum);
 
-            DataTable dt = Repository.GetEntryGridDataTable(paras, formMode, primaryKey, formVar);
-            var rows = DataTable2Object.Data(dt, EntryGridLayout(formMode).GridLayouts);
-            var result = new JsonResult();
-            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
-            result.Data = new { page = pageIndex, records = cnt, total = pageCnt, rows = rows };
-            return result;
+                DataTable dt = Repository.GetEntryGridDataTable(paras, formMode, primaryKey, formVar);
+                var rows = DataTable2Object.Data(dt, EntryGridLayout(formMode).GridLayouts);
+                var result = new JsonResult();
+                result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+                result.Data = new { page = pageIndex, records = cnt, total = pageCnt, rows = rows };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsCheckController.AllDropList", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
         }
 
         //[AppAuthorize]
         public ActionResult Entry(string pageId, string primaryKey, string formMode, string viewTitle)
         {
-            ClearClientPageCache(Response);
-            EntryModel model = new EntryModel();
-            Repository.SetModel(primaryKey, formMode, model);
-            SetParentEntryModel(pageId, primaryKey, formMode, viewTitle, model);
-            SetThisEntryModel(model);
-            return View(model);
+            try
+            {
+                ClearClientPageCache(Response);
+                EntryModel model = new EntryModel();
+                Repository.SetModel(primaryKey, formMode, model);
+                SetParentEntryModel(pageId, primaryKey, formMode, viewTitle, model);
+                SetThisEntryModel(model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsCheckController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         //[AppAuthorize]
         [HttpPost]
         public ActionResult Entry(EntryModel model, string approveReturn)
         {
-            //if (model.FormMode != "approve")
-            //{
-            //    if (CheckModelIsValid(model))
-            //    {
-            //        Update(EntryRepository, model, model.FormMode, model.AssetsCheckId, model.ViewTitle);
-            //        SetMustModel(model);
-            //    }
-            //    if (model.FormMode == "reapply")
-            //        return RedirectToAction("List", "AssetsCheck", new { Area = "AssetsBusiness", pageId = model.PageId, viewTitle = model.ViewTitle, approvemode = model.FormMode });
-            //    else
-            //        return View(model);
-            //}
-            //else
-            //{
-            //    return DealApprove(EntryRepository, model, approveReturn);
-            //}
-            if (Update(Repository, model, model.AssetsCheckId, approveReturn) == 1)
+            try
             {
-                if (model.FormMode == "approve" || model.FormMode == "reapply")
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle, listMode = model.FormMode });
-                if (model.FormMode == "delete")
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle, listMode = "actual" });
-                else if (model.FormMode == "new" || model.FormMode == "new2")
+                //if (model.FormMode != "approve")
+                //{
+                //    if (CheckModelIsValid(model))
+                //    {
+                //        Update(EntryRepository, model, model.FormMode, model.AssetsCheckId, model.ViewTitle);
+                //        SetMustModel(model);
+                //    }
+                //    if (model.FormMode == "reapply")
+                //        return RedirectToAction("List", "AssetsCheck", new { Area = "AssetsBusiness", pageId = model.PageId, viewTitle = model.ViewTitle, approvemode = model.FormMode });
+                //    else
+                //        return View(model);
+                //}
+                //else
+                //{
+                //    return DealApprove(EntryRepository, model, approveReturn);
+                //}
+                if (Update(Repository, model, model.AssetsCheckId, approveReturn) == 1)
                 {
-                    EntryModel newModel = new EntryModel();
-                    SetParentEntryModel(model.PageId, "", model.FormMode, model.ViewTitle, newModel);
-                    SetThisEntryModel(newModel);
-                    return View(newModel);
+                    if (model.FormMode == "approve" || model.FormMode == "reapply")
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle, listMode = model.FormMode });
+                    if (model.FormMode == "delete")
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle, listMode = "actual" });
+                    else if (model.FormMode == "new" || model.FormMode == "new2")
+                    {
+                        EntryModel newModel = new EntryModel();
+                        SetParentEntryModel(model.PageId, "", model.FormMode, model.ViewTitle, newModel);
+                        SetThisEntryModel(newModel);
+                        return View(newModel);
+                    }
+                    else
+                    {
+                        if (model.FormMode == "actual")
+                            return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle, listMode = model.FormMode });
+                        else
+                            return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                    }
                 }
                 else
                 {
-                    if (model.FormMode == "actual")
-                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle, listMode = model.FormMode });
-                    else
-                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                    if (model.FormMode == "approve")
+                    {
+                        Repository.SetModel(model.ApprovePkValue, model.FormMode, model);
+                        SetParentEntryModel(model.PageId, model.ApprovePkValue, model.FormMode, model.ViewTitle, model);
+                    }
+                    SetThisEntryModel(model);
+                    return View(model);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                if (model.FormMode == "approve")
-                {
-                    Repository.SetModel(model.ApprovePkValue, model.FormMode, model);
-                    SetParentEntryModel(model.PageId, model.ApprovePkValue, model.FormMode, model.ViewTitle, model);
-                }
-                SetThisEntryModel(model);
-                return View(model);
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsCheckController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
         }
 
 
         public ActionResult UpLoad(string pageId, string viewTitle)
         {
-            EntryModel model = new EntryModel();
-            model.PageId = pageId;
-            model.ViewTitle = viewTitle;
-            model.FormId = "EntryForm";
-            model.ReturnUrl = Url.Action("List", new { listMode = "actual" });
-            model.SaveUrl = Url.Action("UpLoad");
-            model.FormMode = "upload";
-            return View(model);
+            try
+            {
+                EntryModel model = new EntryModel();
+                model.PageId = pageId;
+                model.ViewTitle = viewTitle;
+                model.FormId = "EntryForm";
+                model.ReturnUrl = Url.Action("List", new { listMode = "actual" });
+                model.SaveUrl = Url.Action("UpLoad");
+                model.FormMode = "upload";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsCheckController.UpLoad get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [HttpPost]
         public ActionResult UpLoad(EntryModel model)
         {
-            PDACheck pdachk = new PDACheck();
             try
             {
-                pdachk.UpLoad(model.UpLoadFileName);
-                model.HasError = "false";
+                PDACheck pdachk = new PDACheck();
+                try
+                {
+                    pdachk.UpLoad(model.UpLoadFileName);
+                    model.HasError = "false";
+                }
+                catch (Exception ex)
+                {
+                    model.HasError = "true";
+                    model.Message = ex.Message;
+                }
+                return View(model);
             }
             catch (Exception ex)
             {
-                model.HasError = "true";
-                model.Message = ex.Message;
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsCheckController.UpLoad post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
-            return View(model);
         }
 
         public ActionResult DownLoad(string pageId, string primaryKey)
         {
-            PDACheck pdachk = new PDACheck();
-            pdachk.DownLoad(primaryKey);
-            string fileName = Server.MapPath("~/Content/uploads/sqlite/" + "PDA.db");
-            return File(fileName, "text/plain", "PDA.db");
+            try
+            {
+                PDACheck pdachk = new PDACheck();
+                pdachk.DownLoad(primaryKey);
+                string fileName = Server.MapPath("~/Content/uploads/sqlite/" + "PDA.db");
+                return File(fileName, "text/plain", "PDA.db");
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsCheckController.DownLoad", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [HttpPost]
         public ActionResult GetAutoNo()
         {
-            string no = AutoNoGenerator.GetMaxNo("AssetsCheck");
-            return Content(no, "text/html");
+            try
+            {
+                string no = AutoNoGenerator.GetMaxNo("AssetsCheck");
+                return Content(no, "text/html");
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsCheckController.GetAutoNo", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         private void SetThisEntryModel(EntryModel model)
@@ -200,20 +264,28 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
 
         public ActionResult SqliteUpload()
         {
-            HttpPostedFileBase file = Request.Files["Filedata"];
-            string folderpath = RouteData.Values["id"].ToString();
-            string path = Server.MapPath("~/Content/uploads/" + folderpath + "/");
-            if (file != null)
+            try
             {
-                if (!Directory.Exists(path))
+                HttpPostedFileBase file = Request.Files["Filedata"];
+                string folderpath = RouteData.Values["id"].ToString();
+                string path = Server.MapPath("~/Content/uploads/" + folderpath + "/");
+                if (file != null)
                 {
-                    Directory.CreateDirectory(path);
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    file.SaveAs(path + file.FileName);
+                    return Content(file.FileName, "text/html");
                 }
-                file.SaveAs(path + file.FileName);
-                return Content(file.FileName, "text/html");
+                else
+                    return Content("0", "text/html");
             }
-            else
-                return Content("0", "text/html");
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsCheckController.SqliteUpload", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
     }

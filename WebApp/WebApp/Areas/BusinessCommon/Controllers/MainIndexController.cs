@@ -24,14 +24,22 @@ namespace WebApp.Areas.BusinessCommon.Controllers
 
         public ActionResult Entry(string pageId, string viewTitle)
         {
-            EntryModel model = new EntryModel();
-            model.PageId = pageId;
-            model.ViewTitle = viewTitle;
-            model.FormId = "EntryForm";
-            model.CssMergeUrl = Url.Action("MergeCss", "Tools", new { Area = "BusinessCommon" });
-            model.EntryGridId = "EntryGrid";
-            model.EntryGridLayout = EntryGridLayout();
-            return View(model);
+            try
+            {
+                EntryModel model = new EntryModel();
+                model.PageId = pageId;
+                model.ViewTitle = viewTitle;
+                model.FormId = "EntryForm";
+                model.CssMergeUrl = Url.Action("MergeCss", "Tools", new { Area = "BusinessCommon" });
+                model.EntryGridId = "EntryGrid";
+                model.EntryGridLayout = EntryGridLayout();
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "MainIndexController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
 
         }
 
@@ -54,8 +62,17 @@ namespace WebApp.Areas.BusinessCommon.Controllers
 
         public ActionResult DownloadPrintTools(string pageId, string primaryKey)
         {
-            string fileName = Server.MapPath("~/Content/uploads/sqlite/" + "PrintKit.zip");
-            return File(fileName, "text/plain", "PrintKit.zip");
+            try
+            {
+                string fileName = Server.MapPath("~/Content/uploads/sqlite/" + "PrintKit.zip");
+                return File(fileName, "text/plain", "PrintKit.zip");
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "MainIndexController.DownloadPrintTools", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
+
         }
 
 
@@ -71,17 +88,25 @@ namespace WebApp.Areas.BusinessCommon.Controllers
         [HttpPost]
         public JsonResult EntryGridData()
         {
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            Dictionary<string, object> paras = new Dictionary<string, object>();
-            if (!paras.ContainsKey("approver"))
-                paras.Add("approver", sysUser.UserId);
-            MainIndexRepository mainRep = new MainIndexRepository();
-            DataTable dt = mainRep.GetEntryGridDataTable(paras);
-            var rows = DataTable2Object.Data(dt, EntryGridLayout().GridLayouts);
-            var result = new JsonResult();
-            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
-            result.Data = new { page = 1, total = rows.Length, rows = rows };
-            return result;
+            try
+            {
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                Dictionary<string, object> paras = new Dictionary<string, object>();
+                if (!paras.ContainsKey("approver"))
+                    paras.Add("approver", sysUser.UserId);
+                MainIndexRepository mainRep = new MainIndexRepository();
+                DataTable dt = mainRep.GetEntryGridDataTable(paras);
+                var rows = DataTable2Object.Data(dt, EntryGridLayout().GridLayouts);
+                var result = new JsonResult();
+                result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+                result.Data = new { page = 1, total = rows.Length, rows = rows };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "MainIndexController.EntryGridData", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
         }
 
 

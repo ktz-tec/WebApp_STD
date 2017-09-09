@@ -36,17 +36,25 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
         [HttpPost]
         public JsonResult EntryGridData(string formVar, string formMode, string primaryKey)
         {
-            int pageIndex = DataConvert.ToInt32(Request.Params["page"]);
-            int pageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
-            Dictionary<string, object> paras = SetParas(formVar);
-            int cnt= Repository.GetGridCount(paras, formMode);
-            double aa = (double)cnt / pageRowNum;
-            double pageCnt = Math.Ceiling(aa);
-            var rows = DataTable2Object.Data(EntryGridDataTable(formVar, formMode, primaryKey), EntryGridLayout().GridLayouts);
-            var result = new JsonResult();
-            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
-            result.Data = new { page = pageIndex, records = cnt, total = pageCnt, rows = rows };
-            return result;
+            try
+            {
+                int pageIndex = DataConvert.ToInt32(Request.Params["page"]);
+                int pageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
+                Dictionary<string, object> paras = SetParas(formVar);
+                int cnt = Repository.GetGridCount(paras, formMode);
+                double aa = (double)cnt / pageRowNum;
+                double pageCnt = Math.Ceiling(aa);
+                var rows = DataTable2Object.Data(EntryGridDataTable(formVar, formMode, primaryKey), EntryGridLayout().GridLayouts);
+                var result = new JsonResult();
+                result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+                result.Data = new { page = pageIndex, records = cnt, total = pageCnt, rows = rows };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsDepreciationController.EntryGridData", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
         }
 
         protected DataTable EntryGridDataTable(string formVar, string formMode, string primaryKey)
@@ -68,20 +76,28 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
         [AppAuthorize]
         public ActionResult Entry(string pageId, string primaryKey, string formMode, string viewTitle)
         {
-            ClearClientPageCache(Response);
-            EntryModel model = new EntryModel();
-            SetParentEntryModel(pageId, formMode, viewTitle, model);
-            model.EntryGridLayout = EntryGridLayout();
-            model.EntryGridId = "EntryGrid";
-            model.DepartmentUrl = Url.Action("DropList", "Department", new { Area = "BusinessCommon", filterExpression = "departmentId=" + DFT.SQ + model.DepartmentId + DFT.SQ });
-            model.DepartmentDialogUrl = Url.Action("Select", "Department", new { Area = "BusinessCommon" });
-            DataRow dr = Repository.GetModel();
-            if (dr != null)
+            try
             {
-                model.FiscalYearId = DataConvert.ToString(dr["fiscalYearIdNext"]);
-                model.FiscalPeriodId = DataConvert.ToString(dr["fiscalPeriodIdNext"]);
+                ClearClientPageCache(Response);
+                EntryModel model = new EntryModel();
+                SetParentEntryModel(pageId, formMode, viewTitle, model);
+                model.EntryGridLayout = EntryGridLayout();
+                model.EntryGridId = "EntryGrid";
+                model.DepartmentUrl = Url.Action("DropList", "Department", new { Area = "BusinessCommon", filterExpression = "departmentId=" + DFT.SQ + model.DepartmentId + DFT.SQ });
+                model.DepartmentDialogUrl = Url.Action("Select", "Department", new { Area = "BusinessCommon" });
+                DataRow dr = Repository.GetModel();
+                if (dr != null)
+                {
+                    model.FiscalYearId = DataConvert.ToString(dr["fiscalYearIdNext"]);
+                    model.FiscalPeriodId = DataConvert.ToString(dr["fiscalPeriodIdNext"]);
+                }
+                return View(model);
             }
-            return View(model);
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsDepreciationController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         protected Dictionary<string, object> SetParas(string formVar)
@@ -100,34 +116,50 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
         [HttpPost]
         public ActionResult Entry(EntryModel model)
         {
-            if (CheckModelIsValid(model))
+            try
             {
-                //string gridHidStr = model.EntryGridId + model.PageId + AppMember.HideString;
-                //Dictionary<string, object> objs = new Dictionary<string, object>();
-                //objs.Add("fiscalYearId", model.FiscalYearId);
-                //objs.Add("fiscalPeriodId", model.FiscalPeriodId);
-                //objs.Add("gridData", Request.Form[gridHidStr]);
-               
-                Update(Repository, model, model.ViewTitle);
-                
+                if (CheckModelIsValid(model))
+                {
+                    //string gridHidStr = model.EntryGridId + model.PageId + AppMember.HideString;
+                    //Dictionary<string, object> objs = new Dictionary<string, object>();
+                    //objs.Add("fiscalYearId", model.FiscalYearId);
+                    //objs.Add("fiscalPeriodId", model.FiscalPeriodId);
+                    //objs.Add("gridData", Request.Form[gridHidStr]);
+
+                    Update(Repository, model, model.ViewTitle);
+
+                }
+                model.EntryGridLayout = EntryGridLayout();
+                return View(model);
             }
-            model.EntryGridLayout = EntryGridLayout();
-            return View(model);
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsDepreciationController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [HttpPost]
         public ActionResult CheckPeriod(string fiscalYearId, string fiscalPeriodId)
         {
-            DataRow dr = Repository.GetModel();
-            if (dr==null ||(DataConvert.ToString(dr["fiscalYearIdNext"]) == fiscalYearId
-                && DataConvert.ToString(dr["fiscalPeriodIdNext"]) == fiscalPeriodId))
+            try
             {
-                return Content("1", "text/html");
+                DataRow dr = Repository.GetModel();
+                if (dr == null || (DataConvert.ToString(dr["fiscalYearIdNext"]) == fiscalYearId
+                    && DataConvert.ToString(dr["fiscalPeriodIdNext"]) == fiscalPeriodId))
+                {
+                    return Content("1", "text/html");
+                }
+                else
+                {
+                    string msg = AppMember.AppText["DepreciationPeriod"] + DataConvert.ToString(dr["fiscalYearIdNextName"]) + "-" + DataConvert.ToString(dr["fiscalPeriodIdNextName"]);
+                    return Content(msg, "text/html");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                string msg = AppMember.AppText["DepreciationPeriod"] + DataConvert.ToString(dr["fiscalYearIdNextName"]) + "-" + DataConvert.ToString(dr["fiscalPeriodIdNextName"]);
-                return Content(msg, "text/html");
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsDepreciationController.CheckPeriod", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
         }
 

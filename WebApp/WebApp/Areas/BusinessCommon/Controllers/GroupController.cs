@@ -52,56 +52,81 @@ namespace WebApp.Areas.BusinessCommon.Controllers
             }
         }
 
-         [AppAuthorize]
+        [AppAuthorize]
         public ActionResult Entry(string pageId, string primaryKey, string formMode, string viewTitle)
         {
-            ClearClientPageCache(Response);
-            EntryModel model = new EntryModel();
-            Repository.SetModel(primaryKey, formMode, model);
-            SetParentEntryModel(pageId, formMode, viewTitle, model);
-            return View(model);
+            try
+            {
+                ClearClientPageCache(Response);
+                EntryModel model = new EntryModel();
+                Repository.SetModel(primaryKey, formMode, model);
+                SetParentEntryModel(pageId, formMode, viewTitle, model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "GroupController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         [AppAuthorize]
         [HttpPost]
         public ActionResult Entry(EntryModel model)
         {
-            //if (CheckModelIsValid(model))
-            //{
-            //    Update(EntryRepository, model, model.FormMode, model.GroupId, model.ViewTitle);
+            try
+            {
+                //if (CheckModelIsValid(model))
+                //{
+                //    Update(EntryRepository, model, model.FormMode, model.GroupId, model.ViewTitle);
 
-            //}
-            //return View(model);
-            if (model.IsFixed == "Y")
-            {
-                ModelState.AddModelError("GroupNo", AppMember.AppText["IsFixed"]);
-                return View(model);
-            }
-            if (Update(Repository, model, model.GroupId) == 1)
-            {
-                if (model.FormMode == "new")
+                //}
+                //return View(model);
+                if (model.IsFixed == "Y")
+                {
+                    ModelState.AddModelError("GroupNo", AppMember.AppText["IsFixed"]);
                     return View(model);
+                }
+                if (Update(Repository, model, model.GroupId) == 1)
+                {
+                    if (model.FormMode == "new")
+                        return View(model);
+                    else
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                }
                 else
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle});
+                    return View(model);
             }
-            else
-                return View(model);
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "GroupController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
 
         }
 
         public ActionResult Select(string pageId, string showCheckbox, string selectVal, string fieldIdObj)
         {
-            DropMultipleSelectModel model = new DropMultipleSelectModel();
-            model.PageId = pageId;
-            model.TreeId = TreeId.GroupTreeId;
-            model.FieldIdObj = fieldIdObj;
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            GroupRepository grep = new GroupRepository();
-            model.DataTree = grep.GetGroupTree(sysUser);
-            if (showCheckbox == "true")
-                model.ShowCheckBox = true;
-            model.PkId = selectVal;
-            return PartialView("DropMultipleSelect", model); 
+            try
+            {
+                DropMultipleSelectModel model = new DropMultipleSelectModel();
+                model.PageId = pageId;
+                model.TreeId = TreeId.GroupTreeId;
+                model.FieldIdObj = fieldIdObj;
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                GroupRepository grep = new GroupRepository();
+                model.DataTree = grep.GetGroupTree(sysUser);
+                if (showCheckbox == "true")
+                    model.ShowCheckBox = true;
+                model.PkId = selectVal;
+                return PartialView("DropMultipleSelect", model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "GroupController.Select", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
+
         }
 
 

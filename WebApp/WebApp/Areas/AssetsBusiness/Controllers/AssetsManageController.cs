@@ -38,11 +38,19 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
         [AppAuthorize]
         public ActionResult List(string pageId, string viewTitle, string listMode)
         {
-            ListModel model = new ListModel();
-            SetParentListModel(pageId, viewTitle, listMode, "Assets", model);
-            SetThisListModel(model);
-            model.GridPkField = "assetsId";
-            return View(model);
+            try
+            {
+                ListModel model = new ListModel();
+                SetParentListModel(pageId, viewTitle, listMode, "Assets", model);
+                SetThisListModel(model);
+                model.GridPkField = "assetsId";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsManageController.List", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         protected override GridLayout GridLayout(string listMode, string selectMode)
@@ -119,61 +127,77 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
         [AppAuthorize]
         public ActionResult Entry(string pageId, string primaryKey, string formMode, string viewTitle, string purchaseObj) 
         {
-            ClearClientPageCache(Response);
-            EntryModel model = new EntryModel();
-            Repository.SetModel(primaryKey, formMode, model);
-            SetParentEntryModel(pageId, primaryKey, formMode, viewTitle, model);
-            SetThisEntryModel(model);
-            if (formMode == "new" || formMode == "new2")
+            try
             {
-                model.PurchaseTypeId = "PHT150425001";
-                SetModelFromPurchase(model, purchaseObj);         
+                ClearClientPageCache(Response);
+                EntryModel model = new EntryModel();
+                Repository.SetModel(primaryKey, formMode, model);
+                SetParentEntryModel(pageId, primaryKey, formMode, viewTitle, model);
+                SetThisEntryModel(model);
+                if (formMode == "new" || formMode == "new2")
+                {
+                    model.PurchaseTypeId = "PHT150425001";
+                    SetModelFromPurchase(model, purchaseObj);
+                }
+                else
+                {
+                    AssetsRepository rep = new AssetsRepository();
+                    model.IsStartDepreciation = rep.GetStartDepreciationValue(primaryKey);
+                }
+                if (AppMember.ViewVersion == "Cus_Simple")
+                    return View("Cus_Simple_Entry", model);
+                else
+                    return View(model);
             }
-            else
+            catch (Exception ex)
             {
-                AssetsRepository rep = new AssetsRepository();
-                model.IsStartDepreciation = rep.GetStartDepreciationValue(primaryKey);
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsManageController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
-            if (AppMember.ViewVersion == "Cus_Simple")
-                return View("Cus_Simple_Entry", model);
-            else
-                return View(model);
         }
 
         [AppAuthorize]
         [HttpPost]
         public ActionResult Entry(EntryModel model, string approveReturn)
         {
-            ClearClientPageCache(Response);
-            if (Update(Repository, model, model.AssetsId, approveReturn) == 1)
+            try
             {
-                if (model.FormMode == "approve" || model.FormMode == "reapply")
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle, listMode = model.FormMode });
-                else if (model.FormMode == "new" || model.FormMode == "new2")
+                ClearClientPageCache(Response);
+                if (Update(Repository, model, model.AssetsId, approveReturn) == 1)
                 {
+                    if (model.FormMode == "approve" || model.FormMode == "reapply")
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle, listMode = model.FormMode });
+                    else if (model.FormMode == "new" || model.FormMode == "new2")
+                    {
+                        SetThisEntryModel(model);
+                        if (AppMember.ViewVersion == "Cus_Simple")
+                            return View("Cus_Simple_Entry", model);
+                        else
+                            return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
+                    }
+                }
+                else
+                {
+                    if (model.FormMode == "approve")
+                    {
+                        Repository.SetModel(model.ApprovePkValue, model.FormMode, model);
+                        SetParentEntryModel(model.PageId, model.ApprovePkValue, model.FormMode, model.ViewTitle, model);
+                    }
                     SetThisEntryModel(model);
-                    if (AppMember.ViewVersion == "Cus_Simple")
+                    if (AppMember.ViewVersion == "Simple")
                         return View("Cus_Simple_Entry", model);
                     else
                         return View(model);
                 }
-                else
-                {
-                    return RedirectToAction("List", new { pageId = model.PageId, viewTitle = model.ViewTitle });
-                }
             }
-            else
+            catch (Exception ex)
             {
-                if (model.FormMode == "approve")
-                {
-                    Repository.SetModel(model.ApprovePkValue, model.FormMode, model);
-                    SetParentEntryModel(model.PageId, model.ApprovePkValue, model.FormMode, model.ViewTitle, model);
-                }
-                SetThisEntryModel(model);
-                if (AppMember.ViewVersion == "Simple")
-                    return View("Cus_Simple_Entry", model);
-                else
-                    return View(model);
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsManageController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
         }
 
@@ -181,8 +205,16 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
         [HttpPost]
         public ActionResult GetAutoNo()
         {
-            string no = AutoNoGenerator.GetMaxNo("Assets");
-            return Content(no, "text/html");
+            try
+            {
+                string no = AutoNoGenerator.GetMaxNo("Assets");
+                return Content(no, "text/html");
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsManageController.GetAutoNo", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         private void SetThisEntryModel(EntryModel model)
@@ -224,131 +256,172 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
 
         public ActionResult Select(string pageId, string assetsState, string selectMode, string formName)
         {
-            SelectModel model = new SelectModel();
-            model.PageId = pageId;
-            model.FormId = "SelectForm";
-            model.GridId = "list";
-            model.IsMultiSelect = true;
-            model.GridWidth = 773;
-            SetThisListModel(model);
+            try
+            {
+                SelectModel model = new SelectModel();
+                model.PageId = pageId;
+                model.FormId = "SelectForm";
+                model.GridId = "list";
+                model.IsMultiSelect = true;
+                model.GridWidth = 773;
+                SetThisListModel(model);
 
-            string checking = "";
-            string assetsStateSql = "";
-            if (DataConvert.ToString(formName) != "BarcodePrint")
-            {
-                checking = "and Assets.checking=" + DFT.SQ + "N" + DFT.SQ;
-                //if (DataConvert.ToString(assetsState) == "")
-                //    assetsState = "A,L,X,R,F";
-                if (DataConvert.ToString(assetsState) == "")
-                    assetsState = "";
-            }
-            else
-            {
-                assetsState = "";
-            }
-            if (assetsState != "")
-            {
-                if (assetsState.Contains(','))
+                string checking = "";
+                string assetsStateSql = "";
+                if (DataConvert.ToString(formName) != "BarcodePrint")
                 {
-                    string[] aste = assetsState.Split(',');
-                    string assetsStates = "";
-                    foreach (string ss in aste)
-                    {
-                        assetsStates += DFT.SQ + ss + DFT.SQ + ",";
-                    }
-                    assetsStates = assetsStates.Substring(0, assetsStates.Length - 1);
-                    assetsStateSql = "Assets.assetsState in (" + assetsStates + ") ";
-                    //model.GridUrl = Url.Action("GridData", new { filterString = "Assets.assetsState in (" + assetsStates + ") " + checking, selectMode = selectMode });
+                    checking = "and Assets.checking=" + DFT.SQ + "N" + DFT.SQ;
+                    //if (DataConvert.ToString(assetsState) == "")
+                    //    assetsState = "A,L,X,R,F";
+                    if (DataConvert.ToString(assetsState) == "")
+                        assetsState = "";
                 }
                 else
                 {
-                    assetsStateSql = "Assets.assetsState=" + DFT.SQ + assetsState + DFT.SQ;
-                    //model.GridUrl = Url.Action("GridData", new { filterString = "Assets.assetsState=" + DFT.SQ + assetsState + DFT.SQ + checking, selectMode = selectMode });
+                    assetsState = "";
                 }
+                if (assetsState != "")
+                {
+                    if (assetsState.Contains(','))
+                    {
+                        string[] aste = assetsState.Split(',');
+                        string assetsStates = "";
+                        foreach (string ss in aste)
+                        {
+                            assetsStates += DFT.SQ + ss + DFT.SQ + ",";
+                        }
+                        assetsStates = assetsStates.Substring(0, assetsStates.Length - 1);
+                        assetsStateSql = "Assets.assetsState in (" + assetsStates + ") ";
+                        //model.GridUrl = Url.Action("GridData", new { filterString = "Assets.assetsState in (" + assetsStates + ") " + checking, selectMode = selectMode });
+                    }
+                    else
+                    {
+                        assetsStateSql = "Assets.assetsState=" + DFT.SQ + assetsState + DFT.SQ;
+                        //model.GridUrl = Url.Action("GridData", new { filterString = "Assets.assetsState=" + DFT.SQ + assetsState + DFT.SQ + checking, selectMode = selectMode });
+                    }
+                }
+                else
+                {
+                    assetsStateSql = " 1=1 ";
+                }
+                model.GridUrl = Url.Action("GridData", new { filterString = assetsStateSql + checking, selectMode = selectMode });
+                model.GridLayout = GridLayout("", selectMode);
+                return PartialView("AssetsSelect", model);
             }
-            else
+            catch (Exception ex)
             {
-                assetsStateSql = " 1=1 ";
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsManageController.Select", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
-            model.GridUrl = Url.Action("GridData", new { filterString = assetsStateSql + checking, selectMode = selectMode });
-            model.GridLayout = GridLayout("", selectMode);
-            return PartialView("AssetsSelect", model);
         }
 
         public ActionResult SingleSelect(string pageId, string assetsState, string selectMode)
         {
-            SelectModel model = new SelectModel();
-            model.PageId = pageId;
-            model.FormId = "SelectForm";
-            model.GridId = "list";
-            model.IsMultiSelect = false;
-            model.GridWidth = 773;
-            if (DataConvert.ToString(assetsState) == "")
-                assetsState = "A";
-            model.GridUrl = Url.Action("GridData", new { filterString = "Assets.assetsState=" + DFT.SQ + assetsState + DFT.SQ, selectMode = selectMode });
-            model.GridLayout = GridLayout("", selectMode);
-            return PartialView("AssetsSelect", model);
+            try
+            {
+                SelectModel model = new SelectModel();
+                model.PageId = pageId;
+                model.FormId = "SelectForm";
+                model.GridId = "list";
+                model.IsMultiSelect = false;
+                model.GridWidth = 773;
+                if (DataConvert.ToString(assetsState) == "")
+                    assetsState = "A";
+                model.GridUrl = Url.Action("GridData", new { filterString = "Assets.assetsState=" + DFT.SQ + assetsState + DFT.SQ, selectMode = selectMode });
+                model.GridLayout = GridLayout("", selectMode);
+                return PartialView("AssetsSelect", model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsManageController.SingleSelect", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
+
         }
 
         [AppAuthorize]
         public ActionResult BatchDelete(string pageId, string formMode, string viewTitle)
         {
-            ClearClientPageCache(Response);
-            BatchDeleteModel model = new BatchDeleteModel();
-            model.PageId = pageId;
-            model.FormId = "SelectForm";
-            model.GridFormId = "GridForm";
-            model.GridId = "BatchGrid";
-            model.IsMultiSelect = true;
-            SetThisListModel(model);
-            model.GridUrl = Url.Action("GridData", new { selectMode = "AssetsSelect" });
-            model.GridLayout = GridLayout("", "AssetsSelect");
-            model.GridWidth = 0;
-            //return PartialView("AssetsSelect", model);
-            return View(model);
+            try
+            {
+                ClearClientPageCache(Response);
+                BatchDeleteModel model = new BatchDeleteModel();
+                model.PageId = pageId;
+                model.FormId = "SelectForm";
+                model.GridFormId = "GridForm";
+                model.GridId = "BatchGrid";
+                model.IsMultiSelect = true;
+                SetThisListModel(model);
+                model.GridUrl = Url.Action("GridData", new { selectMode = "AssetsSelect" });
+                model.GridLayout = GridLayout("", "AssetsSelect");
+                model.GridWidth = 0;
+                //return PartialView("AssetsSelect", model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsManageController.BatchDelete get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
 
         [HttpPost]
         public ActionResult BatchDelete(string pageId, string formMode, string viewTitle, string gridString, string isCascadeDelete)
         {
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            AssetsRepository arep = new AssetsRepository();
-            DataUpdate dbUpdate = new DataUpdate();
             try
             {
-                dbUpdate.BeginTransaction();
-                arep.DbUpdate = dbUpdate;
-                arep.BatchDelete(sysUser, gridString, viewTitle, isCascadeDelete);
-                dbUpdate.Commit();
-                return Content("1");
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                AssetsRepository arep = new AssetsRepository();
+                DataUpdate dbUpdate = new DataUpdate();
+                try
+                {
+                    dbUpdate.BeginTransaction();
+                    arep.DbUpdate = dbUpdate;
+                    arep.BatchDelete(sysUser, gridString, viewTitle, isCascadeDelete);
+                    dbUpdate.Commit();
+                    return Content("1");
+                }
+                catch (Exception)
+                {
+                    dbUpdate.Rollback();
+                    return Content(AppMember.AppText["DeleteExistRefrence"]);
+                }
+                finally
+                {
+                    dbUpdate.Close();
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                dbUpdate.Rollback();
-                return Content(AppMember.AppText["DeleteExistRefrence"]);
-            }
-            finally
-            {
-                dbUpdate.Close();
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsManageController.BatchDelete post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
 
         }
         public ActionResult ExportCard(string pageId, string primaryKey, string viewTitle)
         {
-            System.Web.HttpContext curContext = System.Web.HttpContext.Current;
-            curContext.Response.ContentType = "application/vnd.ms-excel";
-            curContext.Response.ContentEncoding = System.Text.Encoding.GetEncoding("gb2312");
-            curContext.Response.Charset = "gb2312";
+            try
+            {
+                System.Web.HttpContext curContext = System.Web.HttpContext.Current;
+                curContext.Response.ContentType = "application/vnd.ms-excel";
+                curContext.Response.ContentEncoding = System.Text.Encoding.GetEncoding("gb2312");
+                curContext.Response.Charset = "gb2312";
 
-            AssetsRepository arep = new AssetsRepository();
-            DataSet ds = arep.GetAssetsCard(primaryKey);
-            StringBuilder sbHtml = AssetsCardExcel.CreateCardExcel(ds);
-            byte[] fileContents = Encoding.GetEncoding("gb2312").GetBytes(sbHtml.ToString());
-            string fileName = "AssetsCard" + ".xls";
-            if (ds.Tables.Contains("Assets"))
-                fileName = DataConvert.ToString(ds.Tables["Assets"].Rows[0]["assetsBarcode"]) + ".xls";
-            return File(fileContents, "application/ms-excel", fileName);
+                AssetsRepository arep = new AssetsRepository();
+                DataSet ds = arep.GetAssetsCard(primaryKey);
+                StringBuilder sbHtml = AssetsCardExcel.CreateCardExcel(ds);
+                byte[] fileContents = Encoding.GetEncoding("gb2312").GetBytes(sbHtml.ToString());
+                string fileName = "AssetsCard" + ".xls";
+                if (ds.Tables.Contains("Assets"))
+                    fileName = DataConvert.ToString(ds.Tables["Assets"].Rows[0]["assetsBarcode"]) + ".xls";
+                return File(fileContents, "application/ms-excel", fileName);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsManageController.ExportCard", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
     }
 }

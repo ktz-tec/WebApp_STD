@@ -35,59 +35,74 @@ namespace WebApp.Areas.BusinessCommon.Controllers
                 model.AuthorityTree = model.Repository.GetAuthorityTree("", false);
                 return View(model);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                AppLog.WriteLog("system", LogType.Error, "AuthorityController", "权限验证失败：" + ex.Message);
-                return Content(ex.Message, "text/html"); 
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AuthorityController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
-
         }
 
         [AppAuthorize]
         [HttpPost]
         public ActionResult Entry(EntryModel model)
         {
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            string hidenTreeId = model.TreeId + model.PageId + AppMember.HideString;
             try
             {
-                if (model.RadioValue == "group")
-                    model.Repository.SaveForGroup(model.GroupNo, DataConvert.ToString(Request.Form[hidenTreeId]), sysUser);
-                else if (model.RadioValue == "user")
-                    model.Repository.SaveForUser(model.UserNo, DataConvert.ToString(Request.Form[hidenTreeId]), sysUser);
-                model.HasError = "false";
-                model.IsUser = false;
-                model.GroupNo = "";
-                model.UserNo = "";
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                string hidenTreeId = model.TreeId + model.PageId + AppMember.HideString;
+                try
+                {
+                    if (model.RadioValue == "group")
+                        model.Repository.SaveForGroup(model.GroupNo, DataConvert.ToString(Request.Form[hidenTreeId]), sysUser);
+                    else if (model.RadioValue == "user")
+                        model.Repository.SaveForUser(model.UserNo, DataConvert.ToString(Request.Form[hidenTreeId]), sysUser);
+                    model.HasError = "false";
+                    model.IsUser = false;
+                    model.GroupNo = "";
+                    model.UserNo = "";
+                }
+                catch (Exception ex)
+                {
+                    model.Message = ex.Message;
+                    model.HasError = "true";
+                }
+                model.AuthorityTree = model.Repository.GetAuthorityTree("", false);
+                return View(model);
             }
             catch (Exception ex)
             {
-                model.Message = ex.Message;
-                model.HasError = "true";
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AuthorityController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
-            model.AuthorityTree = model.Repository.GetAuthorityTree("", false);
-            return View(model);
         }
 
         public ActionResult RefreshTree(string groupId, string userId)
         {
-            EntryModel model = new EntryModel();
-            DataTable dt = new DataTable();
-            if (DataConvert.ToString(userId) == "")
+            try
             {
-                dt = model.Repository.GetAuthorityTreeId(groupId, true);
-            }
-            else
-            {
-                dt = model.Repository.GetAuthorityTreeId(userId, false);
-            }
-            var checkIds = new object[dt.Rows.Count];
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                checkIds[i] = new { menuId = DataConvert.ToString(dt.Rows[i]["menuId"]) };
-            }
+                EntryModel model = new EntryModel();
+                DataTable dt = new DataTable();
+                if (DataConvert.ToString(userId) == "")
+                {
+                    dt = model.Repository.GetAuthorityTreeId(groupId, true);
+                }
+                else
+                {
+                    dt = model.Repository.GetAuthorityTreeId(userId, false);
+                }
+                var checkIds = new object[dt.Rows.Count];
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    checkIds[i] = new { menuId = DataConvert.ToString(dt.Rows[i]["menuId"]) };
+                }
 
-            return Json(new { menuIds = checkIds }, JsonRequestBehavior.AllowGet);
+                return Json(new { menuIds = checkIds }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AuthorityController.RefreshTree", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
 

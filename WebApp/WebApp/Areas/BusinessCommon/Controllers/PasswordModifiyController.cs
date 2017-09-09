@@ -25,42 +25,58 @@ namespace WebApp.Areas.BusinessCommon.Controllers
         [AppAuthorize]
         public ActionResult Entry(string pageId, string viewTitle)
         {
-            ClearClientPageCache(Response);
-            EntryModel model = new EntryModel();
-            model.PageId = pageId;
-            model.ViewTitle = viewTitle;
-            model.FormId = "EntryForm";
-            model.SaveUrl = Url.Action("Entry");
-            return View(model);
+            try
+            {
+                ClearClientPageCache(Response);
+                EntryModel model = new EntryModel();
+                model.PageId = pageId;
+                model.ViewTitle = viewTitle;
+                model.FormId = "EntryForm";
+                model.SaveUrl = Url.Action("Entry");
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "PasswordModifiyController.Entry get", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
         }
 
         [AppAuthorize]
         [HttpPost]
         public ActionResult Entry(EntryModel model)
         {
-            if (CheckModelIsValid(model))
+            try
             {
-                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-                DataUpdate dbUpdate = new DataUpdate();
-                try
+                if (CheckModelIsValid(model))
                 {
-                    dbUpdate.BeginTransaction();
-                    PasswordModifiyRepository rep = new PasswordModifiyRepository();
-                    rep.DbUpdate = dbUpdate;
-                    rep.ModifiyPassword(model, sysUser.UserId);
-                    dbUpdate.Commit();
+                    UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                    DataUpdate dbUpdate = new DataUpdate();
+                    try
+                    {
+                        dbUpdate.BeginTransaction();
+                        PasswordModifiyRepository rep = new PasswordModifiyRepository();
+                        rep.DbUpdate = dbUpdate;
+                        rep.ModifiyPassword(model, sysUser.UserId);
+                        dbUpdate.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        dbUpdate.Rollback();
+                        throw new Exception(ex.Message);
+                    }
+                    finally
+                    {
+                        dbUpdate.Close();
+                    }
                 }
-                catch (Exception ex)
-                {
-                    dbUpdate.Rollback();
-                    throw new Exception(ex.Message);
-                }
-                finally
-                {
-                    dbUpdate.Close();
-                }
+                return View(model);
             }
-            return View(model);
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "PasswordModifiyController.Entry post", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
         }
 
         protected bool CheckModelIsValid(EntryModel model)

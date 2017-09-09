@@ -27,11 +27,19 @@ namespace WebApp.Areas.Report.Controllers
         [AppAuthorize]
         public ActionResult Entry(string pageId, string formMode, string viewTitle)
         {
-            EntryModel model = new EntryModel();
-            model.EntryGridId = "EntryGrid";
-            SetParentEntryModel(pageId, viewTitle,formMode, model);
-            SetThisModel(model);
-            return View(model);
+            try
+            {
+                EntryModel model = new EntryModel();
+                model.EntryGridId = "EntryGrid";
+                SetParentEntryModel(pageId, viewTitle, formMode, model);
+                SetThisModel(model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AssetsScrapQueryController.Entry", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
         private void SetThisModel(EntryModel model)
