@@ -48,7 +48,6 @@
         <%:Html.ValidationMessageFor(m => m.StoreSiteId)%>
         <%:Html.ValidationMessageFor(m => m.PurchaseTypeId)%>
     </div>
-   
     <div class="editor-field">
         <div class="AssetsEntryColumn1">
             <%:Html.AppLabelFor(m => m.UsePeople, Model.PageId, "AssetsEntry")%>
@@ -75,7 +74,6 @@
         <%:Html.ValidationMessageFor(m => m.UsePeople)%>
         <%:Html.ValidationMessageFor(m => m.Keeper)%>
     </div>
-  
     <div class="editor-field">
         <div class="AssetsEntryColumn1">
             <%:Html.AppLabelFor(m => m.PurchaseDate, Model.PageId, "AssetsEntry")%>
@@ -110,13 +108,13 @@
             <%:Html.AppTextBoxFor(m => m.AssetsValue, Model.PageId, "AssetsEntry")%>
         </div>
         <div class="AssetsEntryColumn2">
-            <%:Html.AppLabelFor(m => m.Remark, Model.PageId, "AssetsEntry")%>
-            <%:Html.AppTextBoxFor(m => m.Remark, Model.PageId, "AssetsEntry")%>
+            <%:Html.AppLabelFor(m => m.AssetsQty, Model.PageId, "AssetsEntry")%>
+            <%:Html.AppTextBoxFor(m => m.AssetsQty, Model.PageId, "AssetsEntry")%>
         </div>
         <%:Html.ValidationMessageFor(m => m.AssetsValue)%>
         <%:Html.ValidationMessageFor(m => m.Remark)%>
     </div>
-      <div class="editor-field">
+    <div class="editor-field">
         <div class="AssetsEntryColumn1">
             <%:Html.AppLabelFor(m => m.AssetsBarcode, Model.PageId, "AssetsEntry")%>
             <%:Html.AppTextBoxFor(m => m.AssetsBarcode, Model.PageId, "AssetsEntry")%>
@@ -140,7 +138,7 @@
         <%:Html.ValidationMessageFor(m => m.GuaranteeDays)%>
         <%:Html.ValidationMessageFor(m => m.MaintainDays)%>
     </div>
-     <div class="editor-field">
+    <div class="editor-field">
         <div class="AssetsEntryColumn1">
             <%if (AppMember.DepreciationRuleOpen)
               { %>
@@ -166,11 +164,17 @@
         <%:Html.ValidationMessageFor(m => m.DepreciationType)%>
         <%}  %>
         <%:Html.ValidationMessageFor(m => m.SupplierName)%>
-     <%--   <div class="AssetsEntryColumn2">
+        <%--   <div class="AssetsEntryColumn2">
             <%:Html.AppLabelFor(m => m.AssetsUsesId, Model.PageId, "AssetsEntry")%>
             <%:Html.AppDropDownListFor(m => m.AssetsUsesId, Model.PageId, Url.Action("DropList", "AssetsUses", new { Area = "BasicData" }), "AssetsEntry")%>
         </div>
         <%:Html.ValidationMessageFor(m => m.AssetsUsesId)%>--%>
+    </div>
+    <div class="editor-field">
+        <div class="AssetsEntryColumn1">
+            <%:Html.AppLabelFor(m => m.Remark, Model.PageId, "AssetsEntry")%>
+            <%:Html.AppTextBoxFor(m => m.Remark, Model.PageId, "AssetsEntry")%>
+        </div>
     </div>
     <%-- <div class="editor-field">
         <div class="AssetsEntryColumn1">
@@ -420,7 +424,6 @@
             </div>
         </div>
         <div class="editor-field" style="height: 30px;">
-           
             <div class="AssetsEntryColumn4">
                 <div class="AssetsEntryColumn5">
                     <%if (Model.FormMode != "approve")

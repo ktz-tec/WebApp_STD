@@ -23,15 +23,23 @@ namespace WebApp.Areas.BusinessCommon.Controllers
         [AppAuthorize]
         public ActionResult Entry(string pageId, string viewTitle)
         {
-            ClearClientPageCache(Response);
-            EntryModel model = new EntryModel();
-            model.PageId = pageId;
-            model.ViewTitle = viewTitle;
-            model.FormId = "EntryForm";
-            model.TreeId = "tree";
-            model.SaveUrl = Url.Action("Entry", "Authority", new { Area = "BusinessCommon" });
-            model.AuthorityTree = model.Repository.GetAuthorityTree("", false);
-            return View(model);
+            try
+            {
+                ClearClientPageCache(Response);
+                EntryModel model = new EntryModel();
+                model.PageId = pageId;
+                model.ViewTitle = viewTitle;
+                model.FormId = "EntryForm";
+                model.TreeId = "tree";
+                model.SaveUrl = Url.Action("Entry", "Authority", new { Area = "BusinessCommon" });
+                model.AuthorityTree = model.Repository.GetAuthorityTree("", false);
+                return View(model);
+            }
+            catch(Exception ex)
+            {
+                AppLog.WriteLog("system", LogType.Error, "AuthorityController", "权限验证失败：" + ex.Message);
+                return Content(ex.Message, "text/html"); 
+            }
 
         }
 

@@ -37,11 +37,19 @@ namespace WebApp.Areas.BusinessCommon.Controllers
         [AppAuthorize]
         public ActionResult List(string pageId, string viewTitle)
         {
-            ClearClientPageCache(Response);
-            ListModel model = new ListModel();
-            SetParentListModel(pageId, viewTitle, model);
-            model.GridPkField = "groupId";
-            return View(model);
+            try
+            {
+                ClearClientPageCache(Response);
+                ListModel model = new ListModel();
+                SetParentListModel(pageId, viewTitle, model);
+                model.GridPkField = "groupId";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "GroupController.List", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content("[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
          [AppAuthorize]

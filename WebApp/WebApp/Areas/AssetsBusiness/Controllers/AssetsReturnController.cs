@@ -113,6 +113,8 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
             model.EntryGridId = "EntryGrid";
             model.EntryGridLayout = EntryGridLayout(model.FormMode);
             model.SelectUrl = Url.Action("Select", "AssetsManage", new { Area = "AssetsBusiness"});
+            UserRepository user = new UserRepository();
+            model.UserSource = user.UserAutoCompleteSource();
         }
 
 

@@ -43,7 +43,7 @@ namespace BusinessLogic.AssetsBusiness.Models.AssetsPurchase
         [AppDisplayNameAttribute("Keeper")]
         public string Keeper { get; set; }
 
-        [AppDisplayNameAttribute("AssetsValue")]
+        [DisplayNameAttribute("单价")]
         public double? AssetsValue { get; set; }
 
         [AppDisplayNameAttribute("Remark")]
@@ -51,6 +51,10 @@ namespace BusinessLogic.AssetsBusiness.Models.AssetsPurchase
 
         [DisplayNameAttribute("供应商")]
         public string SupplierName { get; set; }
+
+
+        [DisplayNameAttribute("数量")]
+        public string PurchaseNum { get; set; }
 
         public string AssetsPurchaseDetailId { get; set; }
     }

@@ -177,9 +177,9 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
                 assetsReturn.ReturnDate = DataConvert.ToString(myModel.ReturnDate);
                 AddDetail(assetsReturn, assetsReturnId, sysUser, viewTitle, updateType);
                 if (retApprove != 0)
-                {
                     UpdateAssetsState(assetsReturn.AssetsId, "HI", sysUser.UserId, viewTitle);
-                }
+                else
+                    UpdateAssetsState(assetsReturn.AssetsId, "A", sysUser.UserId, viewTitle);
             }
             return 1;
         }

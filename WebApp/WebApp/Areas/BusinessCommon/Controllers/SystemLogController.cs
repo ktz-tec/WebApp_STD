@@ -33,7 +33,8 @@ namespace WebApp.Areas.BusinessCommon.Controllers
             SetParentEntryModel(pageId, viewTitle,formMode, model);
             SetThisModel(model);
             model.LogDate1 = DateTime.Today.AddMonths(-1).ToString("yyyy-MM-dd");
-            model.LogDate2 = DateTime.Today.ToString("yyyy-MM-dd");        
+            model.LogDate2 = DateTime.Today.ToString("yyyy-MM-dd");
+            model.LogType = "Info";
             return View(model);
         }
 

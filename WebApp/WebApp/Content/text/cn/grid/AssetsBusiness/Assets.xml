@@ -24,6 +24,7 @@
     <Header name="remainRate" caption="残值率"  index="remainRate" align="right" hidden="false" width="80"/>
     <Header name="assetsNetValue" caption="资产净值"  index="assetsNetValue" align="right" hidden="false" width="100"/>
     <Header name="assetsRemainValue" caption="资产残值"  index="assetsRemainValue" align="right" hidden="false" width="100"/>
+    <Header name="assetsQty" caption="数量"  index="assetsQty" align="right" hidden="false" width="100"/>
     <Header name="purchaseDate" caption="入库日期"  index="purchaseDate" align="Center" hidden="false" width="100"  />
     <Header name="duetoDate" caption="到期日期"  index="duetoDate" align="Center" hidden="false" width="100"  />
     <Header name="purchaseDate2" caption="购买日期"  index="purchaseDate2" align="Center" hidden="false" width="100"  />

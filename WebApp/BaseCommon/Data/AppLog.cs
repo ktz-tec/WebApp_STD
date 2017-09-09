@@ -15,10 +15,20 @@ namespace BaseCommon.Data
             paras.Add("userId", userId);
             paras.Add("logType", logType.ToString());
             paras.Add("logger", logger);
-            paras.Add("message", message);
+            paras.Add("message", message.Length<4000?message:message.Substring(0,3999));
             string sql = "insert into AppLog(LogDate,UserId,LogLevel,Logger,Message)" +
                      "values(@LogDate,@userId,@logType,@logger,@message)";
             return AppMember.DbHelper.ExecuteSql(sql,paras);
+        }
+
+        /// <summary>
+        /// 删除60天前的debug信息
+        /// </summary>
+        /// <returns></returns>
+        public static int DeleteLog()
+        {
+            string sql = "delete from  AppLog where LogLevel='Debug' and LogDate<GETDATE()-60 ";
+            return AppMember.DbHelper.ExecuteSql(sql);
         }
     }
 }

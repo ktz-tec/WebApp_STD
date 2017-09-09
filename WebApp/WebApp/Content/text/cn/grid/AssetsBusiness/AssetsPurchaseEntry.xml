@@ -9,7 +9,8 @@
     <Header name="departmentName" caption="使用部门" index="departmentName" align="Left" hidden="false"  width="100"  />
     <Header name="storeSiteId" caption="存放地点" index="storeSiteId" align="Left" hidden="true"  width="100"  />
     <Header name="storeSiteName" caption="存放地点" index="storeSiteName" align="Left" hidden="false"  width="100"  />
-    <Header name="assetsValue" caption="价值" index="assetsValue" align="Left" hidden="false"  width="100"  />
+    <Header name="assetsValue" caption="单价" index="assetsValue" align="Left" hidden="false"  width="100"  />
+    <Header name="purchaseNum" caption="数量" index="purchaseNum" align="Left" hidden="false"  width="100"  />
     <Header name="usePeople" caption="使用人"  index="usePeople" align="Left" hidden="false" width="150" />
     <Header name="keeper" caption="保管人" index="keeper" align="Left" hidden="false"  width="100"  />
     <Header name="supplierName" caption="供应商" index="supplierName" align="Left" hidden="false"  width="100"  />

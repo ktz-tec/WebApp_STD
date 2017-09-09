@@ -18,8 +18,9 @@ namespace BusinessCommon.Repositorys
             int rowSize = condition.PageIndex * condition.PageRowNum; //子查询返回行数的尺寸
             string sql = string.Format(@"select top 500 LogDate,
                         UserId,
+                        Logger,
                         Message
-                from AppLog where LogLevel not in ('Error','Debug') {0} order by LogDate desc ", ListWhereSql(condition).Sql,
+                from AppLog where 1=1 {0} order by LogDate desc ", ListWhereSql(condition).Sql,
                                                                                                                                                                                    " order by   AssetsScrap.assetsScrapNo  ,Assets.assetsNo");
             DataTable dtGrid = AppMember.DbHelper.GetDataSet(sql, ListWhereSql(condition).DBPara).Tables[0];
             return dtGrid;
@@ -41,7 +42,11 @@ namespace BusinessCommon.Repositorys
                 wcd.Sql += @" and AppLog.Message  like '%'+@LogMessage+'%'";
                 wcd.DBPara.Add("LogMessage", model.LogMessage);
             }
-        
+            if (DataConvert.ToString(model.LogType) != "")
+            {
+                wcd.Sql += @" and AppLog.LogLevel=@LogLevel";
+                wcd.DBPara.Add("LogLevel", model.LogType);
+            }
             if (DataConvert.ToString(model.LogDate1) != "")
             {
                 wcd.Sql += @" and AppLog.LogDate>=@LogDate1";

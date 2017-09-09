@@ -195,7 +195,7 @@
                     success: function (data) {
                         $("#SelectDialog" + pageId).html(data).dialog({
                             title: '<%=AppMember.AppText["PurchaseDetailInfo"]%>',
-                            height: 320,
+                            height: 350,
                             width: 350,
                             modal: true,
                             resizable: true,
@@ -210,7 +210,7 @@
                                         usePeople: $('#UsePeople' + spageId).val(), keeper: $('#Keeper' + spageId).val(),
                                         hasFixed: 'N', hasFixedText: '否',
                                         remark: $('#Remark' + spageId).val(), assetsValue: $('#AssetsValue' + spageId).val(),
-                                        supplierName: $('#SupplierName' + spageId).val(), 
+                                        supplierName: $('#SupplierName' + spageId).val(), purchaseNum: $('#PurchaseNum' + spageId).val()
                                     };
                                     $('#' + gridId).jqGrid('addRowData', AssetsPurchaseDetailId, dataRow);
                                     $(this).dialog("close");
@@ -243,7 +243,7 @@
                     success: function (data) {
                         $("#SelectDialog" + pageId).html(data).dialog({
                             title: '<%=AppMember.AppText["PurchaseDetailInfo"]%>',
-                            height: 320,
+                            height: 350,
                             width: 350,
                             modal: true,
                             resizable: true,
@@ -258,7 +258,7 @@
                                         usePeople: $('#UsePeople' + spageId).val(), keeper: $('#Keeper' + spageId).val(),
                                         hasFixed: 'N', hasFixedText: '否',
                                         remark: $('#Remark' + spageId).val(), assetsValue: $('#AssetsValue' + spageId).val(),
-                                        supplierName: $('#SupplierName' + spageId).val()
+                                        supplierName: $('#SupplierName' + spageId).val(), purchaseNum: $('#PurchaseNum' + spageId).val()
                                     };
                                     $('#' + gridId).jqGrid('setRowData', id, dataRow);
                                     $(this).dialog("close");

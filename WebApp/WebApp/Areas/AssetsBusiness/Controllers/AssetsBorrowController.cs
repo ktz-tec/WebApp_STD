@@ -112,6 +112,8 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
             model.DepartmentAddFavoritUrl = Url.Action("AddFavorit", "Department", new { Area = "BusinessCommon", tableName = "AppDepartment" });
             model.DepartmentReplaceFavoritUrl = Url.Action("ReplaceFavorit", "Department", new { Area = "BusinessCommon", tableName = "AppDepartment" });
             model.EntryGridLayout = EntryGridLayout(model.FormMode);
+            UserRepository user = new UserRepository();
+            model.UserSource = user.UserAutoCompleteSource();
         }
 
     }

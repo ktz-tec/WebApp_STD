@@ -148,6 +148,7 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
                 model.AssetsValue = DataConvert.ToInt32(obj.assetsValue);
                 model.Remark = obj.remark;
                 model.SupplierName = obj.supplierName;
+                model.PurchaseNum = obj.purchaseNum;
             }
             SetThisDetailModel(model);
             return PartialView("PurchaseView", model);

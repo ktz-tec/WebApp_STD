@@ -24,7 +24,8 @@
     <div class="editor-field">
         <div class="AssetsReturnEntryColumn1">
             <%:Html.AppLabelFor(m => m.ReturnPeople, Model.PageId, "AssetsReturnEntry")%>
-            <%:Html.AppDropDownEditorFor(m => m.ReturnPeople, Model.PageId, Url.Action("DropList", "User", new { Area = "BusinessCommon" }), "AssetsReturnEntry")%>
+             <%:Html.AppAutoCompleteFor(m => m.ReturnPeople, Model.PageId, "AssetsReturnEntry", Model.UserSource)%>
+            <%--<%:Html.AppDropDownEditorFor(m => m.ReturnPeople, Model.PageId, Url.Action("DropList", "User", new { Area = "BusinessCommon" }), "AssetsReturnEntry")%>--%>
         </div>
         <div class="AssetsReturnEntryColumn2">
             <%:Html.AppLabelFor(m => m.ReturnDate, Model.PageId, "AssetsReturnEntry")%>
@@ -75,7 +76,7 @@
                 $.ajax({
                     type: "POST",
                     url: '<%:Model.SelectUrl %>',
-                    data: { pageId: spageId, selectMode: "BorrowAssetsSelect",assetsState:"B" },
+                    data: { pageId: spageId, selectMode: "BorrowAssetsSelect",assetsState:"JY" },
                     datatype: "html",
                     success: function (data) {
                         $("#SelectDialog" + pageId).html(data).dialog({
@@ -140,7 +141,7 @@
 <asp:Content ID="Content6" ContentPlaceHolderID="ButtonContent" runat="server">
     <% if (Model.FormMode != "approve" && !Model.FormMode.Contains("view"))
        { %>
-    <%:Html.AppNormalButton(Model.PageId, "btnAdd", AppMember.AppText["BtnAdd"])%>
-    <%:Html.AppNormalButton(Model.PageId, "btnDelete", AppMember.AppText["BtnDelete"])%>
+    <%:Html.AppNormalButton(Model.PageId, "btnAdd", AppMember.AppText["BtnAddRow"])%>
+    <%:Html.AppNormalButton(Model.PageId, "btnDelete", AppMember.AppText["BtnDeleteRow"])%>
     <% } %>
 </asp:Content>

@@ -112,6 +112,7 @@ namespace WebApp.Areas.AssetsBusiness.Controllers
                model.AssetsPurchaseId = obj.assetsPurchaseId;
                model.Remark = obj.remark;
                model.SupplierName = obj.supplierName;
+               model.AssetsQty =DataConvert.ToIntNull(obj.purchaseNum);
             }
         }
 

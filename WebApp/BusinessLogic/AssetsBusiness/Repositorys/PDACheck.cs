@@ -51,10 +51,10 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
                                                assetsId,assetsNo,assetsName,remark,storeSiteId,checkDate,assetsUser)
                                                values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}')",
                                                      DataConvert.ToString(dr["assetsCheckId"]),
-                                                     DataConvert.ToString(dr["assetsCheckNo"]),
-                                                     DataConvert.ToString(dr["assetsCheckName"]),
+                                                     SafeSql.SafeSqlStr(DataConvert.ToString(dr["assetsCheckNo"])),
+                                                     SafeSql.SafeSqlStr(DataConvert.ToString(dr["assetsCheckName"])),
                                                      DataConvert.ToString(dr["assetsId"]),
-                                                     DataConvert.ToString(dr["assetsNo"]),
+                                                     SafeSql.SafeSqlStr(DataConvert.ToString(dr["assetsNo"])),
                                                      SafeSql.SafeSqlStr(DataConvert.ToString(dr["assetsName"])),
                                                      SafeSql.SafeSqlStr(DataConvert.ToString(dr["remark"])),
                                                      DataConvert.ToString(dr["storeSiteId"]),
@@ -91,8 +91,8 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
                     string sql = string.Format(@"insert into StoreSite(storeSiteId,storeSiteNo,storeSiteName)
                                                values ('{0}','{1}','{2}')",
                                                       DataConvert.ToString(dr["storeSiteId"]),
-                                                      DataConvert.ToString(dr["storeSiteNo"]),
-                                                      DataConvert.ToString(dr["storeSiteName"])
+                                                      SafeSql.SafeSqlStr(DataConvert.ToString(dr["storeSiteNo"])),
+                                                      SafeSql.SafeSqlStr(DataConvert.ToString(dr["storeSiteName"]))
                                                       );
                     ret += sqliteDb.ExecuteNonQuery(sql);
                 }

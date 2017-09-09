@@ -14,6 +14,10 @@
             <%:Html.AppLabelFor(m => m.LogMessage, Model.PageId, "SystemLog")%>
             <%:Html.AppTextBoxFor(m => m.LogMessage, Model.PageId, "SystemLog")%>
         </div>
+         <div class="SystemLogColumn2">
+            <%:Html.AppLabelFor(m => m.LogType, Model.PageId, "SystemLog")%>
+            <%:Html.AppDropDownListFor(m => m.LogType, Model.PageId, Url.Action("DropList", "CodeTable", new { Area = "", filter = "LogType" }), "SystemLog")%>
+        </div>
         <%:Html.ValidationMessageFor(m => m.UserName, "SystemLog")%>
         <%:Html.ValidationMessageFor(m => m.Message, "SystemLog")%>
     </div>

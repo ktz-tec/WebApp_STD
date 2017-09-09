@@ -43,6 +43,10 @@
     <%:Html.AppTextBoxFor(m => m.AssetsValue, Model.PageId, "Common150")%>
 </div>
 <div class="editor-field">
+    <%:Html.AppLabelFor(m => m.PurchaseNum, Model.PageId)%>
+    <%:Html.AppTextBoxFor(m => m.PurchaseNum, Model.PageId, "Common150")%>
+</div>
+<div class="editor-field">
     <%:Html.AppLabelFor(m => m.SupplierName, Model.PageId)%>
     <%:Html.AppTextBoxFor(m => m.SupplierName, Model.PageId, "Common150")%>
 </div>

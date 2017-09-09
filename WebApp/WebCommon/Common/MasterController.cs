@@ -181,7 +181,7 @@ namespace WebCommon.Common
                 dbUpdate.Rollback();
                 model.Message = ex.Message;
                 model.HasError = "true";
-                AppLog.WriteLog(sysUser.UserName, LogType.Error, "UpdateError", ex.Message);
+                AppLog.WriteLog(sysUser.UserName, LogType.Error, "UpdateError", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
                 return 0;
             }
             finally

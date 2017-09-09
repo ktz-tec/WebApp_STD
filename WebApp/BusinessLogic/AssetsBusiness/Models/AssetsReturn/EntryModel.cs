@@ -31,6 +31,8 @@ namespace BusinessLogic.AssetsBusiness.Models.AssetsReturn
         [AppDisplayNameAttribute("ReturnPeople")]
         public string ReturnPeople { get; set; }
 
+        public string UserSource { get; set; }
+
 
         [AppDisplayNameAttribute("ReturnDate")]
         public DateTime? ReturnDate { get; set; }

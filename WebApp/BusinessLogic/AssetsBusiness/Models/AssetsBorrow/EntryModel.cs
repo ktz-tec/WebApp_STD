@@ -37,6 +37,8 @@ namespace BusinessLogic.AssetsBusiness.Models.AssetsBorrow
         [AppDisplayNameAttribute("BorrowPeople")]
         public string BorrowPeople { get; set; }
 
+        public string UserSource { get; set; }
+
 
         [AppDisplayNameAttribute("BorrowDate")]
         public DateTime? BorrowDate { get; set; }

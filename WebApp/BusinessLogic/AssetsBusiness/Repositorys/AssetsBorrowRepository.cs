@@ -184,9 +184,9 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
             }
             AddDetail(gridData, assetsBorrowId, sysUser, viewTitle, updateType);
             if (retApprove != 0)
-                UpdateAssetsState(assetsIdList, "BI", sysUser.UserId, viewTitle);
+                UpdateAssetsState(assetsIdList, "JYI", sysUser.UserId, viewTitle);
             else
-                UpdateAssetsState(assetsIdList, "B", sysUser.UserId, viewTitle);
+                UpdateAssetsState(assetsIdList, "JY", sysUser.UserId, viewTitle);
             //foreach (AssetsBorrow assetsBorrow in gridData)
             //{
             //    assetsBorrow.BorrowPeople = DataConvert.ToString(myModel.BorrowPeople);
@@ -344,7 +344,7 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
             DataTable dtAssets = AppMember.DbHelper.GetDataSet(sql, paras, DbUpdate.cmd).Tables[0];
             foreach (DataRow dr in dtAssets.Rows)
             {
-                UpdateAssetsState(DataConvert.ToString(dr["assetsId"]), "B", sysUser.UserId, viewTitle);
+                UpdateAssetsState(DataConvert.ToString(dr["assetsId"]), "JY", sysUser.UserId, viewTitle);
             }
             return 1;
         }

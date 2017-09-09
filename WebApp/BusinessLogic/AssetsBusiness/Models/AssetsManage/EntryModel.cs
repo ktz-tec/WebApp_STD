@@ -8,6 +8,7 @@ using BaseCommon.Data;
 using BusinessLogic.AssetsBusiness;
 using BaseCommon.Models;
 using BusinessLogic.AssetsBusiness.Repositorys;
+using System.ComponentModel;
 
 namespace BusinessLogic.AssetsBusiness.Models.AssetsManage
 {
@@ -80,7 +81,7 @@ namespace BusinessLogic.AssetsBusiness.Models.AssetsManage
 
         //[AppRequiredAttribute("AssetsValue")]
         //[AppRegularExpression(AppMember.DoubleReg, "DoubleOnly")]
-        [AppDisplayNameAttribute("AssetsValue")]
+        [DisplayNameAttribute("资产原值")]
         public double? AssetsValue { get; set; }
 
         //[AppRequiredAttribute("DurableYears")]
@@ -100,12 +101,11 @@ namespace BusinessLogic.AssetsBusiness.Models.AssetsManage
 
 
         [AppRequiredAttribute("PurchaseDate")]
-        [AppDisplayNameAttribute("StockingDate")]
+        [DisplayNameAttribute("入库日期")]
         public DateTime? PurchaseDate { get; set; }
 
 
-
-        [AppDisplayNameAttribute("PurchaseDate2")]
+        [DisplayNameAttribute("购买日期")]
         public DateTime? PurchaseDate2 { get; set; }
 
         [AppDisplayNameAttribute("PurchaseNo")]

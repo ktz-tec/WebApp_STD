@@ -27,9 +27,11 @@
                 <%:Html.AppLabelFor(m => m.DepartmentId, Model.PageId, "AssetsBorrowEntry")%>
                 <%:Html.AppTreeDialogFor(m => m.DepartmentId, Model.PageId, Model.DepartmentUrl, Model.DepartmentDialogUrl, AppMember.AppText["DepartmentSelect"], TreeId.DepartmentTreeId, Model.DepartmentAddFavoritUrl, Model.DepartmentReplaceFavoritUrl, "AssetsBorrowEntry")%>
             </div>
+
             <div class="AssetsBorrowEntryColumn2">
                 <%:Html.AppLabelFor(m => m.BorrowPeople, Model.PageId, "AssetsBorrowEntry")%>
-                <%:Html.AppDropDownEditorFor(m => m.BorrowPeople, Model.PageId, Url.Action("DropList", "User", new { Area = "BusinessCommon", filterExpression = "departmentId=" + DFT.SQ + DataConvert.ToString(Model.DepartmentId) + DFT.SQ }), "AssetsBorrowEntry")%>
+                 <%:Html.AppAutoCompleteFor(m => m.BorrowPeople, Model.PageId, "AssetsBorrowEntry", Model.UserSource)%>
+               <%-- <%:Html.AppDropDownEditiorFor(m => m.BorrowPeople, Model.PageId, Url.Action("DropList", "User", new { Area = "BusinessCommon", filterExpression = "departmentId=" + DFT.SQ + DataConvert.ToString(Model.DepartmentId) + DFT.SQ }), "AssetsBorrowEntry")%>--%>
             </div>
             <%:Html.ValidationMessageFor(m => m.DepartmentId)%>
             <%:Html.ValidationMessageFor(m => m.BorrowPeople)%>
@@ -140,18 +142,18 @@
             //#endregion grid操作
 
             //#region 使用人保管人过滤
-            var departmentIdObj = "#DepartmentId" + pageId;
-            var borrowPeopleObj = "#BorrowPeople" + pageId;
-            $(departmentIdObj).change(function () {
-                var departmentId = $(departmentIdObj).val();
-                if ($.trim(departmentId) == "") {
-                    departmentId = "none";
-                }
-                var urlStr = '<%=Url.Action("DropList", "User", new { Area = "BusinessCommon"}) %>' + '/?filterExpression=departmentId=' + '<%=DFT.SQ %>' + departmentId + '<%=DFT.SQ %>';
-                $.getJSON(urlStr, function (data) {
-                    AppAppendSelect2(data, borrowPeopleObj, urlStr);
-                });
-            });
+//            var departmentIdObj = "#DepartmentId" + pageId;
+//            var borrowPeopleObj = "#BorrowPeople" + pageId;
+//            $(departmentIdObj).change(function () {
+//                var departmentId = $(departmentIdObj).val();
+//                if ($.trim(departmentId) == "") {
+//                    departmentId = "none";
+//                }
+//                var urlStr = '<%=Url.Action("DropList", "User", new { Area = "BusinessCommon"}) %>' + '/?filterExpression=departmentId=' + '<%=DFT.SQ %>' + departmentId + '<%=DFT.SQ %>';
+//                $.getJSON(urlStr, function (data) {
+//                    AppAppendSelect2(data, borrowPeopleObj, urlStr);
+//                });
+//            });
             //#endregion 使用人保管人过滤
 
         });
@@ -164,7 +166,7 @@
 <asp:Content ID="Content6" ContentPlaceHolderID="ButtonContent" runat="server">
     <%  if (Model.FormMode != "approve" && !Model.FormMode.Contains("view"))
         { %>
-    <%:Html.AppNormalButton(Model.PageId, "btnAdd", AppMember.AppText["BtnAdd"])%>
-    <%:Html.AppNormalButton(Model.PageId, "btnDelete", AppMember.AppText["BtnDelete"])%>
+    <%:Html.AppNormalButton(Model.PageId, "btnAdd", AppMember.AppText["BtnAddRow"])%>
+    <%:Html.AppNormalButton(Model.PageId, "btnDelete", AppMember.AppText["BtnDeleteRow"])%>
     <% } %>
 </asp:Content>

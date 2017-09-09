@@ -9,6 +9,7 @@ using System.Collections;
 using System.Data.OleDb;
 using BaseCommon.Repositorys;
 using System.Text.RegularExpressions;
+using BusinessCommon.CommonBusiness;
 
 namespace BusinessCommon.Repositorys
 {
@@ -498,15 +499,15 @@ namespace BusinessCommon.Repositorys
             return DbUpdate.Update(dt, true);
         }
 
-        private string GetConfig(string value)
-        {
-            string sql = string.Format(@"select configKey,configValue from AppConfig where configKey='{0}' ", value);
-            DataTable dt = AppMember.DbHelper.GetDataSet(sql).Tables[0];
-            if (dt.Rows.Count > 0)
-                return DataConvert.ToString(dt.Rows[0]["configValue"]);
-            else
-                return "";
-        }
+        //private string GetConfig(string value)
+        //{
+        //    string sql = string.Format(@"select configKey,configValue from AppConfig where configKey='{0}' ", value);
+        //    DataTable dt = AppMember.DbHelper.GetDataSet(sql).Tables[0];
+        //    if (dt.Rows.Count > 0)
+        //        return DataConvert.ToString(dt.Rows[0]["configValue"]);
+        //    else
+        //        return "";
+        //}
 
         private int ImportAssets(DataSet dsSource, UserInfo sysUser, string viewTitle)
         {
@@ -515,7 +516,7 @@ namespace BusinessCommon.Repositorys
             DataTable dt = AppMember.DbHelper.GetDataSet(sql).Tables[0];
             dt.TableName = "Assets";
             int i = 2;
-            string importAssetsQtyNeedSplitConfig = GetConfig("ImportAssetsQtyNeedSplit");
+            string importAssetsQtyNeedSplitConfig = ConfigHelper.GetConfig("ImportAssetsQtyNeedSplit");
             foreach (DataTable dtSource in dsSource.Tables)
             {
                 i = 2;
@@ -1019,7 +1020,7 @@ namespace BusinessCommon.Repositorys
                                 DataRow drclone = dt.NewRow();
                                 drclone.ItemArray = (object[])dr.ItemArray.Clone();
                                 drclone["assetsId"] = IdGenerator.GetMaxId(dt.TableName);
-                                drclone["assetsNo"] = DataConvert.ToString(drclone["assetsNo"]) + (j + 1).ToString(indexformat);
+                                drclone["assetsNo"] = DataConvert.ToString(drclone["assetsNo"]) + "C" + (j + 1).ToString(indexformat);
                                 dt.Rows.Add(drclone);
                             }
                             Create5Field(dt, sysUser.UserId, viewTitle);

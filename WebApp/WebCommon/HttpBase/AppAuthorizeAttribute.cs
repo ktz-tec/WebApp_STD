@@ -15,10 +15,18 @@ namespace WebCommon.HttpBase
     {
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            if (HasAuthorize(httpContext))
-                return true;
-            else
+            try
+            {
+                if (HasAuthorize(httpContext))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "AppAuthorizeAttribute.AuthorizeCore", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
                 return false;
+            }
         }
 
         protected bool HasAuthorize(HttpContextBase httpContext)

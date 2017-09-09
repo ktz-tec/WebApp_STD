@@ -24,7 +24,8 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
         public string keeper { get; set; }
         public string hasFixed { get; set; }
         public string remark { get; set; }
-        public string supplierName { get; set; } 
+        public string supplierName { get; set; }
+        public string purchaseNum { get; set; } 
     }
 
     public class AssetsPurchaseRepository : ApproveMasterRepository
@@ -168,6 +169,7 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
  AssetsPurchaseDetail.assetsValue assetsValue,
  AssetsPurchaseDetail.remark remark,
 AssetsPurchaseDetail.supplierName supplierName,
+AssetsPurchaseDetail.purchasenum purchaseNum,
  AssetsPurchaseDetail.hasFixed hasFixed,
 (select codeName from CodeTable where CodeTable.codeType='BoolVal' and CodeTable.codeNo=AssetsPurchaseDetail.hasFixed) hasFixedText
                 from AssetsPurchaseDetail 
@@ -278,6 +280,7 @@ AssetsPurchaseDetail.supplierName supplierName,
             dr["hasFixed"] = "N";
             dr["remark"] = assetsPurchase.remark;
             dr["supplierName"] = assetsPurchase.supplierName;
+            dr["purchaseNum"] = assetsPurchase.purchaseNum;
             dr["setBooksId"] = sysUser.MySetBooks.SetBooksId;
             dt.Rows.Add(dr);
             Create5Field(dt, sysUser.UserId, viewTitle);

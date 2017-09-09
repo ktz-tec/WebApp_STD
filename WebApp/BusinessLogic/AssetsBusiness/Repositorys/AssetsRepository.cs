@@ -10,6 +10,7 @@ using BaseCommon.Repositorys;
 using BusinessLogic.AssetsBusiness.Models.AssetsManage;
 using BaseCommon.Models;
 using BusinessLogic.BasicData.Repositorys;
+using BusinessCommon.CommonBusiness;
 
 namespace BusinessLogic.AssetsBusiness.Repositorys
 {
@@ -33,7 +34,7 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
             {
                 if (condition.SysUser.AccessLevel == "A")
                 {
-                    if (condition.SysUser.UserNo!="sa" && condition.SysUser.IsHeaderOffice != "Y")
+                    if (condition.SysUser.UserNo != "sa" && condition.SysUser.IsHeaderOffice != "Y")
                     {
                         wcd.Sql += @" and D.companyId=@curcompanyId";
                         wcd.DBPara.Add("curcompanyId", condition.SysUser.CompanyId);
@@ -51,7 +52,7 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
                     string ins = "";
                     foreach (var department in condition.SysUser.Departments)
                     {
-                        ins += "'" + department.DepartmentId+"',";
+                        ins += "'" + department.DepartmentId + "',";
                     }
                     if (ins.Length > 0)
                         ins = ins.Substring(0, ins.Length - 1);
@@ -337,7 +338,11 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
                 (select userName from AppUser where AssetsBorrowDetail.borrowPeople=AppUser.userId) borrowPeopleName,
                 AssetsBorrowDetail.borrowDepartmentId,
                 (select departmentName from AppDepartment where AssetsBorrowDetail.borrowDepartmentId=AppDepartment.departmentId) borrowDepartmentName,
-                AssetsBorrowDetail.borrowDate
+                AssetsBorrowDetail.borrowDate,
+                     Assets.spec spec,
+                      Assets.remark remark,
+                     Assets.createTime createTime ,
+                      Assets.updateTime updateTime 
                 from Assets inner join AssetsBorrowDetail on Assets.assetsId=AssetsBorrowDetail.assetsId
                left join AppDepartment D on Assets.departmentId=D.departmentId 
                  where AssetsBorrowDetail.alreadyReturn<>'Y'  ", AppMember.AppLanguage.ToString());
@@ -606,13 +611,59 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
             dr["assetsId"] = assetsId;
             dr["checking"] = "N";
             dr["setBooksId"] = sysUser.MySetBooks.SetBooksId;
-            dt.Rows.Add(dr);
+            //dt.Rows.Add(dr);
+            dt=CreateDataTableByAssetsNum(dt, dr, myModel, true);
             Create5Field(dt, sysUser.UserId, viewTitle);
             DbUpdate.Update(dt);
             if (AppMember.LaunchDepreciation == "true")
                 InitDepreciationTrack(sysUser, viewTitle);
             AppLog.WriteLog(sysUser.UserName, LogType.Info, "Assets", string.Format(AppMember.AppText["LogAssetsAdd"], myModel.AssetsNo, myModel.AssetsName, myModel.AssetsBarcode));
             return 1;
+        }
+
+        /// <summary>
+        /// 根据资产数量构造需要创建多少条资产。此步放在datatable更新前一步，目的是为可以单条的所有信息
+        /// 复制到多条资产记录里，多个资产，第一个用原始资产编号，其他的依次以原始编号后+“C”+两位序列号。
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="dr"></param>
+        /// <param name="myModel"></param>
+        /// <param name="isNew">是否是资产新增功能调用，为false是一般是资产编辑等调用</param>
+        /// <returns></returns>
+        private DataTable CreateDataTableByAssetsNum(DataTable dt, DataRow dr, EntryModel myModel,bool isNew)
+        {
+            string importAssetsQtyNeedSplitConfig = ConfigHelper.GetConfig("ImportAssetsQtyNeedSplit");
+            if (importAssetsQtyNeedSplitConfig.ToLower() == "true" && myModel.AssetsQty.Value > 1)//新增资产需要根据资产数量拆分
+            {
+                dr["assetsQty"] = 1;
+                int assetQty = myModel.AssetsQty.Value;
+                int formatLength = assetQty.ToString().Length;
+                if (formatLength < 2)
+                    formatLength = 2;
+                string indexformat = "";
+                for (int f = 0; f < formatLength; f++)
+                {
+                    indexformat += "0";
+                }
+                if(isNew)
+                    dt.Rows.Add(dr);
+                for (int j = 1; j < assetQty; j++)
+                {
+                    DataRow drclone = dt.NewRow();
+                    drclone.ItemArray = (object[])dr.ItemArray.Clone();
+                    drclone["assetsId"] = IdGenerator.GetMaxId(dt.TableName);
+                    drclone["assetsNo"] = DataConvert.ToString(drclone["assetsNo"]) + "C" + (j + 1).ToString(indexformat);
+                    dt.Rows.Add(drclone);
+                }
+            }
+            else // 新增的资产不用根据资产数量拆分
+            {
+                dr["assetsQty"] = myModel.AssetsQty;
+                if (isNew)
+                   dt.Rows.Add(dr);
+            }
+
+            return dt;
         }
 
         private int UpdateUser(EntryModel model, UserInfo sysUser, string viewTitle)
@@ -733,7 +784,7 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
                     dt.Rows[0]["assetsNetValue"] = dt.Rows[0]["assetsValue"];
             }
 
-            if (myModel.PurchaseDate2!=null)
+            if (myModel.PurchaseDate2 != null)
             {
                 dt.Rows[0]["purchaseDate2"] = DataConvert.ToDBObject(myModel.PurchaseDate2);
             }
@@ -755,6 +806,7 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
             AddImg(DataConvert.ToString(myModel.ImgFileContainer), assetsId, sysUser, viewTitle);
             if (formMode == "reapply")
                 dt.Rows[0]["approveState"] = "O";
+            dt = CreateDataTableByAssetsNum(dt, dt.Rows[0], myModel, false);
             Update5Field(dt, sysUser.UserId, viewTitle);
             DbUpdate.Update(dt);
             if (formMode == "reapply")
@@ -898,7 +950,7 @@ namespace BusinessLogic.AssetsBusiness.Repositorys
             dr["remainRate"] = DataConvert.ToDBObject(model.RemainRate);
             dr["purchaseDate"] = DataConvert.ToDBObject(model.PurchaseDate);
 
-            dr["assetsQty"] = DataConvert.ToDBObject(model.AssetsQty);
+            //dr["assetsQty"] = DataConvert.ToDBObject(model.AssetsQty);
             dr["addDate"] = DataConvert.ToDBObject(model.PurchaseDate);
             dr["invoiceNo"] = model.InvoiceNo;
             dr["purchaseNo"] = model.PurchaseNo;

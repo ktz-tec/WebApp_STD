@@ -40,6 +40,7 @@ namespace WebApp
             AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);
             AppInit.Init();
+            AppLog.DeleteLog();
             Thread thread = new Thread(new ThreadStart(AutoDepreciationTask));
             thread.Start();
 
@@ -52,39 +53,60 @@ namespace WebApp
 
         void AutoDepreciationTask()
         {
-            if (AppMember.AutoDepreciation == "true")
+            try
             {
-                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Debug, "AutoTask", string.Format(AppMember.AppText["AutoDepreciationTask"]));
-                while (true)
+                if (AppMember.AutoDepreciation == "true")
                 {
-                    AutoDepreciation.ExcuteAutoUpdateByThread();
-                    int timerIntervalMinute = DataConvert.ToInt32(ConfigurationManager.AppSettings["TimerIntervalMinute"].ToString());
-                    Thread.CurrentThread.Join(1000 * 60 * timerIntervalMinute);//阻止timerIntervalMinute分钟   
+                    AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Debug, "AutoTask", string.Format(AppMember.AppText["AutoDepreciationTask"]));
+                    while (true)
+                    {
+                        AutoDepreciation.ExcuteAutoUpdateByThread();
+                        int timerIntervalMinute = DataConvert.ToInt32(ConfigurationManager.AppSettings["TimerIntervalMinute"].ToString());
+                        Thread.CurrentThread.Join(1000 * 60 * timerIntervalMinute);//阻止timerIntervalMinute分钟   
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "Global.asax.AutoDepreciationTask", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
             }
         }
 
         void AutoMonthUpdateTask()
         {
-            if (AppMember.AutoMonthUpdate == "true")
+            try
             {
-                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Debug, "AutoTask", string.Format(AppMember.AppText["AutoMonthUpdateTask"]));
-                AutoMonthUpdate.ExcuteAutoUpdate();
+                if (AppMember.AutoMonthUpdate == "true")
+                {
+                    AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Debug, "AutoTask", string.Format(AppMember.AppText["AutoMonthUpdateTask"]));
+                    AutoMonthUpdate.ExcuteAutoUpdate();
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "Global.asax.AutoMonthUpdateTask", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
             }
         }
 
         void AutoDBBackUpTask()
         {
-            string autoBackup = ConfigurationManager.AppSettings["AutoBackup"].ToString();
-            if (autoBackup == "true")
+            try
             {
-                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Debug, "AutoTask", string.Format(AppMember.AppText["AutoBackupTask"]));
-                while (true)
+                string autoBackup = ConfigurationManager.AppSettings["AutoBackup"].ToString();
+                if (autoBackup == "true")
                 {
-                    DataBaseBackupRepository.ExcuteAutoBackUpByThread();
-                    int timerIntervalMinute = DataConvert.ToInt32(ConfigurationManager.AppSettings["TimerIntervalMinute"].ToString());
-                    Thread.CurrentThread.Join(1000 * 60 * timerIntervalMinute);//阻止timerIntervalMinute分钟  
+                    AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Debug, "AutoTask", string.Format(AppMember.AppText["AutoBackupTask"]));
+                    while (true)
+                    {
+                        DataBaseBackupRepository.ExcuteAutoBackUpByThread();
+                        int timerIntervalMinute = DataConvert.ToInt32(ConfigurationManager.AppSettings["TimerIntervalMinute"].ToString());
+                        Thread.CurrentThread.Join(1000 * 60 * timerIntervalMinute);//阻止timerIntervalMinute分钟  
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "Global.asax.AutoDBBackUpTask", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
             }
         }
 
