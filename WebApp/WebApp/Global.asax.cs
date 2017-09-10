@@ -44,8 +44,8 @@ namespace WebApp
             Thread thread = new Thread(new ThreadStart(AutoDepreciationTask));
             thread.Start();
 
-            //Thread thread2 = new Thread(new ThreadStart(AutoDBBackUpTask));
-            //thread2.Start();
+            Thread thread2 = new Thread(new ThreadStart(AutoDBBackUpTask));
+            thread2.Start();
 
             Thread thread3 = new Thread(new ThreadStart(AutoMonthUpdateTask));
             thread3.Start();

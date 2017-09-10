@@ -70,7 +70,7 @@ namespace WebCommon.Common
             }
             catch (Exception ex)
             {
-                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "GroupController.List", "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "MasterController.GridData", ControllerName + "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
                 return new JsonResult(); 
             }
         }
@@ -205,97 +205,130 @@ namespace WebCommon.Common
 
         public virtual JsonResult DropList(string filterExpression, string pySearch)
         {
-            ClearClientPageCache(Response);
-            IEntry rep = EntryRepository;
-            CacheInit.RefreshCache(HttpContext, rep, ControllerName + "DropList", DateTime.Now.AddMinutes(CacheExpiryMinute), CachePriority, CacheCreateType.IfNoThenGenerated);
-            DataTable source = (DataTable)HttpContext.Cache[ControllerName + "DropList"];
-            filterExpression = DFT.HandleExpress(filterExpression);
-            List<DropListSource> dropList = rep.DropList(source, filterExpression);
-            if (DataConvert.ToString(pySearch) != "")
+            try
             {
-                List<DropListSource> filterDrop = new List<DropListSource>();
-                foreach (var obj in dropList)
+                ClearClientPageCache(Response);
+                IEntry rep = EntryRepository;
+                CacheInit.RefreshCache(HttpContext, rep, ControllerName + "DropList", DateTime.Now.AddMinutes(CacheExpiryMinute), CachePriority, CacheCreateType.IfNoThenGenerated);
+                DataTable source = (DataTable)HttpContext.Cache[ControllerName + "DropList"];
+                filterExpression = DFT.HandleExpress(filterExpression);
+                List<DropListSource> dropList = rep.DropList(source, filterExpression);
+                if (DataConvert.ToString(pySearch) != "")
                 {
-                    string pyf = PinYin.GetFirstPinyin(DataConvert.ToString(obj.Text)).ToUpper();
-                    string[] pyfs = pyf.Split(',');
-                    foreach (string py in pyfs)
+                    List<DropListSource> filterDrop = new List<DropListSource>();
+                    foreach (var obj in dropList)
                     {
-                        if (py.StartsWith(pySearch.ToUpper()) && !filterDrop.Contains(obj))
+                        string pyf = PinYin.GetFirstPinyin(DataConvert.ToString(obj.Text)).ToUpper();
+                        string[] pyfs = pyf.Split(',');
+                        foreach (string py in pyfs)
                         {
-                            filterDrop.Add(obj);
+                            if (py.StartsWith(pySearch.ToUpper()) && !filterDrop.Contains(obj))
+                            {
+                                filterDrop.Add(obj);
+                            }
                         }
-                    }
 
+                    }
+                    return DropListJson(filterDrop);
                 }
-                return DropListJson(filterDrop);
+                return DropListJson(dropList);
             }
-            return DropListJson(dropList);
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "MasterController.DropList", ControllerName + "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
+
         }
 
 
 
         public ActionResult AddFavorit(string tableName, string pkValue)
         {
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            DataUpdate dbUpdate = new DataUpdate();
             try
             {
-                dbUpdate.BeginTransaction();
-                CacheRepository drep = new CacheRepository();
-                drep.DbUpdate = dbUpdate;
-                drep.AddFavorit(pkValue, sysUser.UserId, tableName);
-                dbUpdate.Commit();
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                DataUpdate dbUpdate = new DataUpdate();
+                try
+                {
+                    dbUpdate.BeginTransaction();
+                    CacheRepository drep = new CacheRepository();
+                    drep.DbUpdate = dbUpdate;
+                    drep.AddFavorit(pkValue, sysUser.UserId, tableName);
+                    dbUpdate.Commit();
+                }
+                catch (Exception ex)
+                {
+                    dbUpdate.Rollback();
+                    throw new Exception(ex.Message);
+                }
+                finally
+                {
+                    dbUpdate.Close();
+                }
+                return Content("0", "text/html");
             }
             catch (Exception ex)
             {
-                dbUpdate.Rollback();
-                throw new Exception(ex.Message);
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "MasterController.AddFavorit", ControllerName + "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content(ControllerName + "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
-            finally
-            {
-                dbUpdate.Close();
-            }
-            return Content("0", "text/html");
         }
 
         public ActionResult ReplaceFavorit(string tableName, string pkValue)
         {
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            DataUpdate dbUpdate = new DataUpdate();
             try
             {
-                dbUpdate.BeginTransaction();
-                CacheRepository drep = new CacheRepository();
-                drep.DbUpdate = dbUpdate;
-                drep.ReplaceFavorit(pkValue, sysUser.UserId, tableName);
-                dbUpdate.Commit();
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                DataUpdate dbUpdate = new DataUpdate();
+                try
+                {
+                    dbUpdate.BeginTransaction();
+                    CacheRepository drep = new CacheRepository();
+                    drep.DbUpdate = dbUpdate;
+                    drep.ReplaceFavorit(pkValue, sysUser.UserId, tableName);
+                    dbUpdate.Commit();
+                }
+                catch (Exception ex)
+                {
+                    dbUpdate.Rollback();
+                    throw new Exception(ex.Message);
+                }
+                finally
+                {
+                    dbUpdate.Close();
+                }
+                return Content("0", "text/html");
             }
             catch (Exception ex)
             {
-                dbUpdate.Rollback();
-                throw new Exception(ex.Message);
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "MasterController.ReplaceFavorit", ControllerName + "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content(ControllerName + "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
             }
-            finally
-            {
-                dbUpdate.Close();
-            }
-            return Content("0", "text/html");
         }
 
         public ActionResult Export(string formvar)
         {
-            ListCondition condition = new ListCondition();
-            condition.SortField = DataConvert.ToString(Request.Params["sidx"]);
-            condition.SortType = DataConvert.ToString(Request.Params["sord"]);
-            condition.PageIndex = DataConvert.ToInt32(Request.Params["page"]);
-            condition.PageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
-            condition.ListModelString = formvar;
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            condition.SysUser = sysUser;
-            DataTable dt = ListRepository.GetAllGridDataTable(condition);
-            StringBuilder sbHtml = ExcelHelper.CreateExcel(dt, GridLayout());
-            byte[] fileContents = Encoding.UTF8.GetBytes(sbHtml.ToString());
-            return File(fileContents, "application/ms-excel", IdGenerator.GetMaxId(ExportFileName) + ".xls");
+            try
+            {
+                ListCondition condition = new ListCondition();
+                condition.SortField = DataConvert.ToString(Request.Params["sidx"]);
+                condition.SortType = DataConvert.ToString(Request.Params["sord"]);
+                condition.PageIndex = DataConvert.ToInt32(Request.Params["page"]);
+                condition.PageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
+                condition.ListModelString = formvar;
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                condition.SysUser = sysUser;
+                DataTable dt = ListRepository.GetAllGridDataTable(condition);
+                StringBuilder sbHtml = ExcelHelper.CreateExcel(dt, GridLayout());
+                byte[] fileContents = Encoding.UTF8.GetBytes(sbHtml.ToString());
+                return File(fileContents, "application/ms-excel", IdGenerator.GetMaxId(ExportFileName) + ".xls");
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "MasterController.Export", ControllerName + "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content(ControllerName + "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
     }

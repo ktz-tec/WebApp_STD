@@ -37,8 +37,9 @@ namespace BusinessCommon.Repositorys
 
         private static int BackUp(string filePath)
         {
+            string dbName = ConfigurationManager.AppSettings["DBName"]; 
             DateTime dtnow = DateTime.Now;
-            string fileName = "AppDBHZ_" + dtnow.ToString("yyyyMMdd_hhmmss") + ".bak";
+            string fileName = dbName+"_" + dtnow.ToString("yyyyMMdd_hhmmss") + ".bak";
             if (!Directory.Exists(filePath))
             {
                 Directory.CreateDirectory(filePath);
@@ -48,7 +49,7 @@ namespace BusinessCommon.Repositorys
                 path = filePath + fileName;
             else
                 path = filePath + "\\" + fileName;
-            string sql = "backup database AppDBHZ to disk='" + path + "'";
+            string sql = "backup database " + dbName + " to disk='" + path + "'";
             AppMember.DbHelper.ExecuteSql(sql);
             string connstrs = ConfigurationManager.ConnectionStrings["BackupConnectionString"].ConnectionString;
             DbProviderFactory provider = DbProviderFactories.GetFactory(

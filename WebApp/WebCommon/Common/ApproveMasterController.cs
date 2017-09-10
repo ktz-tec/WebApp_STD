@@ -33,44 +33,60 @@ namespace WebCommon.Common
         [HttpPost]
         public JsonResult GridData(string listMode, string filterString, string selectMode)
         {
-            ApproveListCondition condition = new ApproveListCondition();
-            condition.SortField = DataConvert.ToString(Request.Form["sidx"]);
-            condition.SortType = DataConvert.ToString(Request.Params["sord"]);
-            condition.PageIndex = DataConvert.ToInt32(Request.Params["page"]);
-            condition.PageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
-            condition.ListMode = listMode;
-            condition.SelectMode = selectMode;
-            condition.FilterString = filterString;
-            //if (Request.Form.AllKeys.Contains("isQuery") && DataConvert.ToString(Request.Form["isQuery"]) == "true")
-            //    condition.PageIndex = 1;
-            if (Request.Form.AllKeys.Contains("formVar"))
-                condition.ListModelString = DataConvert.ToString(Request.Form["formVar"]);
-            
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            condition.SysUser = sysUser;
-            condition.Approver = sysUser.UserId;
-            int cnt = ListRepository.GetGridDataCount(condition);
-            condition.TotalRowNum = cnt;
-            DataTable dt = ListRepository.GetGridDataTable(condition);
-            var rows = DataTable2Object.Data(dt, GridLayout(listMode, selectMode).GridLayouts);
-            double aa = (double)cnt / condition.PageRowNum;
-            double pageCnt = Math.Ceiling(aa);
-            var result = new JsonResult();
-            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
-            result.Data = new { page = condition.PageIndex, records = cnt, total = pageCnt, rows = rows };
-            return result;
+            try
+            {
+                ApproveListCondition condition = new ApproveListCondition();
+                condition.SortField = DataConvert.ToString(Request.Form["sidx"]);
+                condition.SortType = DataConvert.ToString(Request.Params["sord"]);
+                condition.PageIndex = DataConvert.ToInt32(Request.Params["page"]);
+                condition.PageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
+                condition.ListMode = listMode;
+                condition.SelectMode = selectMode;
+                condition.FilterString = filterString;
+                //if (Request.Form.AllKeys.Contains("isQuery") && DataConvert.ToString(Request.Form["isQuery"]) == "true")
+                //    condition.PageIndex = 1;
+                if (Request.Form.AllKeys.Contains("formVar"))
+                    condition.ListModelString = DataConvert.ToString(Request.Form["formVar"]);
+
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                condition.SysUser = sysUser;
+                condition.Approver = sysUser.UserId;
+                int cnt = ListRepository.GetGridDataCount(condition);
+                condition.TotalRowNum = cnt;
+                DataTable dt = ListRepository.GetGridDataTable(condition);
+                var rows = DataTable2Object.Data(dt, GridLayout(listMode, selectMode).GridLayouts);
+                double aa = (double)cnt / condition.PageRowNum;
+                double pageCnt = Math.Ceiling(aa);
+                var result = new JsonResult();
+                result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+                result.Data = new { page = condition.PageIndex, records = cnt, total = pageCnt, rows = rows };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "ApproveMasterController.GridData", ControllerName + "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
         }
 
         [HttpPost]
         public virtual JsonResult EntryGridData(string formVar, string formMode, string primaryKey)
         {
-            Dictionary<string, object> paras = new Dictionary<string, object>();
-            DataTable dt = EntryRepository.GetEntryGridDataTable(paras, formMode, primaryKey, formVar);
-            var rows = DataTable2Object.Data(dt, EntryGridLayout(formMode).GridLayouts);
-            var result = new JsonResult();
-            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
-            result.Data = new { page = 1, total = rows.Length, rows = rows };
-            return result;
+            try
+            {
+                Dictionary<string, object> paras = new Dictionary<string, object>();
+                DataTable dt = EntryRepository.GetEntryGridDataTable(paras, formMode, primaryKey, formVar);
+                var rows = DataTable2Object.Data(dt, EntryGridLayout(formMode).GridLayouts);
+                var result = new JsonResult();
+                result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+                result.Data = new { page = 1, total = rows.Length, rows = rows };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "ApproveMasterController.EntryGridData", ControllerName + "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return new JsonResult();
+            }
         }
 
         protected virtual GridLayout GridLayout(string listMode, string selectMode)
@@ -428,19 +444,27 @@ namespace WebCommon.Common
 
         public ActionResult Export(string formvar)
         {
-            ApproveListCondition condition = new ApproveListCondition();
-            condition.SortField = DataConvert.ToString(Request.Params["sidx"]);
-            condition.SortType = DataConvert.ToString(Request.Params["sord"]);
-            condition.PageIndex = DataConvert.ToInt32(Request.Params["page"]);
-            condition.PageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
-            condition.ListModelString = formvar;
-            UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
-            condition.SysUser = sysUser;
-            condition.Approver = sysUser.UserId;
-            DataTable dt = ListRepository.GetAllGridDataTable(condition);
-            StringBuilder sbHtml = ExcelHelper.CreateExcel(dt, GridLayout("", ""));
-            byte[] fileContents = Encoding.UTF8.GetBytes(sbHtml.ToString());
-            return File(fileContents, "application/ms-excel", IdGenerator.GetMaxId(ExportFileName) + ".xls");
+            try
+            {
+                ApproveListCondition condition = new ApproveListCondition();
+                condition.SortField = DataConvert.ToString(Request.Params["sidx"]);
+                condition.SortType = DataConvert.ToString(Request.Params["sord"]);
+                condition.PageIndex = DataConvert.ToInt32(Request.Params["page"]);
+                condition.PageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
+                condition.ListModelString = formvar;
+                UserInfo sysUser = CacheInit.GetUserInfo(HttpContext);
+                condition.SysUser = sysUser;
+                condition.Approver = sysUser.UserId;
+                DataTable dt = ListRepository.GetAllGridDataTable(condition);
+                StringBuilder sbHtml = ExcelHelper.CreateExcel(dt, GridLayout("", ""));
+                byte[] fileContents = Encoding.UTF8.GetBytes(sbHtml.ToString());
+                return File(fileContents, "application/ms-excel", IdGenerator.GetMaxId(ExportFileName) + ".xls");
+            }
+            catch (Exception ex)
+            {
+                AppLog.WriteLog(AppMember.AppText["SystemUser"], LogType.Error, "ApproveMasterController.Export", ControllerName + "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace);
+                return Content(ControllerName + "[Message]:" + ex.Message + " [StackTrace]:" + ex.StackTrace, "text/html");
+            }
         }
 
     }
