@@ -5,10 +5,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
     <script type="text/javascript">
 
-        function QueryReport() {
-            var pageId = '<%=Model.PageId %>';
-            var formId = '<%=Model.FormId %>';
-            var gridId = '<%=Model.EntryGridId %>';
+        function QueryReport(pageId, formId, gridId) {
             var obj = $('#' + formId + pageId).serializeObject();
             var formvar = JSON.stringify(obj);
             $('#FormVar' + pageId).val(formvar);
@@ -78,9 +75,7 @@
     </asp:ContentPlaceHolder>
     <%:Html.AppNormalButton(Model.PageId, "btnQuery", AppMember.AppText["BtnQuery"])%>
     <%:Html.AppNormalButton(Model.PageId, "btnExport", AppMember.AppText["BtnExport"])%>
-    <%:Html.AppNormalButton(Model.PageId, "btnPrint", AppMember.AppText["BtnPrint"])%>
-    <%-- <%:Html.AppLinkButton(Model.PageId, "btnExport", AppMember.AppText["BtnExport"], Model.ExportUrl, Model.ViewTitle)%>--%>
-    <%-- <%:Html.AppNormalButton(Model.PageId, "btnExport", AppMember.AppText["BtnExport"], Model.ExportUrl, Model.FormId)%>--%>
+    <%--<%:Html.AppNormalButton(Model.PageId, "btnPrint", AppMember.AppText["BtnPrint"])%>--%>
     <%:Html.AppHiddenFor(m => m.PageId, Model.PageId)%>
     <%:Html.AppHiddenFor(m => m.ViewTitle,Model.PageId) %>
     <%:Html.AppHiddenFor(m => m.Message, Model.PageId)%>

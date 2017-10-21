@@ -12,10 +12,11 @@ namespace BusinessLogic.Report.Repositorys
     public class UpcomingScrapQueryRepository : IQuery
     {
 
-        public virtual DataTable GetReportGridDataTable(ListCondition condition)
+        public virtual DataTable GetReportGridDataTable(ListCondition condition, bool needPaging)
         {
-            int rowSize = condition.PageIndex * condition.PageRowNum; //子查询返回行数的尺寸
-            string sql = string.Format(@"select  Assets.assetsId assetsId,
+           
+            string sql = string.Format(@"select  row_number() over(order by  Assets.assetsNo) as rownumber,
+Assets.assetsId assetsId,
                         Assets.assetsNo assetsNo,
                         Assets.assetsName assetsName,
                         (select assetsClassName from AssetsClass where Assets.assetsClassId=AssetsClass.assetsClassId) assetsClassId,
@@ -25,7 +26,15 @@ namespace BusinessLogic.Report.Repositorys
 	                convert(nvarchar(100),  Assets.purchaseDate ,23) purchaseDate,
                     convert(nvarchar(100),  DATEADD(yy,Assets.durableYears,Assets.purchaseDate) ,23)  endDate,
 	                (select CodeTable.codeName from CodeTable where Assets.assetsState=CodeTable.codeNo and CodeTable.codeType='AssetsState' and CodeTable.languageVer='{0}' ) assetsState
-                from Assets where 1=1 {1} {2} ", AppMember.AppLanguage.ToString(), ListWhereSql(condition).Sql, " order by   Assets.assetsNo");
+                from Assets where 1=1 {1}  ", AppMember.AppLanguage.ToString(), ListWhereSql(condition).Sql);
+            if (needPaging)
+            {
+                sql = string.Format("select top {0} *  from ({1}) A where rownumber > {2} order by   assetsNo ", condition.PageRowNum, sql, (condition.PageIndex - 1) * condition.PageRowNum);
+            }
+            else
+            {
+                sql += " order by   Assets.assetsNo";
+            }
             DataTable dtGrid = AppMember.DbHelper.GetDataSet(sql, ListWhereSql(condition).DBPara).Tables[0];
             return dtGrid;
         }

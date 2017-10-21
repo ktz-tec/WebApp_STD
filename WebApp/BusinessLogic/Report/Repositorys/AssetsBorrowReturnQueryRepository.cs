@@ -13,10 +13,10 @@ namespace BusinessLogic.Report.Repositorys
     {
 
 
-        public virtual DataTable GetReportGridDataTable(ListCondition condition)
+        public virtual DataTable GetReportGridDataTable(ListCondition condition,bool needPaging)
         {
-            int rowSize = condition.PageIndex * condition.PageRowNum; //子查询返回行数的尺寸
-            string sql = string.Format(@"select T1.*,
+            string sql = string.Format(@"select row_number() over(order by T1.assetsBorrowNo) as rownumber,
+                                    T1.*,
                                     T2.assetsReturnNo,
                                     T2.assetsReturnName,
                                     T2.returnPeople,
@@ -43,8 +43,15 @@ namespace BusinessLogic.Report.Repositorys
                                     AssetsReturnDetail.returnDate
                                     from AssetsReturn,AssetsReturnDetail
                                     where AssetsReturn.assetsReturnId=AssetsReturnDetail.assetsReturnId) T2
-                                    on T1.assetsId=T2.assetsId where 1=1 {0} {1} ", ListWhereSql(condition).Sql,
-                                                                        " order by T1.assetsBorrowNo,T1.assetsNo");
+                                    on T1.assetsId=T2.assetsId where 1=1 {0}  ", ListWhereSql(condition).Sql);
+            if (needPaging)
+            {
+                sql = string.Format("select top {0} *  from ({1}) A where rownumber > {2}  order by assetsBorrowNo,assetsNo ", condition.PageRowNum, sql, (condition.PageIndex - 1) * condition.PageRowNum);
+            }
+            else
+            {
+                sql += " order by assetsBorrowNo,assetsNo ";
+            }
             DataTable dtGrid = AppMember.DbHelper.GetDataSet(sql, ListWhereSql(condition).DBPara).Tables[0];
             return dtGrid;
         }

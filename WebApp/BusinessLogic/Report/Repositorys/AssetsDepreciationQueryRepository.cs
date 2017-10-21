@@ -13,7 +13,7 @@ namespace BusinessLogic.Report.Repositorys
     {
 
 
-        public virtual DataTable GetReportGridDataTable(ListCondition condition)
+        public virtual DataTable GetReportGridDataTable(ListCondition condition, bool needPaging)
         {
             int rowSize = condition.PageIndex * condition.PageRowNum; //子查询返回行数的尺寸
             string sql = string.Format(@"select  Assets.assetsId assetsId,

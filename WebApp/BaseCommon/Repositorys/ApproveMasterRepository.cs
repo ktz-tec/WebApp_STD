@@ -284,7 +284,7 @@ namespace BaseCommon.Repositorys
                 {
                     
                     sql = string.Format(@"select count(1) cnt from 
-                        (select isnull(max(a.assetsValue),0) assetsValue  from AssetsPurchaseDetail
+                        (select isnull(max(assetsValue),0) assetsValue  from AssetsPurchaseDetail
                         where assetsPurchaseId ='{0}') M  
                         where 1=1  
                         {1}", DataConvert.ToString(refId), valSql);

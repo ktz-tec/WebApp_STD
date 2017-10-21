@@ -39,6 +39,7 @@
             var formId = '<%=Model.FormId %>' + pageId;
             var fiscalYearIdObj = "#FiscalYearId" + pageId;
             var fiscalPeriodIdObj = "#FiscalPeriodId" + pageId;
+            var gridId = '<%=Model.EntryGridId %>';
             //#endregion 公共变量
 
             //#region 会计期间过滤 
@@ -55,8 +56,10 @@
             });
             //#endregion 会计期间过滤 
 
+       
+            
             $('#btnQuery' + pageId).click(function () {
-                QueryReport();
+                QueryReport(pageId, formId, gridId);
             });
 
         });

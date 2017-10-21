@@ -40,15 +40,20 @@ namespace WebCommon.Common
             condition.PageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
             condition.ListModelString = formVar;
             var rows = new object[0];
+            int cnt = 0;
             if (DataConvert.ToString(formVar) != "")
             {
+                cnt = Repository.GetReportGridDataTable(condition, false).Rows.Count;
+                condition.TotalRowNum = cnt;
                 QueryEntryViewModel model = JsonHelper.Deserialize<QueryEntryViewModel>(formVar);
-                DataTable dt = Repository.GetReportGridDataTable(condition);
+                DataTable dt = Repository.GetReportGridDataTable(condition,true);
                 rows = DataTable2Object.Data(dt, EntryGridLayout(model.FormMode).GridLayouts);
             }
+            double aa = (double)cnt / condition.PageRowNum;
+            double pageCnt = Math.Ceiling(aa);
             var result = new JsonResult();
             result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
-            result.Data = new { page = 1, total = 1, rows = rows };
+            result.Data = new { page = 1, records = cnt, total = pageCnt, rows = rows };
             return result;
         }
 
@@ -60,7 +65,7 @@ namespace WebCommon.Common
             condition.PageIndex = DataConvert.ToInt32(Request.Params["page"]);
             condition.PageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
             condition.ListModelString = formvar;
-            DataTable dt = Repository.GetReportGridDataTable(condition);
+            DataTable dt = Repository.GetReportGridDataTable(condition,false);
             QueryEntryViewModel model = JsonHelper.Deserialize<QueryEntryViewModel>(formvar);
             StringBuilder sbHtml = ExcelHelper.CreateExcel(dt, EntryGridLayout(model.FormMode));
             //string fileName = Server.MapPath("~/Content/uploads/output.xls");
@@ -89,7 +94,7 @@ namespace WebCommon.Common
             condition.PageIndex = DataConvert.ToInt32(Request.Params["page"]);
             condition.PageRowNum = DataConvert.ToInt32(Request.Params["rows"]);
             condition.ListModelString = formvar;
-            DataTable dt = Repository.GetReportGridDataTable(condition);
+            DataTable dt = Repository.GetReportGridDataTable(condition,false);
             QueryEntryViewModel model = JsonHelper.Deserialize<QueryEntryViewModel>(formvar);
             model.EntryGridData = dt;
             model.EntryGridLayout = EntryGridLayout(model.FormMode);

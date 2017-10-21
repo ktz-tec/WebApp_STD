@@ -11,7 +11,7 @@ namespace BusinessLogic.Report.Repositorys
 {
     public class AssetsChangeReportRepository : IQuery
     {
-        public virtual DataTable GetReportGridDataTable(ListCondition condition)
+        public virtual DataTable GetReportGridDataTable(ListCondition condition, bool needPaging)
         {
             EntryModel model = JsonHelper.Deserialize<EntryModel>(condition.ListModelString);
             switch (model.FormMode)

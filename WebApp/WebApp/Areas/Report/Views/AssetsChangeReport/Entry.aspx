@@ -45,7 +45,7 @@
             var formId = '<%=Model.FormId %>' + pageId;
             var fiscalYearIdObj = "#FiscalYearId" + pageId;
             var fiscalPeriodIdObj = "#FiscalPeriodId" + pageId;
-
+            var gridId = '<%=Model.EntryGridId %>';
 
             //#region 会计期间过滤 
             $(fiscalYearIdObj).change(function () {
@@ -71,7 +71,7 @@
                     AppMessage(pageId, '<%=AppMember.AppText["MessageTitle"]%>', '<%=AppMember.AppText["FiscalPeriodId"]%>' + '<%=AppMember.AppText["NotNull"]%>', 'error', function () { });
                     return;
                 }
-                QueryReport();
+                QueryReport(pageId, formId, gridId);
             });
         });
     </script>

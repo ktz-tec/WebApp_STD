@@ -13,10 +13,11 @@ namespace BusinessLogic.Report.Repositorys
     {
 
 
-        public virtual DataTable GetReportGridDataTable(ListCondition condition)
+        public virtual DataTable GetReportGridDataTable(ListCondition condition, bool needPaging)
         {
-            int rowSize = condition.PageIndex * condition.PageRowNum; //子查询返回行数的尺寸
-            string sql = string.Format(@"select  Assets.assetsId assetsId,
+            
+            string sql = string.Format(@"select  row_number() over(order by  AssetsTransfer.assetsTransferNo,Assets.assetsNo) as rownumber,
+Assets.assetsId assetsId,
                         Assets.assetsNo assetsNo,
                         Assets.assetsName assetsName,
                         AssetsTransfer.assetsTransferNo assetsTransferNo,
@@ -35,8 +36,15 @@ namespace BusinessLogic.Report.Repositorys
                 where AssetsTransferDetail.assetsId=Assets.assetsId  
                 and AssetsTransferDetail.assetsTransferId=AssetsTransfer.assetsTransferId 
                 and (AssetsTransferDetail.approveState='E' or AssetsTransferDetail.approveState is null) 
-                {0} {1} ", ListWhereSql(condition).Sql,
-                                                                                                                                                                                                        " order by  AssetsTransfer.assetsTransferNo,Assets.assetsNo");
+                {0}  ", ListWhereSql(condition).Sql );
+            if (needPaging)
+            {
+                sql = string.Format("select top {0} *  from ({1}) A where rownumber > {2}  order by  assetsTransferNo,assetsNo ", condition.PageRowNum, sql, (condition.PageIndex - 1) * condition.PageRowNum);
+            }
+            else
+            {
+                sql += " order by  AssetsTransfer.assetsTransferNo,Assets.assetsNo";
+            }
             DataTable dtGrid = AppMember.DbHelper.GetDataSet(sql, ListWhereSql(condition).DBPara).Tables[0];
             return dtGrid;
         }

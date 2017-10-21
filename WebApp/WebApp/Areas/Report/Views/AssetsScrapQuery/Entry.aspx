@@ -63,8 +63,10 @@
     <script type="text/javascript">
         $(document).ready(function () {
             var pageId = '<%=Model.PageId %>';
+            var formId = '<%=Model.FormId %>';
+            var gridId = '<%=Model.EntryGridId %>';
             $('#btnQuery' + pageId).click(function () {
-                QueryReport();
+                QueryReport(pageId, formId, gridId);
             });
         });
     </script>

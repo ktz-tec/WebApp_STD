@@ -8,6 +8,6 @@ namespace BaseCommon.Basic
 {
     public interface IQuery
     {
-        DataTable GetReportGridDataTable(ListCondition condition);
+        DataTable GetReportGridDataTable(ListCondition condition, bool needPaging);
     }
 }

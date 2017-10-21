@@ -85,7 +85,7 @@ namespace BaseControl.HtmlHelpers
             sbGrid.AppendFormat("colNames:[{0}],", GetColNames(gridLayout.GridLayouts));
             sbGrid.AppendFormat("colModel:[{0}],", GetColModel(urlHelper, gridLayout.GridLayouts));
 
-            SetGridProperty(gridId, gridLayout.GridTitle, pagerId, sbGrid, gridHeight, false,false,0,false,false,false);
+            SetGridProperty(gridId, gridLayout.GridTitle, pagerId, sbGrid, gridHeight, false,false,0,false,false,true);
             SetGridEvent(pageId, formId, gridId, sbGrid, "", "", "");
 
             sbGrid.Length--;
@@ -339,7 +339,7 @@ namespace BaseControl.HtmlHelpers
             if (!rowLimit)
                 sbGrid.AppendFormat(" rowNum: 10000000,");
             else
-                sbGrid.AppendFormat(" rowNum: 100,");
+                sbGrid.AppendFormat(" rowNum: 50,");
             sbGrid.AppendLine("rownumbers: true,");
             //sbGrid.AppendFormat("rowList: [10, 50, 100],");
             sbGrid.AppendFormat("pager: '#{0}',", pager);
